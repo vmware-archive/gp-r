@@ -1,0 +1,1 @@
+package.skeleton(list=c( "gp.data.frame","gpConnect","as.data.frame.gp.data.frame","dim.gp.data.frame", "is.gp.data.frame","mad.glm", "mad.lm", "summary.mad.glm", "summary.mad.lm", "values2list"), name="RMADlib")

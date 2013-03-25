@@ -1,0 +1,13 @@
+#Define function
+dim.gp.data.frame <- 
+function (x) 
+{
+    rows <- attr(x, "totalRows")
+    c(rows, length(x))
+}
+
+# Try out function
+gpConnect(host="10.110.122.107", dbname="airlines",user="gpadmin", password="changeme")
+gdf<- gp.data.frame("use_r.census1")
+dim.gp.data.frame(gdf)
+dim(gdf)
