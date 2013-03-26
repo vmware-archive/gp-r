@@ -1,0 +1,26 @@
+#Define Function
+
+summary.mad.glm<- 
+function (object)
+{
+	z<- object
+	num_iterations<- z$num_iterations
+	Estimate<- as.numeric(values2list(z$coef))
+	Std.Error<- values2list(z$std_err)
+	Zvalue<- values2list(z$z_stats)
+	Pvalue<- values2list(z$p_values)
+    VarName<- strsplit(paste("(Intercept)",z$namesX,sep=","),",")[[1]]
+    znew<- data.frame(cbind(VarName,Estimate, Std.Error, Zvalue, Pvalue))
+	res<- list(Call=z$Call, Coefficients=znew, NumOfIterations=num_iterations)
+    #class(res)<- "summary.mad.glm"
+	return(res)
+}
+
+#Example
+gpConnect(host="10.110.122.107", dbname="airlines",user="gpadmin", password="changeme")
+gdf<- gp.data.frame("use_r.census1")
+names(gdf)
+m2<- mad.glm(bachelor~hours+hsdeg, family="binomial", gdf)
+m2
+summary(m2)
+
