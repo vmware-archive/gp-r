@@ -1,22 +1,22 @@
-NOTES ON PERMISSIONS
-R is an untrusted language [untrusted]. Only superusers can create functions in untrusted languages. A discussion with the customer as to whether granting super user priveleges on the database is acceptable needs to be an explicit step in selecting PL/R based analytics.   
+## <a name="packages"/> Notes on permissions
+R is an untrusted language [untrusted]. Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
 
--- This is what happens when you try to create a PL/R function when you aren't a superuser 
+This is what happens when you try to create a PL/R function when you aren't a superuser:
+
+``` 
 ERROR:  permission denied for language plr
 
 ********** Error **********
 
 ERROR: permission denied for language plr
 SQL state: 42501
+```
 
 You do not need superuser priveleges to EXECUTE a PL/R function, only to CREATE a PL/R function. You can do:
 
-Normal users *can* run a PL/R function that was created by a super-user.
-
-In the GP Admin Guide there is a section entitled 'Managing Object Privileges' which outlines how to grant priveleges to other roles. 
+Non-superusers *can run* a PL/R function that was created by a superuser. In the GP Admin Guide there is a section entitled 'Managing Object Privileges' which outlines how to grant priveleges to other roles. 
 
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
-
 
 [untrusted] http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html
