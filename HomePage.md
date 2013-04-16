@@ -220,7 +220,6 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 ### Command center
 
 ## <a name="packages"/> Installing packages
-## <a name="packages"/> Installing packages
 For a given R library, identify all dependent R libraries and each library’s web url.  This can be found by selecting the given package from the following navigation page: 
 http://cran.r-project.org/web/packages/available_packages_by_name.html 
 
@@ -260,6 +259,7 @@ R CMD INSTALL lattice_0.19-33.tar.gz Matrix_1.0-1.tar.gz abind_1.4-0.tar.gz coda
 ```
 
 Check that the newly installed package is listed under the `$R_HOME/library` directory on all the segments (convenient to use `gpssh` here as well). If you do not see it in that directory:
+
 1. Search for the directory (the name of the package) and determine which path it has installed to
 2. Copy over the contents of this directory to the `$R_HOME/library` directory
 
@@ -352,8 +352,7 @@ FROM abalone
 DISTRIBUTED RANDOMLY;
 ```
 
-### Designer Templates
-We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.
+### Sample R code syntax highlighting
 
 ```splus
 m = lm(formula = rings ~ ., data = abalone)
@@ -363,9 +362,6 @@ y = table(x)
 barplot( y[order( as.integer(rownames(y)) )], xlab='Segment ID', 
 		 ylab='Number of rows', main = 'Row distribution across segments' )
 ```
-
-### Rather Drive Stick?
-If you prefer to not use the automatic generator, push a branch named `gh-pages` to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.
 
 ### Authors and Contributors
 This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
