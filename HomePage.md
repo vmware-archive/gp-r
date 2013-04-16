@@ -219,7 +219,64 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 
 ### Command center
 
-## <a name="packages"/> Installing packages
+## <a name="packages"/> R packages
+
+R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages.
+
+### Check R package installation
+A simple test if a package can be loaded can be done by this function:
+
+```SQL
+CREATE OR REPLACE FUNCTION R_test_require(fname text)
+RETURNS boolean AS
+$BODY$
+    return(require(fname,character.only=T))
+$BODY$
+LANGUAGE 'plr';
+```
+
+If you want to check for a package called 'rpart', you would do
+```SQL
+SELECT R_test_require('rpart');
+```
+
+And it will return TRUE if the package could be loaded and FALSE if it couldn't. However, this only works on the node that you are currently logged on to.
+
+To test the R installations on all nodes you would first create a dummy table with a series of integers that will be stored on different nodes in GPDB, like this:
+
+```SQL
+DROP TABLE IF EXISTS simple_series;
+CREATE TABLE simple_series AS (SELECT generate_series(0,1000) AS id);
+```
+
+Also, since we want to know which host we are on we create a function to tell us:
+
+```SQL
+CREATE OR REPLACE FUNCTION R_return_host()
+RETURNS text AS
+$BODY$
+  return(system("hostname",intern=T))
+$BODY$
+LANGUAGE 'plr';
+```
+
+Now we can check for each id (ids are stored on different nodes) if rpart is installed like this:
+```SQL
+DROP TABLE IF EXISTS result_nodes;
+CREATE TABLE result_nodes AS 
+    (SELECT id, R_return_host() AS hostname, R_test_require('rpart') AS result 
+    FROM simple_series group by id); 
+```
+
+`result_nodes` is a table that contains for every id, the host that it is stored on as hostname, and the result of R_test_require as result. Since we only want to know for every host once, we group by hostname like this:
+
+```SQL
+select hostname,bool_and(result) as host_result from result_nodes group by hostname order by hostname;
+```
+
+For a hostname where `R_test_require` returned true for all ids, the value in the column `host_result` will be true. If on a certain host the package couldn't be loaded, `host_result` will be false.
+
+### Installing R packages
 For a given R library, identify all dependent R libraries and each library’s web url.  This can be found by selecting the given package from the following navigation page: 
 http://cran.r-project.org/web/packages/available_packages_by_name.html 
 
@@ -259,7 +316,6 @@ R CMD INSTALL lattice_0.19-33.tar.gz Matrix_1.0-1.tar.gz abind_1.4-0.tar.gz coda
 ```
 
 Check that the newly installed package is listed under the `$R_HOME/library` directory on all the segments (convenient to use `gpssh` here as well). If you do not see it in that directory:
-
 1. Search for the directory (the name of the package) and determine which path it has installed to
 2. Copy over the contents of this directory to the `$R_HOME/library` directory
 
