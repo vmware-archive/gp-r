@@ -17,13 +17,56 @@ Topics covered
 * [Plotting](#plotting)
 
 ## <a name="overview"/> Overview 
-Here is some text
+There are lots of different ways to use R with the Greenplum database. This documentation is intended for practitioners who want pragmatic tips on how to navigate GP+R. 
 
-## Another header
-With some text. And now I made a change
+## <a name="installation"/> Verify installation
+CONTENT TBD
 
-### Welcome to GitHub Pages.
-This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:
+### Verify R installation
+CONTENT TBD
+
+### Verify PL/R installation
+CONTENT TBD
+
+## <a name="parallelization"/> Verify parallelization
+CONTENT TBD
+
+## <a name="packages"/> Installing packages
+CONTENT TBD
+
+## <a name="packages"/> Notes on permissions
+CONTENT TBD
+
+## <a name="packages"/> Best practices
+CONTENT TBD
+
+### Data preparation
+CONTENT TBD
+
+### Return types
+CONTENT TBD
+
+### UDA & UDF
+CONTENT TBD
+
+### RPostgreSQL
+CONTENT TBD
+
+## <a name="memory"/> Memory limitations
+CONTENT TBD
+
+## <a name="persistence"/> Persisting R models in database
+CONTENT TBD
+
+## <a name="datatypes"/> Data types
+CONTENT TBD
+
+## <a name="performance"/> Performance testing
+CONTENT TBD
+
+## <a name="plotting"/> Plotting
+CONTENT TBD
+
 
 ```
 $ cd your_repo_root/repo_name
