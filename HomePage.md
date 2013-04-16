@@ -51,6 +51,31 @@ In the example PL/R function below we add a system call to the Unix 'touch' func
     select my_plr_func( '' ) from sample_model_data;
 ```
 
+After running the sample code, log into the segments and note that the file specified in the path exists with an appropriate timestamp. Also note that if you remove the `FROM` clause (`select my_plr_func( '' );`) that the function will only run on the master node (`mdw`) and not on any of the segments. You can verify this using the same method described.
+
+```
+    [gpadmin@mdw ~]$ gpssh -f all_hosts
+    => ls -la /home/gpadmin/weRhere
+    [sdw16] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [sdw14] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [sdw15] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [sdw12] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [sdw13] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [sdw10] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [sdw11] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw9] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw4] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw5] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw6] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw7] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw1] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw2] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw3] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [ sdw8] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
+    [  mdw] ls: /home/gpadmin/weRhere: No such file or directory
+    [ smdw] ls: /home/gpadmin/weRhere: No such file or directory
+```
+
 ### Timing
 
 ### Command center
