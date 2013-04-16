@@ -1,0 +1,5 @@
+is.gp.data.frame <- 
+function (x) 
+{
+    inherits(x, "gp.data.frame")
+}

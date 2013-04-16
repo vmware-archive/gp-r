@@ -1,0 +1,13 @@
+# define function
+gpConnect <- 
+function (drv="PostgreSQL", host= "", dbname= "", user = "", password = "") 
+{
+        library(RPostgreSQL)         
+		gpConnection <- dbConnect(drv=drv, host=host, dbname=dbname, user=user, password=password)
+        assign("gpConnection", gpConnection, envir = .GlobalEnv)
+        invisible(gpConnection)
+}
+
+# example
+gpConnect(host="10.110.122.107", dbname="airlines",user="gpadmin", password="changeme")
+

@@ -1,0 +1,56 @@
+#Define Function
+
+mad.glm <- 
+
+function(formula,family,data)
+{
+
+gp_table<- attr(data, "tableName")
+
+fo<- terms(formula)
+fo.vars<- paste(attr(fo, "variables"))
+
+query1<- paste(fo.vars[3:length(fo.vars)], collapse=",")
+query2<- paste("drop table if exists temp_rmadlib_logregr")
+try(dbGetQuery(gpConnection, query2))
+
+query3<- paste("create table temp_rmadlib_logregr as select ", fo.vars[2], "::boolean as y, array[1, ", query1, "] as x FROM ", gp_table, " distributed randomly")
+try(dbGetQuery(gpConnection, query3))
+
+data1<- suppressWarnings(gp.data.frame("temp_rmadlib_logregr"))
+
+query4<- paste("select * from madlib.logregr(\'temp_rmadlib_logregr\', 'y', 'x')")
+
+res<- suppressWarnings(try(dbGetQuery(gpConnection, query4)))
+
+res$namesX<- query1
+res$namesY<- fo.vars[2]
+res$Call<- paste(paste(fo)[2],"~",paste(fo)[3])
+
+class(res)<- "mad.glm"
+
+return(res)
+}
+
+
+# Example
+
+gpConnect(host="10.110.122.107", dbname="airlines",user="gpadmin", password="changeme")
+gdf<- gp.data.frame("use_r.census1")
+names(gdf)
+m2<- mad.glm(bachelor~hours+hsdeg, family="binomial", gdf)
+m2
+summary(m2)
+
+
+
+# Equivalent MADlib code:
+
+DROP TABLE IF EXISTS census1_array_bachelor2;
+CREATE TABLE census1_array_bachelor2 AS 
+SELECT bachelor::boolean
+, array[1, hours, hsdeg] AS x 
+FROM census1 
+DISTRIBUTED RANDOMLY;
+
+SELECT * FROM madlib.logregr('census1_array_bachelor2', 'bachelor','x');
