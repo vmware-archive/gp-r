@@ -17,7 +17,7 @@ Topics covered
 * [Plotting](#plotting)
 
 ## <a name="overview"/> Overview 
-There are lots of different ways to use R with the Greenplum database. This documentation is intended for practitioners who want pragmatic tips on how to navigate GP+R. 
+There are lots of different ways to use R with the Greenplum database. This documentation should be considered a guide for practitioners and *not* official documentation. The intention is to give pragmatic tips on how to navigate GP+R. 
 
 ## <a name="installation"/> Verify installation
 CONTENT TBD
@@ -29,7 +29,31 @@ CONTENT TBD
 CONTENT TBD
 
 ## <a name="parallelization"/> Verify parallelization
-CONTENT TBD
+Congratulations, you've just parellelized your first PL/R algorithm in GPDB. Or have you?? In this section we will describe 3 sanity check to ensure that your code is actually running in parallel.
+
+### Writing temporary files
+The simplest way to verify that your PL/R code is running on multiple segments is to write a temporary file from within the PL/R function. You can then log into each of the segments and inspect the temporary file. This method should only be used during debugging, as writing to disk will add unecessary overhead to query processing.  
+
+In the example PL/R function below we add a system call to the Unix 'touch' function which updates the access and modification time a file to the current time. The sample PL/R function takes a file path as an argument, indicating where to write the file. Ensure that the path (but not the file) exists, or else the file may not be written.
+
+```SQL
+    DROP FUNCTION IF EXISTS my_plr_func( character );
+    CREATE OR REPLACE FUNCTION my_plr_func( character ) 
+    RETURNS BOOL AS 
+    $$
+        path = ifelse( arg1 == '', '/home/gpadmin/plrtest/weRhere', arg1 )
+        system( paste( "touch", path ) )
+
+        return TRUE
+    $$
+    LANGUAGE 'plr';
+
+    select my_plr_func( '' ) from sample_model_data;
+```
+
+### Timing
+
+### Command center
 
 ## <a name="packages"/> Installing packages
 CONTENT TBD
