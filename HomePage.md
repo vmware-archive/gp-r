@@ -373,7 +373,7 @@ CONTENT TBD
 CONTENT TBD
 
 ### RPostgreSQL
-The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database [RPostgreSQL]. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
+The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
 
 Using RPostgreSQL has 3 steps: (i) create a database driver for PostgreSQL, (ii) connect to a specific database (iii) execute the query on GPDB and return results. 
 
@@ -420,12 +420,16 @@ While RPostgreSQL can be quite useful in a development context, don't be fooled.
     $$
     LANGUAGE 'plr';
 ```
-```
-    -- This returns without error but does not run in parallel
+
+This returns without error, but does not run in parallel
+```SQL
     SELECT my_plr_error_func( 'zimmen' );
-    
-    -- This produces the error below
-    SELECT my_plr_error_func( 'zimmen' ) FROM sample_model_data;
+```
+
+This produces the error below
+```
+    SELECT my_plr_error_func( 'zimmen' ) 
+    FROM sample_model_data;
 
     ********** Error **********
 
