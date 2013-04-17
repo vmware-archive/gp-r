@@ -340,7 +340,7 @@ In getDependencies(pkgs, dependencies, available, lib) :
 Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (http://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (http://cran.r-project.org/src/contrib/Archive/glmnet/ )
 
 ## <a name="packages"/> Notes on permissions
-R is an untrusted language [untrusted]. Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
+R is an [untrusted language](http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html). Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
 
 This is what happens when you try to create a PL/R function when you aren't a superuser:
 
@@ -359,8 +359,6 @@ Non-superusers *can run* a PL/R function that was created by a superuser. In the
 
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
-
-[untrusted] http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html
 
 ## <a name="packages"/> Best practices
 CONTENT TBD
