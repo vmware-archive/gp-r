@@ -19,6 +19,8 @@ Topics covered
 ## <a name="overview"/> Overview 
 There are lots of different ways to use R with the Greenplum database. This documentation should be considered a guide for practitioners and *not* official documentation. The intention is to give pragmatic tips on how to navigate GP+R. 
 
+PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
+
 ## <a name="installation"/> Verify installation
 CONTENT TBD
 
@@ -220,6 +222,11 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 ### Command center
 
 ## <a name="packages"/> R packages
+The trick to installing R packages on the DCA is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
+
+1. Get the package tars from CRAN (wget)
+2. Copy the tar to all the segments on the DCA (gpscp)
+3. Install the package (gpssh, then R CMD INSTALL)
 
 R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages.
 
@@ -240,7 +247,7 @@ If you want to check for a package called 'rpart', you would do
 SELECT R_test_require('rpart');
 ```
 
-And it will return TRUE if the package could be loaded and FALSE if it couldn't. However, this only works on the node that you are currently logged on to.
+And it will return `TRUE` if the package could be loaded and `FALSE` if it couldn't. However, this only works on the node that you are currently logged on to.
 
 To test the R installations on all nodes you would first create a dummy table with a series of integers that will be stored on different nodes in GPDB, like this:
 
@@ -268,10 +275,13 @@ CREATE TABLE result_nodes AS
     FROM simple_series group by id); 
 ```
 
-`result_nodes` is a table that contains for every id, the host that it is stored on as hostname, and the result of R_test_require as result. Since we only want to know for every host once, we group by hostname like this:
+`result_nodes` is a table that contains for every id, the host that it is stored on as `hostname`, and the result of `R_test_require` as result. Since we only want to know for every host once, we group by `hostname` like this:
 
 ```SQL
-select hostname,bool_and(result) as host_result from result_nodes group by hostname order by hostname;
+select hostname, bool_and(result) AS host_result 
+FROM result_nodes 
+GROUP BY hostname 
+ORDER BY hostname;
 ```
 
 For a hostname where `R_test_require` returned true for all ids, the value in the column `host_result` will be true. If on a certain host the package couldn't be loaded, `host_result` will be false.
