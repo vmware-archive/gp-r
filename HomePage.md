@@ -224,9 +224,9 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 ## <a name="packages"/> R packages
 The trick to installing R packages on the DCA is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
 
-1. Get the package tars from CRAN (wget)
-2. Copy the tar to all the segments on the DCA (gpscp)
-3. Install the package (gpssh, then R CMD INSTALL)
+1. Get the package tars from CRAN (`wget`)
+2. Copy the tar to all the segments on the DCA (`gpscp`)
+3. Install the package (`gpssh`, then `R CMD INSTALL`)
 
 R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages.
 
@@ -360,7 +360,7 @@ Non-superusers *can run* a PL/R function that was created by a superuser. In the
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
-## <a name="packages"/> Best practices
+## <a name="bestpractices"/> Best practices
 CONTENT TBD
 
 ### Data preparation
@@ -373,7 +373,84 @@ CONTENT TBD
 CONTENT TBD
 
 ### RPostgreSQL
-CONTENT TBD
+The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database [RPostgreSQL]. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
+
+Using RPostgreSQL has 3 steps: (i) create a database driver for PostgreSQL, (ii) connect to a specific database (iii) execute the query on GPDB and return results. 
+
+#### 1) Local development
+RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. 
+
+```splus
+    DBNAME = 'marketing'
+    HOST   = '10.110.134.123'
+
+    # Create a driver
+    drv <- dbDriver( "PostgreSQL" )
+    # Create the database connection
+    con <- dbConnect( drv, dbname = DBNAME, host = HOST )
+
+    # Create the SQL query string. Include a semi-colon to terminate
+    querystring =   'SELECT countryname, income, babies FROM country_table;'
+    # Execute the query and return results as a data frame
+    countries   = dbGetQuery( con, querystring )
+
+    # Plot the results
+    plot( countries$income, countries$babies )
+```
+
+#### 2) PL/R Usage
+RPostgreSQL can also be used from within a PL/R function and deployed on the host GPDB instance. This bypasses the PL/R pipe for data exchange in favor of the DBI driver used by RPostgreSQL. In certain tests we have found the RPostgreSQL data exchange to be faster than the PL/R interface [NOTE: We should explore/verify this claim]. The primary benefit of using this interface over the standard PL/R interface is that datatype conversions happen automatically; one need not specify all of the columns and their datatypes to pass to the function ahead of time. Sensible conversions are done automatically, including conversion of strings to factors which can be helpful in downstream processes. 
+
+While RPostgreSQL can be quite useful in a development context, don't be fooled. It is not a good path towards actual parallelization of your R code. Because the code in the PL/R function accesses database objects it cannot safely be called in a distributed manner. This will lead to errors such as:
+
+```SQL
+    DROP FUNCTION IF EXISTS my_plr_error_func( character );
+    CREATE OR REPLACE FUNCTION my_plr_error_func( character ) 
+    RETURNS INTEGER AS 
+    $$
+      library("RPostgreSQL")
+
+      drv <- dbDriver( "PostgreSQL" )
+      con <- dbConnect( drv, dbname = arg1 )
+
+      querystring = 'SELECT reviewid FROM sample_model_data;'
+      model.data  = dbGetQuery( con, querystring )
+
+      16
+    $$
+    LANGUAGE 'plr';
+```
+```
+    -- This returns without error but does not run in parallel
+    SELECT my_plr_error_func( 'zimmen' );
+    
+    -- This produces the error below
+    SELECT my_plr_error_func( 'zimmen' ) FROM sample_model_data;
+
+    ********** Error **********
+
+    ERROR: R interpreter expression evaluation error  (seg55 slice1 sdw3:40001 pid=1676)
+    SQL state: 22000
+    Detail: 
+         Error in pg.spi.exec(sql) : 
+      error in SQL statement : function cannot execute on segment because it accesses relation "public.sample_model_data"
+         In R support function pg.spi.exec
+    In PL/R function my_plr_error_func
+```
+
+GPDB is complaining because you are trying to access a table directly from a segment, which breaks the whole notion of coordination between the master node and its segments. Therefore, you cannot specify a from clause in your PL/R function when you make an RPostgreSQL call from within that function. 
+
+#### Alternative
+For the adventerous, the RPostgreSQL package provides more granular control over execution. An equivalent to dbGetQuery is to first submit the SQL to the database engine using dbSendQuery and then fetch the results: 
+
+```splus
+drv <- dbDriver( "PostgreSQL" )
+con <- dbConnect( drv )
+res <- dbSendQuery( con, "SELECT * FROM sample_model_data;" )
+data <- fetch( res, n = -1 ) 
+```
+
+Note that the fetch function has a parameter, `n`, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. 
 
 ## <a name="memory"/> Memory limitations
 CONTENT TBD
@@ -396,8 +473,6 @@ $ cd your_repo_root/repo_name
 $ git fetch origin
 $ git checkout gh-pages
 ```
-
-If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.
 
 ```SQL
 DROP TABLE IF EXISTS abalone_array;
