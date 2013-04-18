@@ -1,3 +1,5 @@
+# THIS GUIDE IS A WORK IN PROGRESS. PROCEED WITH CAUTION :)
+
 Topics covered
 ==============
 * [Overview](#overview)
@@ -20,6 +22,24 @@ Topics covered
 There are lots of different ways to use R with the Greenplum database. This documentation should be considered a guide for practitioners and *not* official documentation. The intention is to give pragmatic tips on how to navigate GP+R. 
 
 PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
+
+## Getting started with this guide
+
+Download data into linux file system, and note path (linux prompt)
+```
+wget http://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
+pwd
+```
+
+Create table in GP; note that "/path/to/data" is the path 
+returned by 'pwd' in the previous line of code (psql prompt)
+
+```
+DROP TABLE IF EXISTS abalone;
+CREATE TABLE abalone (sex text, length float8, diameter float8, height float8, whole_weight float8, shucked_weight float8, viscera_weight float8, shell_weight float8, rings float8) 
+DISTRIBUTED RANDOMLY;
+COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
+```
 
 ## <a name="installation"/> Verify installation
 CONTENT TBD
@@ -220,6 +240,7 @@ Now we have a new table `abalone_array_replicates` that contains 64 rows and 9 c
 Of course, parallelization aint perfect. There is overhead and other stuff. 
 
 ### Command center
+CONTENT TBD
 
 ## <a name="packages"/> R packages
 The trick to installing R packages on the DCA is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
