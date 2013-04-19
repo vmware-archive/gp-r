@@ -481,7 +481,8 @@ Note that the fetch function has a parameter, `n`, which sets the maximum number
 CONTENT TBD
 
 ## <a name="persistence"/> Persisting R models in database
-CONTENT TBD
+One benefit of using PL/R on an MPP database like Greenplum is the ability to perform scoring in parallel across all the segments.
+
 
 ## <a name="datatypes"/> Data types
 CONTENT TBD
