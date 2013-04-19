@@ -239,7 +239,7 @@ Now we have a new table `abalone_array_replicates` that contains 64 rows and 9 c
 
 Of course, parallelization aint perfect. There is overhead and other stuff. 
 
-![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png "Row distribution across segments")
+![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png?raw=true "Row distribution across segments")
 
 ### Command center
 CONTENT TBD
