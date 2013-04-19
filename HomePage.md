@@ -482,7 +482,191 @@ CONTENT TBD
 
 ## <a name="persistence"/> Persisting R models in database
 One benefit of using PL/R on an MPP database like Greenplum is the ability to perform scoring in parallel across all the segments.
+If you've trained a GLM model for instance, you could save a serialized version of this model in a database table and de-serialize it when needed and use it for scoring.
 
+Typically the models are built once or are trained periodically depending on what the application may be, but the scoring may have to happen in real-time as new data becomes available.
+If the data to be scored is stored in a table distributed across the segments on GPDB, then by ensuring the trained models are also distributed across the same segments, we
+can achieve parallel scoring through PL/R.
+
+The simplest approach would be to serialize the entire model into a byte array and store it in a table,
+although not all parameters of the R model are required for scoring. For example, for linear or logistic regression we only
+need the coefficients of the features to perform scoring. Advanced users should be able to extract only the relevant
+parameters from the model and serialize them into a byte array on a table. This will improve scoring speed
+as the segment nodes won't have to de-serialize large byte arrays. Another optimization that will speed up scoring will be
+to pre-load the models into memory on the segment nodes - so that models are not de-serialized for every PL/R
+function call. In both these cases the user will have to write additional logic beside the scoring itself, for the optimization.
+
+In the sample code shown below we demonstrate some of these optimizations. This guide is work in progress
+and in the upcoming versions we will include more examples to optimize the scoring function.
+
+Here is a PL/R function that demonstrates how a trained GLM model can be serialized as a byte array.
+The sample table patient_history_train is included in the data folder of this repo.
+
+```SQL
+	DROP FUNCTION IF EXISTS gpdemo.mdl_save_demo();
+	CREATE FUNCTION gpdemo.mdl_save_demo() 
+        RETURNS bytea 
+        AS
+	$$
+	     #Read the previously created patient_history training set
+	     dataset <- pg.spi.exec('select * from gpdemo.patient_history_train');
+
+	     # Use the subset function to select a subset of the columns
+             # Indices 2:6 are age, gender, race, marital status and bmi
+             # Indices 14:20 are med_cond1 to med_cond7
+             # Index 26 is the label 'infection cost'
+	     ds = subset(dataset,select=c(2:6,14:20, 26))
+
+	     #Define text  columns to be factor types
+	     #These include gender, race, marital_status	     
+	     ds$gender = as.factor(ds$gender)
+	     ds$race = as.factor(ds$race)
+	     ds$marital_status = as.factor(ds$marital_status)
+
+	     #Fit a GLM
+	     mdl = glm(formula = infection_cost ~ age +
+				  gender +
+				  race +
+				  marital_status +
+				  bmi +
+				  med_cond1 +
+				  med_cond2 +
+				  med_cond3 +
+				  med_cond4 +
+				  med_cond5 +
+				  med_cond6 +
+				  med_cond7 
+			, family = gaussian, data=ds)
+
+             #Remove the data from the model (we only want to store the model, not the training set
+             #mdl$data = NULL
+             #mdl$qr = qr(qr.R(mdl$qr))
+	     #The model is serialized and returned as a bytearray
+	     return (serialize(mdl,NULL))
+	$$
+	LANGUAGE 'plr';
+```
+
+Here is a PL/R function to read the serialized PL/R model and apply it for scoring.
+
+```SQL
+	DROP FUNCTION IF EXISTS gpdemo.mdl_load_demo(bytea);
+	CREATE FUNCTION gpdemo.mdl_load_demo(mdl bytea) 
+        RETURNS setof gpdemo.glm_result_type 
+        AS
+	$$
+	     #R-code goes here.
+	     mdl <- unserialize(mdl)
+	     cf <- coef(summary(mdl))
+	     rows = dimnames(cf)[1]
+	     #Create a data frame and pass that as a result
+	     result = data.frame(params=rows[[1]],estimate=cf[,1],error=cf[,2],z_val=cf[,3],pr_z=cf[,4])
+	     return (result)
+	$$
+	LANGUAGE 'plr';
+```
+
+Here is the PL/R function which demonstrate the parallel scoring using the GLM model we trained in the example above.
+
+
+```SQL
+	DROP FUNCTION IF EXISTS gpdemo.mdl_score_demo( bytea, 
+							integer,
+							text,
+							text,
+							text,
+							double precision,
+							integer,
+							integer,
+							integer,
+							integer,
+							integer,
+							integer,
+							integer
+						      );
+	CREATE FUNCTION gpdemo.mdl_score_demo( mdl bytea, 
+						age integer,
+						gender text,
+						race text,
+						marital_status text,
+						bmi double precision,
+						med_cond1 integer,
+						med_cond2 integer,
+						med_cond3 integer,
+						med_cond4 integer,
+						med_cond5 integer,
+						med_cond6 integer,
+						med_cond7 integer	
+					      ) 
+	RETURNS numeric AS
+	$$
+	     if (pg.state.firstpass == TRUE) {
+	     	#Unserialize the model (i.e reconstruct it from its binary form).
+	        assign("gp_plr_mdl_score", unserialize(mdl) ,env=.GlobalEnv)
+	        assign("pg.state.firstpass", FALSE, env=.GlobalEnv)
+	     }
+
+
+	     #Read the test set from the previously created table  
+	     test_set <- data.frame(
+					age = age,
+					gender = gender,
+					race = race,
+					marital_status = marital_status, 
+					bmi =  bmi,
+					med_cond1 =  med_cond1,
+					med_cond2 =  med_cond2,
+					med_cond3 =  med_cond3,
+					med_cond4 =  med_cond4,
+					med_cond5 =  med_cond5,
+					med_cond6 =  med_cond6,
+					med_cond7 =  med_cond7  	
+			            );
+	     #Perform prediction
+	     pred <- predict(gp_plr_mdl_score, newdata=test_set, type="response"); 
+
+	     return (pred)
+	$$
+	LANGUAGE 'plr';
+
+```
+
+The training, loading and scoring functions can be invoked from SQL like so :
+
+```SQL
+	-- Compute R square (coefficient of determination)
+	-- R_square = (1 - SS_err/SS_tot)
+	select 'PL/R glm model '::text as model, 
+	       (1.0 - sum(ss_err)*1.0/sum(ss_tot)) as R_square
+	from
+	(
+		select instance_num, 
+		(infection_cost_actual - (select avg(infection_cost) from gpdemo.patient_history_test) )^2.0 as ss_tot,
+		(infection_cost_actual -  infection_cost_predicted)^2.0 as ss_err,		
+		1 as cnt
+		from
+		(
+			-- Show actual vs predicted values for the infection cost
+			select row_number() over (order by random()) as instance_num, 
+				infection_cost as infection_cost_actual,
+				gpdemo.mdl_score_demo ( mdls.model, 
+							age,
+							gender,
+							race,
+							marital_status,
+							bmi,
+							med_cond1,
+							med_cond2,
+							med_cond3,
+							med_cond4,
+							med_cond5,
+							med_cond6,
+							med_cond7		
+						      ) as infection_cost_predicted 
+			from gpdemo.plr_mdls mdls, gpdemo.patient_history_test test limit 10
+		) q1
+	) q2 group by cnt;
+```
 
 ## <a name="datatypes"/> Data types
 CONTENT TBD
