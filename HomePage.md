@@ -252,6 +252,42 @@ The trick to installing R packages on the DCA is that each segment has it's own 
 R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages.
 
 ### Check R package installation
+
+The simplest way to check if the requires R packages are available for PL/R is to gpssh into 
+all the nodes and test if you are able to find the version of the required package. All the nodes
+should return the correct version of the package, if the installation was successful.
+
+```
+gpssh -f all_hosts
+=> echo "packageVersion('rpart')" | R --no-save
+
+[sdw11] > packageVersion('rpart')
+[sdw11] [1] ‘3.1.49’
+[ sdw9] > packageVersion('rpart')
+[ sdw9] [1] ‘3.1.49’
+.
+.
+.
+```
+
+If the package is unavailable, the above code will error out. In the snippet below, we check for the version of the HMM package
+in our installation. As there is no such package installed, the command will not execute successfully.
+
+```
+gpssh -f all_hosts
+=> echo "packageVersion('hmm')" | R --no-save
+[ sdw2] > packageVersion('hmm')
+[ sdw2] Error in packageVersion("hmm") : package ‘hmm’ not found
+[ sdw2] Execution halted
+[ sdw3] > packageVersion('hmm')
+[ sdw3] Error in packageVersion("hmm") : package ‘hmm’ not found
+[ sdw3] Execution halted
+
+```
+
+Now, for whatever reason, if you do not have access to SSH into the GPDB or you prefer to only deal with 
+UDFs to tell you if a PL/R package is present or absent, then you can write UDFs like the following:
+
 A simple test if a package can be loaded can be done by this function:
 
 ```SQL
@@ -308,6 +344,14 @@ ORDER BY hostname;
 For a hostname where `R_test_require` returned true for all ids, the value in the column `host_result` will be true. If on a certain host the package couldn't be loaded, `host_result` will be false.
 
 ### Installing R packages
+
+Before installing the packages for PL/R ensure that you are referring to the right R binary in your PATH and also ensure that the environment variable R_HOME
+is referring to the right location where you installed R. These paths should be identical on all master and segment nodes.
+
+Some users typically have a separate stand-alone installation of R on just the master node. If this is the case
+with your installation, ensure that this is does not conflict with installation you need for PL/R to run on multiple segments.
+
+
 For a given R library, identify all dependent R libraries and each library’s web url.  This can be found by selecting the given package from the following navigation page: 
 http://cran.r-project.org/web/packages/available_packages_by_name.html 
 
@@ -346,9 +390,7 @@ gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
 R CMD INSTALL lattice_0.19-33.tar.gz Matrix_1.0-1.tar.gz abind_1.4-0.tar.gz coda_0.14-7.tar.gz R2WinBUGS_2.1-18.tar.gz lme4_0.999375-42.tar.gz MASS_7.3-17.tar.gz arm_1.5-03.tar.gz -l $R_HOME/library
 ```
 
-Check that the newly installed package is listed under the `$R_HOME/library` directory on all the segments (convenient to use `gpssh` here as well). If you do not see it in that directory:
-1. Search for the directory (the name of the package) and determine which path it has installed to
-2. Copy over the contents of this directory to the `$R_HOME/library` directory
+Check that the newly installed package is listed under the `$R_HOME/library` directory on all the segments (convenient to use `gpssh` here as well).
 
 ### Package versions
 Sometimes the current version of a package has dependencies on an earlier version of R. If this happens, you might get an error message like:
