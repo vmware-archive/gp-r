@@ -51,9 +51,7 @@ CONTENT TBD
 CONTENT TBD
 
 ## <a name="parallelization"/> Verify parallelization
-Congratulations, you've just parellelized your first PL/R algorithm in GPDB. Or have you?? In this section we will describe 3 sanity check to ensure that your code is actually running in parallel.
-
-### Verifying Parallelization
+Congratulations, you've just parellelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe 3 sanity check to ensure that your code is actually running in parallel.
 
 We can quickly verify if a PL/R function is indeed running on all segment as follows:
 
