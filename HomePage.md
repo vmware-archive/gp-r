@@ -53,50 +53,51 @@ CONTENT TBD
 ## <a name="parallelization"/> Verify parallelization
 Congratulations, you've just parellelized your first PL/R algorithm in GPDB. Or have you?? In this section we will describe 3 sanity check to ensure that your code is actually running in parallel.
 
-### Writing temporary files
-The simplest way to verify that your PL/R code is running on multiple segments is to write a temporary file from within the PL/R function. You can then log into each of the segments and inspect the temporary file. This method should only be used during debugging, as writing to disk will add unecessary overhead to query processing.  
+### Verifying Parallelization
 
-In the example PL/R function below we add a system call to the Unix 'touch' function which updates the access and modification time a file to the current time. The sample PL/R function takes a file path as an argument, indicating where to write the file. Ensure that the path (but not the file) exists, or else the file may not be written.
+We can quickly verify if a PL/R function is indeed running on all segment as follows:
 
 ```SQL
-    DROP FUNCTION IF EXISTS my_plr_func( character );
-    CREATE OR REPLACE FUNCTION my_plr_func( character ) 
-    RETURNS BOOL AS 
-    $$
-        path = ifelse( arg1 == '', '/home/gpadmin/plrtest/weRhere', arg1 )
-        system( paste( "touch", path ) )
-
-        return TRUE
-    $$
-    LANGUAGE 'plr';
-
-    select my_plr_func( '' ) from sample_model_data;
-```
-
-After running the sample code, log into the segments and note that the file specified in the path exists with an appropriate timestamp. Also note that if you remove the `FROM` clause (`select my_plr_func( '' );`) that the function will only run on the master node (`mdw`) and not on any of the segments. You can verify this using the same method described.
+drop function if exists plr_parallel_test;
+create function plr_parallel_test() 
+returns text 
+as 
+$$ 
+	return (system('hostname',intern=TRUE)) 
+$$ language 'plr';
 
 ```
-    [gpadmin@mdw ~]$ gpssh -f all_hosts
-    => ls -la /home/gpadmin/weRhere
-    [sdw16] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [sdw14] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [sdw15] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [sdw12] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [sdw13] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [sdw10] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [sdw11] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw9] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw4] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw5] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw6] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw7] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw1] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw2] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw3] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [ sdw8] -rw------- 1 gpadmin gpadmin 0 Feb 26 09:33 /home/gpadmin/weRhere
-    [  mdw] ls: /home/gpadmin/weRhere: No such file or directory
-    [ smdw] ls: /home/gpadmin/weRhere: No such file or directory
+
+The function essentially returns the hostname of the segment node on which it is executing.
+By invoking the function for rows from a table that is distributed across all segments, we can verify if we indeed
+see all the segments in the output.
+
+```SQL
+gpadmin=# select distinct plr_parallel_test() from abalone;
+ plr_parallel_test 
+------------------
+ sdw1
+ sdw10
+ sdw11
+ sdw12
+ sdw13
+ sdw14
+ sdw15
+ sdw16
+ sdw2
+ sdw3
+ sdw4
+ sdw5
+ sdw6
+ sdw7
+ sdw8
+ sdw9
+(16 rows)
+
 ```
+
+We can see that all 16 segment hosts were returned in the result, which means all nodes executed our PL/R function.
+
 
 ### Timing
 An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization. 
