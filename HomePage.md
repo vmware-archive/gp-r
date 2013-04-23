@@ -718,42 +718,8 @@ CONTENT TBD
 CONTENT TBD
 
 ## <a name="plotting"/> Plotting
-CONTENT TBD
+It is probably best to do plotting on a single node (either the master or locally using the RPostgreSQL interface). In this context, plotting is no different from normal plotting in R. Of course, you likely have *a lot* of data which may obscure traditional visualization techniques. You may choose to experiment with packages like [bigviz](https://github.com/hadley/bigvis) which provides tools for exploratory data analysis of large datasets. 
 
-
-```
-$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-```
-
-```SQL
-DROP TABLE IF EXISTS abalone_array;
-CREATE TABLE abalone_array AS 
-SELECT 
-	array_agg(sex)::text[] as sex, 
-	array_agg(length)::float8[] as length,
-	array_agg(diameter)::float8[] as diameter, 
-	array_agg(height)::float8[] as height,
-	array_agg(whole_weight)::float8[] as whole_weight, 
-	array_agg(shucked_weight)::float8[] as shucked_weight,
-	array_agg(viscera_weight)::float8[] as viscera_weight, 
-	array_agg(shell_weight)::float8[] as shell_weight, 
-	array_agg(rings)::float8[] as rings
-FROM abalone
-DISTRIBUTED RANDOMLY;
-```
-
-### Sample R code syntax highlighting
-
-```splus
-m = lm(formula = rings ~ ., data = abalone)
-
-x = readLines(pipe("pbpaste"))
-y = table(x)
-barplot( y[order( as.integer(rownames(y)) )], xlab='Segment ID', 
-		 ylab='Number of rows', main = 'Row distribution across segments' )
-```
 
 ### Authors and Contributors
 This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
