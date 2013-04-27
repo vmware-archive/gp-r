@@ -8,9 +8,11 @@ Topics covered
 * [Installing packages](#packages)
 * [Notes on permissions](#permissions)
 * [Best practices](#bestpractices)
+  * [Make a plan](#makeplan)
   * [Data prep](#dataprep)
   * [Return types](#returntypes)
-  * [UDA & UDF](#uda)
+  * [PL/R UDF Definition](#udf)
+  * [PL/R Execution](#execution)
   * [RPostgreSQL](#rpostgresql)
 * [Memory limitations](#memory)
 * [Persisting R models in database](#persistence)
@@ -425,16 +427,98 @@ GRANT USAGE privilege to the account
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
 ## <a name="bestpractices"/> Best practices
-CONTENT TBD
+Here we outline workflows that have worked well for us in past experiences with R on Greenplum.  
 
-### Data preparation
-CONTENT TBD
+One overarching theme for PL/R on Greenplum is that it is best suited in scenarios where the problem that you want to solve is one that is explicitly/embarrassingly parallelizable.  A simple way to think about PL/R is that it is provides functionality akin to MapReduce or R’s apply family of functions – with the added bonus of leveraging Greenplum native architecture to execute each mapper.  In other words, it provides a nice framework for one to run parallelized for loops containing R jobs in Greenplum.  We focus our description of best practices around this theme.
 
-### Return types
-CONTENT TBD
+  * [Make a plan](#makeplan)
+  * [Data prep](#dataprep)
+  * [Return types](#returntypes)
+  * [PL/R UDF Definition](#udf)
+  * [PL/R Execution](#execution)
+  * [RPostgreSQL](#rpostgresql)
 
-### UDA & UDF
-CONTENT TBD
+### <a name="makeplan"/> Make a plan
+Before doing anything, ask yourself whether the problem you are solving is explicitly parallelizable.  If so, identify what you’d like to parallelize by.  In other words, what is the index of your for loop?  This will play a large role in determining how you will prepare your data and build your PL/R function.
+
+Using the abalone data as an example, let’s suppose you were interested in building a separate, completely independent model for each sex of abalone in the dataset.  Under this scenario, it’s clear that it would then make sense to parallelize by the abalone’s sex.  
+
+### <a name="dataprep"/> Data preparation
+It’s often good practice to build another version of your table, dimensioned by the field by which you’d like to parallelize.  Let’s call this field the parallelization index for shorthand.  You essentially want to build a table where each row contains all the data for each value of the parallelization index.  This is done by array aggregation.  In essence, you would want to use the SQL array_agg() function to aggregate all of the records for each unique value of the parallelization index into a single row.  
+
+An example will make this more clear.  Let’s take a look at our raw abalone table:
+```SQL
+SELECT * FROM abalone LIMIT 3;
+ sex | length | diameter | height | whole_weight | shucked_weight | viscera_weight | shell_weight | rings 
+-----+--------+----------+--------+--------------+----------------+----------------+--------------+-------
+ M   |  0.405 |     0.31 |    0.1 |        0.385 |          0.173 |         0.0915 |         0.11 |     7
+ M   |  0.425 |     0.35 |  0.105 |        0.393 |           0.13 |          0.063 |        0.165 |     9
+ I   |  0.315 |    0.245 |  0.085 |       0.1435 |          0.053 |         0.0475 |         0.05 |     8
+(3 rows)
+```
+Let’s suppose that the end goal is to build a separate regression model for each sex with shucked_weight as the response variable and rings, diameter as explanatory variables.  Thinking ahead to this end goal, you would then create another version of the data table by:
+1.	array aggregating each variable of interest,
+2.	grouping by the parallelization index, and
+3.	distributing by the parallelization index
+To continue our example:
+
+```SQL
+DROP TABLE IF EXISTS abalone_array;
+CREATE TABLE abalone_array AS SELECT 
+sex::text
+, array_agg(shucked_weight::float8) as s_weight
+, array_agg(rings::float8) as rings
+, array_agg(diameter::float8) as diameter 
+FROM abalone 
+GROUP BY sex 
+DISTRIBUTED BY (sex);
+```
+The raw table is array aggregated into a table with rows equal to the number of unique values of the parallelization index.  For this specific example, there are three unique values of sex in the abalone data, and thus there are three rows in the abalone_array table.   
+
+### <a name="returntypes"/> Return types
+As described in the Data Types section, it’s often difficult to read SQL arrays, and its not possible to have SQL arrays containing both text and numeric entries.  For this reason, our best practice is to use custom composite types as return types for PL/R functions in Greenplum.  
+
+It’s useful to think ahead and identify what the final output of your PL/R function will be.  In the case of our example, since we are running regressions, let’s suppose we want to return information that looks a lot like R’s summary.lm() function.  In particular, we are interested in getting back a table with each explanatory variable’s name, the coefficient estimate, standard error, t-stat, and pvalue.  With this in mind, we build a custom composite type as a template for the output we intend to get back from our PL/R function.  
+```SQL
+DROP TYPE IF EXISTS lm_abalone_type CASCADE;
+CREATE TYPE lm_abalone_type AS (
+Variable text, Coef_Est float, Std_Error float, T_Stat float, P_Value float); 
+```
+
+### <a name="plr"/> PL/R UDF Definition
+Now that we’ve defined the structure of our input and output values, we can go ahead and tell Greenplum and R what we want to do with this data.  In other words, we are now ready to define our PL/R function. 
+
+A couple of helpful rules to follow here:
+* Each argument of the PL/R function and its specified data type should correspond to a column that exists in the array aggregated table that was created in the Data Prep step
+* The return data type of the PL/R function should be a SETOF the composite type that was created in the Return Types step
+
+Continuing our example using the abalone data, we define the following PL/R function:
+
+```SQL
+CREATE OR REPLACE FUNCTION lm_abalone_plr(s_weight float8[], rings float8[], diameter float8[]) 
+RETURNS SETOF lm_abalone_type AS 
+$$ 
+    m1<- lm(s_weight~rings+diameter)
+    m1_s<- summary(m1)$coef
+    temp_m1<- data.frame(rownames(m1_s), m1_s)
+    return(temp_m1)
+$$ 
+LANGUAGE 'plr';
+```
+
+### <a name="execution"/> PL/R Execution
+We then execute the PL/R function by specifying the parallelization index and the function call in the SELECT statement.  
+
+To conclude our example, we run the following SELECT statement to run 3 separate regression model, parallelized by the abalone’s sex:
+```SQL
+SELECT  sex, (lm_abalone_plr(s_weight,rings,diameter)).* FROM abalone_array;
+sex |  variable   |       coef_est       |      std_error       |       t_stat       |        p_value        -----+-------------+----------------------+----------------------+--------------------+----------------------- F   | (Intercept) |   -0.617050922097655 |   0.0169416168113397 |   -36.422198009144 | 6.03016903934925e-201 F   | rings       | -0.00956233525043721 | 0.000835808125948978 |  -11.4408258947951 |  5.96598342834597e-29 F   | diameter    |     2.57219713416591 |   0.0365667203043869 |    70.342571407951 |                     0 M   | (Intercept) |   -0.534293488484019 |   0.0148876715438078 |  -35.8883178549332 | 5.42293200035969e-205 M   | rings       |  -0.0101856670676353 |  0.00096233015174409 |  -10.5843790191704 |  2.59455668009866e-25 M   | diameter    |     2.45006792350753 |   0.0345072752341834 |   71.0014890158715 |                     0
+ I   | (Intercept) |   -0.236131314300337 |  0.00601596875673268 |  -39.2507547576729 | 6.73787958361764e-225
+ I   | rings       | -0.00046870969168018 | 0.000850383676525165 | -0.551174375307179 |     0.581606099530735
+ I   | diameter    |     1.31967087153234 |   0.0242402717496186 |   54.4412573078149 |                     0
+(9 rows)
+```
+
 
 ### RPostgreSQL
 The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
