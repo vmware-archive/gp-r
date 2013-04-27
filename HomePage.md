@@ -802,6 +802,63 @@ func_convert_example
  data.frame
 (1 row)
 ```
+### R data types → SQL data types
+For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:
+
+1.	a SQL array (in all flavors: 1D,2D,3D), or 
+2.	a SQL composite type.
+
+The quickest, “hands-free” approach is to just specify your return object as a SQL array.  Regardless of whether your R object is a vector, matrix, data.frame, or array, you will be able to recover the information contained in the R object by specifying a SQL array as your RETURN data type for a given PL/R function.
+
+* Vectors, a single column of a matrix or data.frame, and a 1D R array are returned as a 1D SQL array
+* A matrix, a data.frame, and a 2D R array are returned as a 2D SQL array
+* A 3D R array is returned as a 3D SQL array
+
+A couple of caveats here.  Arrays can be somewhat difficult to look at in SQL.  Also, there currently isn’t support for arrays of mixed type.  You can nominally set your return type to a text[], but this will find limited use in an analytics workflow.
+
+A richer, more flexible approach is to use a SQL composite type as your RETURN data type for a given PL/R function.  Let’s suppose you wanted to return the equivalent of an R data frame in your PL/R function.  In other words, lets suppose you’d like to return a table where at least one of the columns contains text rather than numbers.  We allow for this return by first setting up a SQL composite type in Greenplum.  You can think of SQL composite types as a “template” or “skeleton” for SQL tables.  When setting up a type, it’s useful to think ahead and draw out the format of the output you intend to get back from your PL/R function.
+```SQL
+DROP TYPE IF EXISTS iris_type CASCADE;
+CREATE TYPE iris_type AS (
+sepal_length float8, sepal_width float8, petal_length float8, petal_width float8, specices text);
+```
+We can then return output from a PL/R function which follows the structure of the type you’ve created.  You just need to specify your return type as a SETOF your custom type:
+```SQL
+CREATE OR REPLACE FUNCTION iris_trivial ()  
+RETURNS SETOF iris_type AS 
+$$ 
+data(iris)
+d<- iris
+return(d[c(1,51,100),])
+$$
+LANGUAGE 'plr';
+
+SELECT * from iris_trivial();
+sepal_length | sepal_width | petal_length | petal_width |  specices  
+--------------+-------------+--------------+-------------+------------
+          5.1 |         3.5 |          1.4 |         0.2 | setosa
+            7 |         3.2 |          4.7 |         1.4 | versicolor
+          5.7 |         2.8 |          4.1 |         1.3 | versicolor
+(3 rows)
+```
+
+The data types for the individual columns are governed by those of the SQL composite defined:
+
+```SQL
+DROP TABLE IF EXISTS iris_trivial_table;
+CREATE TABLE iris_trivial_table AS SELECT * FROM iris_trivial();
+\d+ iris_trivial_table
+                  Table "public.iris_trivial_table"
+    Column    |       Type       | Modifiers | Storage  | Description 
+--------------+------------------+-----------+----------+-------------
+ sepal_length | double precision |           | plain    | 
+ sepal_width  | double precision |           | plain    | 
+ petal_length | double precision |           | plain    | 
+ petal_width  | double precision |           | plain    | 
+ specices     | text             |           | extended | 
+```
+
+We see that this is identical to the set of column data types of iris_type.
 
 
 ## <a name="performance"/> Performance testing
