@@ -712,7 +712,97 @@ The training, loading and scoring functions can be invoked from SQL like so :
 ```
 
 ## <a name="datatypes"/> Data types
-CONTENT TBD
+At its core, a function takes in input, does something with this input, and produces output.  PL/R functions in Greenplum:
+
+1.	Take SQL data types as input
+2.	Converts SQL data types to R data types
+3.	Outputs results as R data types
+4.	Converts the R data type output as SQL data types
+
+(1) and (3) are fairly straightforward.  I personally found (2) and (4) a little less straightforward, and would like to devote some space to go into these two pieces in more detail.  
+
+The purpose of this section is really to just help users be aware of default data type conversions, and keep them in mind when doing code development and debugging.
+
+It is my subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  
+
+### SQL data types → R data types
+
+We will describe how SQL data types are converted into R data types via PL/R in this section.  
+
+Let’s take a look at some examples.  We first define a PL/R function that simply returns a string of identifying the R data type:
+```SQL
+DROP FUNCTION IF EXISTS func_array(arg_array float8[]);
+CREATE FUNCTION func_array(arg_array float8[]) 
+RETURNS text AS 
+$$ 
+d<- arg_array
+return(class(d))
+$$
+LANGUAGE 'plr';
+```
+
+You would think that 1D SQL arrays (i.e. a vector of values) should map to R vectors, but we see that 1D SQL arrays default-map to 1D R arrays:
+```SQL
+SELECT array[1,2,3,4];
+   array   
+-----------
+ {1,2,3,4}
+(1 row)
+
+SELECT func_array(array[1,2,3,4]);
+func_array 
+------------
+ array
+(1 row)
+
+```
+Given the result for 1D SQL arrays, what are your bets on how 2D SQL arrays are mapped to R objects?  Turns out that 2D SQL arrays (i.e. a matrix) default-map to R matrices (not R 2D arrays):
+```SQL
+SELECT array[array[1,2], array[3,4]];
+     array     
+---------------
+ {{1,2},{3,4}}
+(1 row)
+SELECT func_array(array[array[1,2],array[3,4]]);
+ func_array 
+------------
+ matrix
+(1 row)
+```
+
+And as one would expect, 3D SQL arrays map to an R array:
+```SQL
+SELECT array[array[array[1,2], array[3,4]],array[array[5,6], array[7,8]]];
+             array             
+-------------------------------
+ {{{1,2},{3,4}},{{5,6},{7,8}}}
+(1 row)
+SELECT func_array(array[array[array[1,2], array[3,4]],array[array[5,6], array[7,8]]]);
+func_array 
+------------
+ array
+(1 row)
+```
+
+You can of course convert between data types in R, so if an R function that you’d like to use in your workflow expects data to be in a certain R class, just make appropriate conversions in your PL/R code:
+```SQL
+DROP FUNCTION IF EXISTS func_convert_example(arg_array float8[]);
+CREATE FUNCTION func_convert_example(arg_array float8[]) 
+RETURNS text AS 
+$$ 
+d<- arg_array
+d<- as.data.frame(d)
+return(class(d))
+$$
+LANGUAGE 'plr';
+
+SELECT func_convert_example(array[array[1,2], array[3,4]]); 
+func_convert_example 
+----------------------
+ data.frame
+(1 row)
+```
+
 
 ## <a name="performance"/> Performance testing
 CONTENT TBD
