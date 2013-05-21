@@ -20,7 +20,7 @@ Topics covered
 * [Performance testing](#performance)
 * [Plotting](#plotting)
 
-## <a name="overview"/> Overview 
+# <a name="overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. 
 
 The Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.
@@ -30,24 +30,19 @@ Official documentation can be found here:
 * [GPDB Installation guide](https://support.emc.com/docu36090_Greenplum-Database-4.2-Installation-Guide.pdf)
 * [GPDB Administrator guide](https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US)
 
-This documentation is intended as a guide for *practitioners* and *should not* be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  
-
-### PL/R Architecture
-
-![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true "Distributed PL/R architecture on GPDB")
-
-PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
+This documentation is intended as a guide for **practitioners** and **should not** be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  
 
 ## Getting started with this guide
 
-Download data into linux file system, and note path (linux prompt)
+This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the `abalone` [dataset](http://archive.ics.uci.edu/ml/datasets/Abalone) from the UC Irvine [Machine Learning Repository](http://archive.ics.uci.edu/ml/index.html).
+
+To get started, download the data onto the file system of the GPDB host machine, and note the path: 
 ```
 wget http://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
 pwd
 ```
 
-Create table in GP; note that "/path/to/data" is the path 
-returned by 'pwd' in the previous line of code (psql prompt)
+Next, create a table in GPDB to store the abalone data. Note that `/path/to/data` is the path returned by `pwd` in the previous line of code. 
 
 ```
 DROP TABLE IF EXISTS abalone;
@@ -56,7 +51,23 @@ DISTRIBUTED RANDOMLY;
 COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 ```
 
-## <a name="installation"/> Verify installation
+You should now have a table in the `public` schema of your database containing 4177 rows.
+
+```
+user# select count(*) from abalone;
+ count 
+-------
+  4177
+(1 row)
+```
+
+### PL/R Architecture
+
+![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true "Distributed PL/R architecture on GPDB")
+
+PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
+
+# <a name="installation"/> Verify installation
 CONTENT TBD
 
 ### Verify R installation
@@ -66,7 +77,7 @@ CONTENT TBD
 CONTENT TBD
 
 ## <a name="parallelization"/> Verify parallelization
-Congratulations, you've just parellelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe 3 sanity check to ensure that your code is actually running in parallel.
+Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe 2 sanity checks to ensure that your code is actually running in parallel. 
 
 We can quickly verify if a PL/R function is indeed running on all segment as follows:
 
@@ -78,11 +89,9 @@ as
 $$ 
 	return (system('hostname',intern=TRUE)) 
 $$ language 'plr';
-
 ```
 
-The function essentially returns the hostname of the segment node on which it is executing.
-By invoking the function for rows from a table that is distributed across all segments, we can verify if we indeed
+The function returns the hostname of the segment node on which it is executing. By invoking the function for rows from a table that is distributed across all segments, we can verify if we indeed
 see all the segments in the output.
 
 ```SQL
@@ -106,16 +115,14 @@ gpadmin=# select distinct plr_parallel_test() from abalone;
  sdw8
  sdw9
 (16 rows)
-
 ```
 
 We can see that all 16 segment hosts were returned in the result, which means all nodes executed our PL/R function.
 
-
 ### Timing
-An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization. 
+An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization to a business partner or customer. Using the abalone dataset, we show how to compare the timing results from an implementation that builds models sequentially with a version that builds models in parallel. 
 
-Using the abalone dataset, we show how to compare the timing results from an implementation that builds models sequentially with the version that builds them in parallel. First we create a PL/R function which builds a linear regression to predict the age of an abalone (determined by counting the number of rings) from physical measurements. The function returns the coefficients for each of the linear predictors. 
+First we create a PL/R function which builds a linear regression to predict the age of an abalone (determined by counting the number of rings) from physical measurements. The function returns the coefficients for each of the linear predictors. 
 
 ```SQL
     DROP FUNCTION IF EXISTS plr_lm( sex text[], length float8[], diameter float8[],
