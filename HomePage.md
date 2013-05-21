@@ -147,7 +147,7 @@ First we create a PL/R function which builds a linear regression to predict the 
     LANGUAGE 'plr';
 ```
 
-Next we convert the dataset (as described in section XX) to an array representation and store the results in a new table called `abalone_array`.
+Next we convert the dataset to an array representation (as described in [Data Preparation](#dataprep)) and store the results in a new table called `abalone_array`.
 
 ```SQL
     -- Create a vectorized version of the data
