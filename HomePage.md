@@ -76,9 +76,11 @@ CONTENT TBD
 ### Verify PL/R installation
 CONTENT TBD
 
-## <a name="parallelization"/> Verify parallelization
+# <a name="parallelization"/> Verify parallelization
 Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe 2 sanity checks to ensure that your code is actually running in parallel. 
 
+
+## 1. Segment hostnames
 We can quickly verify if a PL/R function is indeed running on all segment as follows:
 
 ```SQL
@@ -119,7 +121,7 @@ gpadmin=# select distinct plr_parallel_test() from abalone;
 
 We can see that all 16 segment hosts were returned in the result, which means all nodes executed our PL/R function.
 
-### Timing
+## 2. Timing
 An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization to a business partner or customer. Using the abalone dataset, we show how to compare the timing results from an implementation that builds models sequentially with a version that builds models in parallel. 
 
 First we create a PL/R function which builds a linear regression to predict the age of an abalone (determined by counting the number of rings) from physical measurements. The function returns the coefficients for each of the linear predictors. 
@@ -265,7 +267,7 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 ### Command center
 CONTENT TBD
 
-## <a name="packages"/> R packages
+# <a name="packages"/> R packages
 The trick to installing R packages on the DCA is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
 
 1. Get the package tars from CRAN (`wget`)
@@ -425,7 +427,7 @@ In getDependencies(pkgs, dependencies, available, lib) :
 
 Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (http://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (http://cran.r-project.org/src/contrib/Archive/glmnet/ )
 
-## <a name="packages"/> Notes on permissions
+# <a name="packages"/> Notes on permissions
 R is an [untrusted language](http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html). Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
 
 This is what happens when you try to create a PL/R function when you aren't a superuser:
@@ -446,7 +448,7 @@ Non-superusers *can run* a PL/R function that was created by a superuser. In the
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
-## <a name="bestpractices"/> Best practices
+# <a name="bestpractices"/> Best practices
 Here we outline workflows that have worked well for us in past experiences with R on Greenplum.  
 
 One overarching theme for PL/R on Greenplum is that it is best suited in scenarios where the problem that you want to solve is one that is explicitly/embarrassingly parallelizable.  A simple way to think about PL/R is that it is provides functionality akin to MapReduce or R’s apply family of functions – with the added bonus of leveraging Greenplum native architecture to execute each mapper.  In other words, it provides a nice framework for one to run parallelized for loops containing R jobs in Greenplum.  We focus our description of best practices around this theme.
@@ -973,11 +975,11 @@ CREATE TABLE iris_trivial_table AS SELECT * FROM iris_trivial();
 We see that this is identical to the set of column data types of iris_type.
 
 
-## <a name="performance"/> Performance testing
+# <a name="performance"/> Performance testing
 CONTENT TBD
 
-## <a name="plotting"/> Plotting
+# <a name="plotting"/> Plotting
 It is probably best to do plotting on a single node (either the master or locally using the RPostgreSQL interface). In this context, plotting is no different from normal plotting in R. Of course, you likely have *a lot* of data which may obscure traditional visualization techniques. You may choose to experiment with packages like [bigviz](https://github.com/hadley/bigvis) which provides tools for exploratory data analysis of large datasets. 
 
-### Authors and Contributors
+# Authors and Contributors
 This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
