@@ -21,7 +21,20 @@ Topics covered
 * [Plotting](#plotting)
 
 ## <a name="overview"/> Overview 
-There are lots of different ways to use R with the Greenplum database. This documentation should be considered a guide for practitioners and *not* official documentation. The intention is to give pragmatic tips on how to navigate GP+R. 
+In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. 
+
+The Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.
+
+Official documentation can be found here:
+* [GPDB Product Page](https://support.emc.com/products/13148_Greenplum-Database/Topics/pg42716/)
+* [GPDB Installation guide](https://support.emc.com/docu36090_Greenplum-Database-4.2-Installation-Guide.pdf)
+* [GPDB Administrator guide](https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US)
+
+This documentation is intended as a guide for *practitioners* and *should not* be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  
+
+### PL/R Architecture
+
+![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true "Distributed PL/R architecture on GPDB")
 
 PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
 
@@ -958,7 +971,6 @@ CONTENT TBD
 
 ## <a name="plotting"/> Plotting
 It is probably best to do plotting on a single node (either the master or locally using the RPostgreSQL interface). In this context, plotting is no different from normal plotting in R. Of course, you likely have *a lot* of data which may obscure traditional visualization techniques. You may choose to experiment with packages like [bigviz](https://github.com/hadley/bigvis) which provides tools for exploratory data analysis of large datasets. 
-
 
 ### Authors and Contributors
 This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
