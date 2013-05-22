@@ -206,7 +206,7 @@ To build the models sequentially we create a simple PGSQL function that builds l
       LANGUAGE plpgsql;
 ```
 
-The function accepts a single argument, which specifies the number of iterations. For this example we set that value to 64 and expect that the running time will be roughly the length of time it took to build a single model multipled by the number of iterations: 47 * 64 = 3008 ms.
+The function accepts a single argument, which specifies the number of iterations. For this example we set that value to 64 and expect that the running time will be roughly the length of time it took to build a single model multiplied by the number of iterations: 47 * 64 = 3008 ms.
 
 ```SQL
     SELECT IterativePLRModels( 64 );
@@ -218,7 +218,7 @@ The function accepts a single argument, which specifies the number of iterations
 
 Pretty darn close!
 
-Next let's construct the models in parallel. In order to do this we must replicate the abalone data and distribute it across the GPDB segments. The PGSQL function below creates a new table called `abalone_array_replicates` that contains copies of the abalone dataset indexed by a distkey and distributed randomly across the segments. 
+Next let's construct the models in parallel. In order to do this we must replicate the abalone data and distribute it across the GPDB segments. The PGSQL function below creates a new table called `abalone_array_replicates` that contains copies of the abalone dataset indexed by a `distkey` and distributed randomly across the segments. 
 
 ```SQL
     DROP FUNCTION IF EXISTS ReplicateAbaloneArrays( INTEGER );
@@ -260,7 +260,22 @@ Now we have a new table `abalone_array_replicates` that contains 64 rows and 9 c
     Time: 183.937 ms
 ```
 
-Of course, parallelization aint perfect. There is overhead and other stuff. 
+Of course, parallelization aint perfect! There is overhead associated with parallel processing. However, the contribution of the overhead to the overall running time of an algorithm shrinks as the size of the data increase. Additionally, since the distribution function is `random` data are not necessarily *uniformly* distributed across segments. You can see how the data are distributed by interrogating the database like this:
+
+```SQL
+SELECT gp_segment_id, count(*)
+FROM abalone_array_replicates
+GROUP BY gp_segment_id
+ORDER BY gp_segment_id;
+```
+
+If you plot the results in R:
+
+```splus
+barplot( segment_distribution, xlab='Segment ID', ylab='Number of rows', main = 'Row distribution w/ sequential dist key' )
+```
+
+You will get a plot that looks something like the one below. Note that certain segments have 3 models to build, while others only have 1. The overall running time of the algorithm is bounded by the running time of the slowest node - a good reminder of why it is important to choose your distribution key wisely!
 
 ![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png?raw=true "Row distribution across segments")
 
@@ -268,18 +283,15 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 CONTENT TBD
 
 # <a name="packages"/> R packages
-The trick to installing R packages on the DCA is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
+The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
 
 1. Get the package tars from CRAN (`wget`)
 2. Copy the tar to all the segments on the DCA (`gpscp`)
 3. Install the package (`gpssh`, then `R CMD INSTALL`)
 
-R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages.
-
 ### Check R package installation
 
-The simplest way to check if the requires R packages are available for PL/R is to gpssh into 
-all the nodes and test if you are able to find the version of the required package. All the nodes
+R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages. The simplest way to check if the requires R packages are available for PL/R is to `gpssh` into all the nodes and test if you are able to find the version of the required package. All the nodes
 should return the correct version of the package, if the installation was successful.
 
 ```
@@ -295,7 +307,7 @@ gpssh -f all_hosts
 .
 ```
 
-If the package is unavailable, the above code will error out. In the snippet below, we check for the version of the HMM package
+If the package is unavailable, the above code will error out. In the snippet below, we check for the version of the `HMM` package
 in our installation. As there is no such package installed, the command will not execute successfully.
 
 ```
@@ -310,11 +322,9 @@ gpssh -f all_hosts
 
 ```
 
-Now, for whatever reason, if you do not have access to SSH into the GPDB or you prefer to only deal with 
-UDFs to tell you if a PL/R package is present or absent, then you can write UDFs like the following:
+If you do not have access to SSH into the GPDB or you prefer to only deal with UDFs to tell you if a PL/R package is present or absent, then you can write UDFs like the following:
 
 A simple test if a package can be loaded can be done by this function:
-
 ```SQL
 CREATE OR REPLACE FUNCTION R_test_require(fname text)
 RETURNS boolean AS
