@@ -13,7 +13,7 @@ Topics covered
   * [Return types](#returntypes)
   * [PL/R UDF Definition](#udf)
   * [PL/R Execution](#execution)
-  * [RPostgreSQL](#rpostgresql)
+  * [Local development with DBI](#rpostgresql)
 * [Memory limitations](#memory)
 * [Persisting R models in database](#persistence)
 * [Data types](#datatypes)
@@ -275,7 +275,7 @@ If you plot the results in R:
 barplot( segment_distribution, xlab='Segment ID', ylab='Number of rows', main = 'Row distribution w/ sequential dist key' )
 ```
 
-You will get a plot that looks something like the one below. Note that certain segments have 3 models to build, while others only have 1. The overall running time of the algorithm is bounded by the running time of the slowest node - a good reminder of why it is important to choose your distribution key wisely!
+You will get a plot that looks something like the one below. Note that certain segments (64, 61) have 3 models to build, while others only have 1. The overall running time of the algorithm is bounded by the running time of the slowest node - a good reminder of why it is important to choose your distribution key wisely!
 
 ![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png?raw=true "Row distribution across segments")
 
@@ -380,19 +380,16 @@ For a hostname where `R_test_require` returned true for all ids, the value in th
 
 ### Installing R packages
 
-Before installing the packages for PL/R ensure that you are referring to the right R binary in your PATH and also ensure that the environment variable R_HOME
-is referring to the right location where you installed R. These paths should be identical on all master and segment nodes.
+Before installing the packages for PL/R ensure that you are referring to the right R binary in your PATH and also ensure that the environment variable `R_HOME` is referring to the right location where you installed R. These paths should be identical on all master and segment nodes.
 
-Some users typically have a separate stand-alone installation of R on just the master node. If this is the case
-with your installation, ensure that this is does not conflict with installation you need for PL/R to run on multiple segments.
+Some users have a separate stand-alone installation of R on just the master node. If this is the case with your installation, ensure that this does not conflict with installation you need for PL/R to run on multiple segments.
 
-
-For a given R library, identify all dependent R libraries and each library’s web url.  This can be found by selecting the given package from the following navigation page: 
-http://cran.r-project.org/web/packages/available_packages_by_name.html 
+For a given R package, identify all dependent R packages and the package URLs.  This can be found by selecting the given package from the following navigation page: 
+`http://cran.r-project.org/web/packages/available_packages_by_name.html`
 
 From the page for the `arm` library, it can be seen that this library requires the following R libraries: `Matrix`, `lattice`, `lme4`, `R2WinBUGS`, `coda`, `abind`, `foreign`, `MASS`
 
-From the command line, use wget to download the required libraries' `tar.gz` files to the master node:
+From the command line, use wget to download the required packages' `tar.gz` files to the master node:
 
 ```
 wget http://cran.r-project.org/src/contrib/arm_1.5-03.tar.gz
@@ -435,7 +432,7 @@ In getDependencies(pkgs, dependencies, available, lib) :
   package ‘matrix’ is not available (for R version 2.13.0)
 ```
 
-Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (http://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (http://cran.r-project.org/src/contrib/Archive/glmnet/ )
+Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (http://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (http://cran.r-project.org/src/contrib/Archive/glmnet/ ) and download that version. This manual heuristic works reasonably well for finding compatible package versions. 
 
 # <a name="packages"/> Notes on permissions
 R is an [untrusted language](http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html). Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
@@ -451,24 +448,22 @@ ERROR: permission denied for language plr
 SQL state: 42501
 ```
 
-You do not need superuser priveleges to EXECUTE a PL/R function, only to CREATE a PL/R function. You can do:
-
-Non-superusers *can run* a PL/R function that was created by a superuser. In the GP Admin Guide there is a section entitled 'Managing Object Privileges' which outlines how to grant priveleges to other roles. 
+You do not need superuser privileges to EXECUTE a PL/R function, only to CREATE a PL/R function. Thus, non-superusers *can run* a PL/R function that was created by a superuser. In the GP Admin Guide there is a section entitled 'Managing Object Privileges' which outlines how to grant privileges to other roles for executing untrusted languages. 
 
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
 # <a name="bestpractices"/> Best practices
-Here we outline workflows that have worked well for us in past experiences with R on Greenplum.  
+Here we outline workflows that have worked well for us in past experiences using R on Greenplum.  
 
-One overarching theme for PL/R on Greenplum is that it is best suited in scenarios where the problem that you want to solve is one that is explicitly/embarrassingly parallelizable.  A simple way to think about PL/R is that it is provides functionality akin to MapReduce or R’s apply family of functions – with the added bonus of leveraging Greenplum native architecture to execute each mapper.  In other words, it provides a nice framework for one to run parallelized for loops containing R jobs in Greenplum.  We focus our description of best practices around this theme.
+One overarching theme for PL/R on Greenplum is that it is best suited in scenarios where the problem that you want to solve is one that is embarrassingly parallelizable. A simple way to think about PL/R is that it is provides functionality akin to MapReduce or R’s apply family of functions – with the added bonus of leveraging Greenplum native architecture to execute each mapper. In other words, it provides a nice framework for you to run parallelized `for` loops containing R jobs in Greenplum.  We focus our description of best practices around this theme.
 
   * [Make a plan](#makeplan)
   * [Data prep](#dataprep)
   * [Return types](#returntypes)
   * [PL/R UDF Definition](#udf)
   * [PL/R Execution](#execution)
-  * [RPostgreSQL](#rpostgresql)
+  * [Local development](#rpostgresql)
 
 ### <a name="makeplan"/> Make a plan
 Before doing anything, ask yourself whether the problem you are solving is explicitly parallelizable.  If so, identify what you’d like to parallelize by.  In other words, what is the index of your for loop?  This will play a large role in determining how you will prepare your data and build your PL/R function.
@@ -476,7 +471,7 @@ Before doing anything, ask yourself whether the problem you are solving is expli
 Using the abalone data as an example, let’s suppose you were interested in building a separate, completely independent model for each sex of abalone in the dataset.  Under this scenario, it’s clear that it would then make sense to parallelize by the abalone’s sex.  
 
 ### <a name="dataprep"/> Data preparation
-It’s often good practice to build another version of your table, dimensioned by the field by which you’d like to parallelize.  Let’s call this field the parallelization index for shorthand.  You essentially want to build a table where each row contains all the data for each value of the parallelization index.  This is done by array aggregation.  In essence, you would want to use the SQL array_agg() function to aggregate all of the records for each unique value of the parallelization index into a single row.  
+It’s often good practice to build another version of your table, dimensioned by the field by which you’d like to parallelize.  Let’s call this field the parallelization index for shorthand.  You essentially want to build a table where each row contains all the data for each value of the parallelization index.  This is done by array aggregation.  Using the SQL `array_agg()` function, aggregate all of the records for each unique value of the parallelization index into a single row.  
 
 An example will make this more clear.  Let’s take a look at our raw abalone table:
 ```SQL
@@ -508,9 +503,9 @@ DISTRIBUTED BY (sex);
 The raw table is array aggregated into a table with rows equal to the number of unique values of the parallelization index.  For this specific example, there are three unique values of sex in the abalone data, and thus there are three rows in the abalone_array table.   
 
 ### <a name="returntypes"/> Return types
-As described in the Data Types section, it’s often difficult to read SQL arrays, and its not possible to have SQL arrays containing both text and numeric entries.  For this reason, our best practice is to use custom composite types as return types for PL/R functions in Greenplum.  
+As described in the Data Types section, it’s often difficult to read SQL arrays, and it's not possible to have SQL arrays containing both text and numeric entries.  For this reason, our best practice is to use custom composite types as return types for PL/R functions in Greenplum.  
 
-It’s useful to think ahead and identify what the final output of your PL/R function will be.  In the case of our example, since we are running regressions, let’s suppose we want to return information that looks a lot like R’s summary.lm() function.  In particular, we are interested in getting back a table with each explanatory variable’s name, the coefficient estimate, standard error, t-stat, and pvalue.  With this in mind, we build a custom composite type as a template for the output we intend to get back from our PL/R function.  
+It’s useful to think ahead and identify what the final output of your PL/R function will be.  In the case of our example, since we are running regressions, let’s suppose we want to return information that looks a lot like R’s `summary.lm()` function.  In particular, we are interested in getting back a table with each explanatory variable’s name, the coefficient estimate, standard error, t-statistic, and p-value.  With this in mind, we build a custom composite type as a template for the output we intend to get back from our PL/R function.  
 ```SQL
 DROP TYPE IF EXISTS lm_abalone_type CASCADE;
 CREATE TYPE lm_abalone_type AS (
@@ -518,7 +513,7 @@ Variable text, Coef_Est float, Std_Error float, T_Stat float, P_Value float);
 ```
 
 ### <a name="plr"/> PL/R UDF Definition
-Now that we’ve defined the structure of our input and output values, we can go ahead and tell Greenplum and R what we want to do with this data.  In other words, we are now ready to define our PL/R function. 
+Now that we’ve defined the structure of our input and output values, we can go ahead and tell Greenplum and R what we want to do with this data.  We are now ready to define our PL/R function. 
 
 A couple of helpful rules to follow here:
 * Each argument of the PL/R function and its specified data type should correspond to a column that exists in the array aggregated table that was created in the Data Prep step
@@ -558,7 +553,6 @@ SELECT  sex, (lm_abalone_plr(s_weight,rings,diameter)).* FROM abalone_array;
 (9 rows)
 
 ```
-
 
 ### RPostgreSQL
 The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
@@ -630,7 +624,7 @@ This produces the error below
     In PL/R function my_plr_error_func
 ```
 
-GPDB is complaining because you are trying to access a table directly from a segment, which breaks the whole notion of coordination between the master node and its segments. Therefore, you cannot specify a from clause in your PL/R function when you make an RPostgreSQL call from within that function. 
+GPDB is complaining because you are trying to access a table directly from a segment, which breaks the whole notion of coordination between the master node and its segments. Therefore, you cannot specify a `FROM` clause in your PL/R function when you make an RPostgreSQL call from within that function. 
 
 #### Alternative
 For the adventerous, the RPostgreSQL package provides more granular control over execution. An equivalent to dbGetQuery is to first submit the SQL to the database engine using dbSendQuery and then fetch the results: 
@@ -652,22 +646,13 @@ One benefit of using PL/R on an MPP database like Greenplum is the ability to pe
 If you've trained a GLM model for instance, you could save a serialized version of this model in a database table and de-serialize it when needed and use it for scoring.
 
 Typically the models are built once or are trained periodically depending on what the application may be, but the scoring may have to happen in real-time as new data becomes available.
-If the data to be scored is stored in a table distributed across the segments on GPDB, then by ensuring the trained models are also distributed across the same segments, we
-can achieve parallel scoring through PL/R.
+If the data to be scored is stored in a table distributed across the segments on GPDB, then by ensuring the trained models are also distributed across the same segments, we can achieve parallel scoring through PL/R.
 
-The simplest approach would be to serialize the entire model into a byte array and store it in a table,
-although not all parameters of the R model are required for scoring. For example, for linear or logistic regression we only
-need the coefficients of the features to perform scoring. Advanced users should be able to extract only the relevant
-parameters from the model and serialize them into a byte array on a table. This will improve scoring speed
-as the segment nodes won't have to de-serialize large byte arrays. Another optimization that will speed up scoring will be
-to pre-load the models into memory on the segment nodes - so that models are not de-serialized for every PL/R
-function call. In both these cases the user will have to write additional logic beside the scoring itself, for the optimization.
+The simplest approach would be to serialize the entire model into a byte array and store it in a table, although not all parameters of the R model are required for scoring. For example, for linear or logistic regression we only need the coefficients of the features to perform scoring. Advanced users should be able to extract only the relevant parameters from the model and serialize them into a byte array on a table. This will improve scoring speed as the segment nodes won't have to de-serialize large byte arrays. Another optimization that will speed up scoring will be to pre-load the models into memory on the segment nodes - so that models are not de-serialized for every PL/R function call. In both these cases the user will have to write additional logic beside the scoring itself, for the optimization.
 
-In the sample code shown below we demonstrate some of these optimizations. This guide is work in progress
-and in the upcoming versions we will include more examples to optimize the scoring function.
+In the sample code shown below we demonstrate some of these optimizations. This guide is work in progress and in the upcoming versions we will include more examples to optimize the scoring function.
 
-Here is a PL/R function that demonstrates how a trained GLM model can be serialized as a byte array.
-The sample table patient_history_train is included in the data folder of this repo.
+Here is a PL/R function that demonstrates how a trained GLM model can be serialized as a byte array. The sample table `patient_history_train` is included in the data folder of this repository.
 
 ```SQL
 	DROP FUNCTION IF EXISTS gpdemo.mdl_save_demo();
@@ -734,7 +719,6 @@ Here is a PL/R function to read the serialized PL/R model and apply it for scori
 ```
 
 Here is the PL/R function which demonstrate the parallel scoring using the GLM model we trained in the example above.
-
 
 ```SQL
 	DROP FUNCTION IF EXISTS gpdemo.mdl_score_demo( bytea, 
