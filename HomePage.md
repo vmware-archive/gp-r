@@ -6,9 +6,12 @@ Topics covered
 * [PL/R on Pivotal Greenplum Database](#plr)
   * [Getting Started](#plr_gettingstarted)
        * [PL/R Architecture](#plr_arch)
-       * [Verify PL/R installation](#installation)
-       * [Notes on Permissions](#permissions)
-       * [R Packages](#packages)
+       * [PL/R Installation](#installation)
+       * [Note on Permissions](#permissions)
+  * [Leveraging R Packages](#packages)
+       * [Checking R Package Availability](#plr_packages_check)
+       * [Installing R Packages](#plr_packages_install)
+       * [Note on R Package Versions & Dependencies](#plr_packages_versions)
   * [Usage & Best Practices](#bestpractices)
        * [Make a Plan](#makeplan)
        * [Data Preparation](#dataprep)
@@ -19,10 +22,10 @@ Topics covered
        * [Verify Parallelization](#parallelization)
   * [More Details](#plr_details)
        * [Data Types](#datatypes)
-       * [Memory Limitations](#memory)
+       * [Memory Limits](#memory)
        * [Performance Testing](#performance)
 * [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
-  * [Overview](#rpostgresql)
+  * [Introduction](#rpostgresql)
   * [Local Development](#rpostgresql_local)
   * [Plotting](#plotting)
   * [Caveats Around Usage Within PL/R](#rpostgresql_plrcaveats)
@@ -39,7 +42,7 @@ Official documentation can be found here:
 
 This documentation is intended as a guide for **practitioners** and **should not** be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  
 
-## Getting started with this guide
+## Getting Started with this Guide
 
 This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the `abalone` [dataset](http://archive.ics.uci.edu/ml/datasets/Abalone) from the UC Irvine [Machine Learning Repository](http://archive.ics.uci.edu/ml/index.html).
 
@@ -78,10 +81,10 @@ user# select count(*) from abalone;
 
 PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
 
-### <a name="installation"/> Verify PL/R Installation
+### <a name="installation"/> PL/R Installation
 CONTENT TBD
 
-### <a name="packages"/> Notes on permissions
+### <a name="permissions"/> Note on Permissions
 R is an [untrusted language](http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html). Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
 
 This is what happens when you try to create a PL/R function when you aren't a superuser:
@@ -100,14 +103,14 @@ You do not need superuser privileges to EXECUTE a PL/R function, only to CREATE 
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
-### <a name="packages"/> R Packages
+## <a name="packages"/> Leveraging R Packages
 The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
 
 1. Get the package tars from CRAN (`wget`)
 2. Copy the tar to all the segments on the DCA (`gpscp`)
 3. Install the package (`gpssh`, then `R CMD INSTALL`)
 
-#### Check R package installation
+### <a name="plr_packages_check"/> Checking R Package Availability
 
 R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages. The simplest way to check if the requires R packages are available for PL/R is to `gpssh` into all the nodes and test if you are able to find the version of the required package. All the nodes
 should return the correct version of the package, if the installation was successful.
@@ -196,7 +199,7 @@ ORDER BY hostname;
 
 For a hostname where `R_test_require` returned true for all ids, the value in the column `host_result` will be true. If on a certain host the package couldn't be loaded, `host_result` will be false.
 
-#### Installing R Packages
+### <a name="plr_packages_install"/> Installing R Packages
 
 Before installing the packages for PL/R ensure that you are referring to the right R binary in your PATH and also ensure that the environment variable `R_HOME` is referring to the right location where you installed R. These paths should be identical on all master and segment nodes.
 
@@ -242,7 +245,7 @@ R CMD INSTALL lattice_0.19-33.tar.gz Matrix_1.0-1.tar.gz abind_1.4-0.tar.gz coda
 
 Check that the newly installed package is listed under the `$R_HOME/library` directory on all the segments (convenient to use `gpssh` here as well).
 
-### Package versions
+### <a name="plr_packages_versions"/> Note on R Package Versions & Dependencies
 Sometimes the current version of a package has dependencies on an earlier version of R. If this happens, you might get an error message like:
 
 ```
@@ -265,7 +268,7 @@ One overarching theme for PL/R on Greenplum is that it is best suited in scenari
   * [Persisting R Models in the Database](#persistence)
   * [Verifying Parallelization](#parallelization)
 
-### <a name="makeplan"/> Make a plan
+### <a name="makeplan"/> Make a Plan
 Before doing anything, ask yourself whether the problem you are solving is explicitly parallelizable.  If so, identify what you’d like to parallelize by.  In other words, what is the index of your for loop?  This will play a large role in determining how you will prepare your data and build your PL/R function.
 
 Using the abalone data as an example, let’s suppose you were interested in building a separate, completely independent model for each sex of abalone in the dataset.  Under this scenario, it’s clear that it would then make sense to parallelize by the abalone’s sex.  
@@ -354,7 +357,7 @@ SELECT  sex, (lm_abalone_plr(s_weight,rings,diameter)).* FROM abalone_array;
 
 ```
 
-### <a name="persistence"/> Persisting R models in database
+### <a name="persistence"/> Persisting R Models in the Database
 One benefit of using PL/R on an MPP database like Greenplum is the ability to perform scoring in parallel across all the segments.
 If you've trained a GLM model for instance, you could save a serialized version of this model in a database table and de-serialize it when needed and use it for scoring.
 
@@ -532,8 +535,8 @@ The training, loading and scoring functions can be invoked from SQL like so :
 	) q2 group by cnt;
 ```
 
-### <a name="parallelization"/> Verify parallelization
-Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe 2 sanity checks to ensure that your code is actually running in parallel. 
+### <a name="parallelization"/> Verify Parallelization
+Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe three sanity checks to ensure that your code is actually running in parallel. 
 
 
 #### Option 1: Via Segment Hostnames 
@@ -749,11 +752,11 @@ At its core, a function takes in input, does something with this input, and prod
 3.	Outputs results as R data types
 4.	Converts the R data type output as SQL data types
 
-(1) and (3) are fairly straightforward.  I personally found (2) and (4) a little less straightforward, and would like to devote some space to go into these two pieces in more detail.  
+(1) and (3) are fairly straightforward.  We personally found (2) and (4) a little less straightforward, and would like to devote some space to go into these two pieces in more detail.  
 
 The purpose of this section is really to just help users be aware of default data type conversions, and keep them in mind when doing code development and debugging.
 
-It is my subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  
+It is our subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  
 
 #### SQL data types → R data types
 
@@ -890,7 +893,7 @@ CREATE TABLE iris_trivial_table AS SELECT * FROM iris_trivial();
 
 We see that this is identical to the set of column data types of iris_type.
 
-### <a name="memory"/> Memory limitations
+### <a name="memory"/> Memory Limits
 CONTENT TBD
 
 ### <a name="performance"/> Performance testing
