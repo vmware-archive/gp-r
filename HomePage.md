@@ -84,7 +84,7 @@ user# select count(*) from abalone;
 
 ![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true "Distributed PL/R architecture on GPDB")
 
-PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
+PL/R provides a connection from the database to R -- which is running on every segment of the Greenplum instance -- to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.
 
 ### <a name="installation"/> Installation
 
@@ -104,7 +104,7 @@ Also, PL/R should be able to load the libraries from R at run time, so you will 
 
 Both these environment variables are defined in `/usr/local/greenplum-db/greenplum_path.sh` . You should ensure that greenplum_path.sh
 is sourced in your `.bashrc` . Please note that any new environment variable that is added will require
-and restart of the gpdb, in order for it to pick it up. Please refer to the GPDB Admin Guide for more information).
+a restart of gpdb (refer to the [GPDB Admin guide](https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US) for more information).
 
 Note that any time you install a new R library/package using:
 
@@ -118,10 +118,8 @@ should be generated in `/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/<li
 #### Install and verify PL/R
 
 Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
-and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged
-quite a lot that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
-Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET) . 
-Once obtained the gppkg for PL/R can be installed by following the steps below :
+and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
+Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET). Once obtained, the gppkg for PL/R can be installed by following the steps below:
 
 First use `gpscp` to copy the PL/R gppkg to all hosts.
 
@@ -129,7 +127,7 @@ First use `gpscp` to copy the PL/R gppkg to all hosts.
 gpscp -f <hosts file> plr-1.0-rhel5-x86_64.gppkg "=:$(pwd)"
 ```
 
-Now gpssh into all hosts and run install PL/R
+Now `gpssh` into all hosts and run install PL/R
 
 ```
 #gpssh -f <hosts file>
@@ -175,7 +173,7 @@ GRANT USAGE privilege to the account
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
 ## <a name="packages"/> Leveraging R Packages
-The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
+The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a Greenplum instance are:
 
 1. Get the package tars from CRAN (`wget`)
 2. Copy the tar to all the segments on the DCA (`gpscp`)
