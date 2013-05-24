@@ -36,7 +36,7 @@ Topics covered
   * [Caveats Around Usage Within PL/R](#rpostgresql_plrcaveats)
 * [PivotalR on Pivotal Greenplum Database](#pivotalr)
   * [Introduction](#pivotalr)
-  * [Design & Workflow](#pivotalr_design)
+  * [Design](#pivotalr_design)
 
   
 # <a name="overview"/> Overview 
@@ -1084,14 +1084,14 @@ While end users benefit from MADlib’s high performance and scalability, its au
 
 More details around PivotalR will be added to this guide after its debut release in June 2013.  
 
-## <a name="pivotalr_design"/> Design
+## <a name="pivotalr_design"/> Design 
 At their core, R functions in PivotalR:
 
 1. Translates R model formulas into corresponding MADlib SQL statements 
 2. Executes these statements on the database
 3. Returns summarized model output to R 
 
-This workflow allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR. 
+This allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR. 
 
 # Authors and Contributors
 This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
