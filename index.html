@@ -171,9 +171,68 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 <p>PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
 
 <h3>
-<a name="installation"></a> PL/R Installation</h3>
+<a name="installation"></a> Installation</h3>
 
-<p>CONTENT TBD</p>
+<h4>Install and verify R</h4>
+
+<p>Greenplum ships R and Python as extensions and you will find R in the folder <code>/usr/local/greenplum-db/./ext/R-2.13.0.</code>
+To install PL/R you should ensure that the environment <code>R_HOME</code> is set on all the segments.</p>
+
+<pre><code>[gpadmin@mdw ~]$ echo $R_HOME
+/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R
+[gpadmin@mdw ~]$ 
+</code></pre>
+
+<p>Also, PL/R should be able to load the libraries from R at run time, so you will also need to ensure that the environment variable
+<code>LD_LIBRARY_PATH</code> contains the path to R libraries (<code>/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R/lib</code>) on all segments.</p>
+
+<p>Both these environment variables are defined in <code>/usr/local/greenplum-db/greenplum_path.sh</code> . You should ensure that greenplum_path.sh
+is sourced in your <code>.bashrc</code> . Please note that any new environment variable that is added will require
+and restart of the gpdb, in order for it to pick it up. Please refer to the GPDB Admin Guide for more information).</p>
+
+<p>Note that any time you install a new R library/package using:</p>
+
+<pre><code>R CMD INSTALL &lt;package name&gt;
+</code></pre>
+
+<p>The resulting shared object (.so file) of the library
+should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/&lt;library_name&gt;</code></p>
+
+<h4>Install and verify PL/R</h4>
+
+<p>Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
+and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged
+quite a lot that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
+Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET) . 
+Once obtained the gppkg for PL/R can be installed by following the steps below :</p>
+
+<p>First use <code>gpscp</code> to copy the PL/R gppkg to all hosts.</p>
+
+<pre><code>gpscp -f &lt;hosts file&gt; plr-1.0-rhel5-x86_64.gppkg "=:$(pwd)"
+</code></pre>
+
+<p>Now gpssh into all hosts and run install PL/R</p>
+
+<pre><code>#gpssh -f &lt;hosts file&gt;
+#gppkg --install plr-1.0-rhel5-x86_64.gppkg
+</code></pre>
+
+<p>You should see a trace like the following for each segment</p>
+
+<pre><code>bash-4.1$ gppkg --install plr-1.0-rhel5-x86_64.gppkg
+20130524:10:56:17:007456 gppkg:agni_centos:gpadmin-[INFO]:-Starting gppkg with args: --install plr-1.0-rhel5-x86_64.gppkg
+20130524:10:56:18:007456 gppkg:agni_centos:gpadmin-[INFO]:-Installing package plr-1.0-rhel5-x86_64.gppkg
+20130524:10:56:18:007456 gppkg:agni_centos:gpadmin-[INFO]:-Validating rpm installation cmdStr='rpm --test -i /usr/local/greenplum-db-4.2.2.4/.tmp/plr-1.0-1.x86_64.rpm /usr/local/greenplum-db-4.2.2.4/.tmp/R-2.13.0-1.x86_64.rpm --dbpath /usr/local/greenplum-db-4.2.2.4/share/packages/database --prefix /usr/local/greenplum-db-4.2.2.4'
+20130524:10:56:18:007456 gppkg:agni_centos:gpadmin-[INFO]:-Installing plr-1.0-rhel5-x86_64.gppkg locally
+20130524:10:56:19:007456 gppkg:agni_centos:gpadmin-[INFO]:-Validating rpm installation cmdStr='rpm --test -i /usr/local/greenplum-db-4.2.2.4/.tmp/plr-1.0-1.x86_64.rpm /usr/local/greenplum-db-4.2.2.4/.tmp/R-2.13.0-1.x86_64.rpm --dbpath /usr/local/greenplum-db-4.2.2.4/share/packages/database --prefix /usr/local/greenplum-db-4.2.2.4'
+20130524:10:56:19:007456 gppkg:agni_centos:gpadmin-[INFO]:-Installing rpms cmdStr='rpm -i /usr/local/greenplum-db-4.2.2.4/.tmp/plr-1.0-1.x86_64.rpm /usr/local/greenplum-db-4.2.2.4/.tmp/R-2.13.0-1.x86_64.rpm --dbpath /usr/local/greenplum-db-4.2.2.4/share/packages/database --prefix=/usr/local/greenplum-db-4.2.2.4'
+20130524:10:56:20:007456 gppkg:agni_centos:gpadmin-[INFO]:-Completed local installation of plr-1.0-rhel5-x86_64.gppkg.
+20130524:10:56:20:007456 gppkg:agni_centos:gpadmin-[INFO]:-Please source your $GPHOME/greenplum_path.sh file and restart the database.
+You can enable PL/R by running createlang plr -d mydatabase.
+20130524:10:56:20:007456 gppkg:agni_centos:gpadmin-[INFO]:-plr-1.0-rhel5-x86_64.gppkg successfully installed.
+</code></pre>
+
+<p>The installation can be verified by checking for the existence of the PL/R shared object in <code>/usr/local/greenplum-db/lib/postgresql/plr.so</code></p>
 
 <h3>
 <a name="permissions"></a> Note on Permissions</h3>
