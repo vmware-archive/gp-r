@@ -244,7 +244,7 @@ Of course, parallelization aint perfect. There is overhead and other stuff.
 CONTENT TBD
 
 ## <a name="packages"/> R packages
-The trick to installing R packages on the DCA is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:
+Each segment on the DCA has it's own R instance running and thus we'll have to install the R packages on each segment. At a high-level, the steps for installing R packages on a DCA are:
 
 1. Get the package tars from CRAN (`wget`)
 2. Copy the tar to all the segments on the DCA (`gpscp`)
