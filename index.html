@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>GPDB || R by zimmeee</title>
+    <title>GPDB | R by zimmeee</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -31,16 +31,14 @@
 
       <section>
         <div id="title">
-          <h1>GPDB || R</h1>
+          <h1>GPDB | R</h1>
           <p>A place for all things Greenplum Database &amp; R</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/zimmeee">zimmeee</a></span>
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
         </div>
 
-        <h1>THIS GUIDE IS A WORK IN PROGRESS. PROCEED WITH CAUTION :)</h1>
-
-<h1>Topics covered</h1>
+        <h1>Topics covered</h1>
 
 <ul>
 <li><a href="#overview">Overview</a></li>
@@ -115,6 +113,14 @@
 <li><a href="#rpostgresql_plrcaveats">Caveats Around Usage Within PL/R</a></li>
 </ul>
 </li>
+<li>
+<a href="#pivotalr">PivotalR on Pivotal Greenplum Database</a>
+
+<ul>
+<li><a href="#pivotalr">Introduction</a></li>
+<li><a href="#pivotalr_design">Design</a></li>
+</ul>
+</li>
 </ul><h1>
 <a name="overview"></a> Overview</h1>
 
@@ -168,7 +174,7 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 
 <p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true" alt="alt text" title="Distributed PL/R architecture on GPDB"></p>
 
-<p>PL/R provides a connection from the database to R, which is running on every segment of the DCA, to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
+<p>PL/R provides a connection from the database to R -- which is running on every segment of the Greenplum instance -- to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
 
 <h3>
 <a name="installation"></a> Installation</h3>
@@ -188,7 +194,7 @@ To install PL/R you should ensure that the environment <code>R_HOME</code> is se
 
 <p>Both these environment variables are defined in <code>/usr/local/greenplum-db/greenplum_path.sh</code> . You should ensure that greenplum_path.sh
 is sourced in your <code>.bashrc</code> . Please note that any new environment variable that is added will require
-and restart of the gpdb, in order for it to pick it up. Please refer to the GPDB Admin Guide for more information).</p>
+a restart of gpdb (refer to the <a href="https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US">GPDB Admin guide</a> for more information).</p>
 
 <p>Note that any time you install a new R library/package using:</p>
 
@@ -201,17 +207,15 @@ should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/librar
 <h4>Install and verify PL/R</h4>
 
 <p>Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
-and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged
-quite a lot that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
-Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET) . 
-Once obtained the gppkg for PL/R can be installed by following the steps below :</p>
+and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
+Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET). Once obtained, the gppkg for PL/R can be installed by following the steps below:</p>
 
 <p>First use <code>gpscp</code> to copy the PL/R gppkg to all hosts.</p>
 
 <pre><code>gpscp -f &lt;hosts file&gt; plr-1.0-rhel5-x86_64.gppkg "=:$(pwd)"
 </code></pre>
 
-<p>Now gpssh into all hosts and run install PL/R</p>
+<p>Now <code>gpssh</code> into all hosts and run install PL/R</p>
 
 <pre><code>#gpssh -f &lt;hosts file&gt;
 #gppkg --install plr-1.0-rhel5-x86_64.gppkg
@@ -257,7 +261,7 @@ SQL state: 42501
 <h2>
 <a name="packages"></a> Leveraging R Packages</h2>
 
-<p>The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a DCA are:</p>
+<p>The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a Greenplum instance are:</p>
 
 <ol>
 <li>Get the package tars from CRAN (<code>wget</code>)</li>
@@ -1169,6 +1173,28 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 </pre></div>
 
 <p>Note that the fetch function has a parameter, <code>n</code>, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. </p>
+
+<h1>
+<a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database</h1>
+
+<h2>Introduction</h2>
+
+<p><a href="http://madlib.net">MADlib</a> is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical &amp; machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  </p>
+
+<p>While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. <a href="https://github.com/madlib-internal/PivotalR">PivotalR</a> is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  </p>
+
+<p>More details around PivotalR will be added to this guide after its debut release in June 2013.  </p>
+
+<h2>
+<a name="pivotalr_design"></a> Design</h2>
+
+<p>At their core, R functions in PivotalR:</p>
+
+<ol>
+<li>Translates R model formulas into corresponding MADlib SQL statements </li>
+<li>Executes these statements on the database</li>
+<li>Returns summarized model output to R </li>
+</ol><p>This allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR. </p>
 
 <h1>Authors and Contributors</h1>
 
