@@ -42,13 +42,36 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 ```
 
 ## <a name="installation"/> Verify installation
-CONTENT TBD
+
 
 ### Verify R installation
-CONTENT TBD
+Greenplum ships R and Python as extensions and you will find R in the folder /usr/local/greenplum-db/./ext/R-2.13.0.
+To install PL/R you should ensure that the environment R_HOME is set on all the segments.
 
-### Verify PL/R installation
-CONTENT TBD
+echo $R_HOME
+/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R
+
+Also, PL/R should be able to load the libraries from R at run time, so you will also need to ensure that the environment variable
+LD_LIBRARY_PATH points contains the path to R libraries (/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R/lib) on all segments.
+
+Both these environment variables are defined in /usr/local/greenplum-db/greenplum_path.sh. You should ensure that greenplum_path.sh
+is sourced in your .bashrc. Please note that any new environment variable that is added will require
+and restart of the gpdb, in order for it to pick it up. Please refer to the GPDB Admin Guide for more information).
+
+Note that any time you install a new R library/package using R CMD INSTALL <package name>, the resulting shared object (.so file) of the library
+should be available in /usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/<library_name>
+
+### Install and verify PL/R
+
+Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
+and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged
+quite a lot that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
+Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET) . Once obtained, you can run:
+
+gppkg --install <PL/R gppkg> 
+
+to install PL/R. The installation can be verified by checking for the existence of the PL/R shared object in /usr/local/greenplum-db/lib/postgresql/plr.so
+
 
 ## <a name="parallelization"/> Verify parallelization
 Congratulations, you've just parellelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe 3 sanity check to ensure that your code is actually running in parallel.
