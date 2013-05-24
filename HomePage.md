@@ -22,6 +22,8 @@ Topics covered
        * [Verify Parallelization](#parallelization)
   * [More Details](#plr_details)
        * [Data Types](#datatypes)
+             * [PL/R Input Conversion: SQL data types → R data types](#plr_datatypes_input)
+             * [PL/R Output Conversion: R data types → SQL data types](#plr_datatypes_output)
        * [Memory Limits](#memory)
        * [Performance Testing](#performance)
 * [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
@@ -758,7 +760,7 @@ The purpose of this section is really to just help users be aware of default dat
 
 It is our subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  
 
-#### SQL data types → R data types
+#### <a name="plr_datatypes_input"/> PL/R Input Conversion: SQL data types → R data types
 
 We will describe how SQL data types are converted into R data types via PL/R in this section.  
 
@@ -835,7 +837,8 @@ func_convert_example
  data.frame
 (1 row)
 ```
-#### R data types → SQL data types
+
+#### <a name="plr_datatypes_output"/> PL/R Output Conversion: R data types → SQL data types
 For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:
 
 1.	a SQL array (in all flavors: 1D,2D,3D), or 
@@ -894,7 +897,11 @@ CREATE TABLE iris_trivial_table AS SELECT * FROM iris_trivial();
 We see that this is identical to the set of column data types of iris_type.
 
 ### <a name="memory"/> Memory Limits
-CONTENT TBD
+When coding in PL/R there are a couple of memory management items to keep in mind.  
+
+Recall that R is installed on each and every host of the Greenplum database - one corrollary is that each "mapper" job which you wish to execute in parallel via PL/R must fit in the memory of the R on each host.  
+
+Given the heavy use of arrays in a PL/R workflow, another item to keep in mind is that the maximum memory limit for each cell (i.e. each record-column tuple) in Greenplum database is 1GB.  This is a theoretical upper bound and in practice, the maximum can be less than 1GB.  
 
 ### <a name="performance"/> Performance testing
 CONTENT TBD
