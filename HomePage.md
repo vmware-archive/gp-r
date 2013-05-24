@@ -34,7 +34,11 @@ Topics covered
   * [Local Development](#rpostgresql_local)
   * [Plotting](#plotting)
   * [Caveats Around Usage Within PL/R](#rpostgresql_plrcaveats)
+* [PivotalR on Pivotal Greenplum Database](#pivotalr)
+  * [Introduction](#pivotalr)
+  * [Design & Workflow](#pivotalr_design)
 
+  
 # <a name="overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. 
 
@@ -1072,7 +1076,22 @@ data <- fetch( res, n = -1 )
 
 Note that the fetch function has a parameter, `n`, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. 
 
+# <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database
+## Introduction
+[MADlib](http://madlib.net) is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
 
+While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](https://github.com/madlib-internal/PivotalR) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  
+
+More details around PivotalR will be added to this guide after its debut release in June 2013.  
+
+## <a name="pivotalr_design"/> Design
+At their core, R functions in PivotalR:
+
+1. Translates R model formulas into corresponding MADlib SQL statements 
+2. Executes these statements on the database
+3. Returns summarized model output to R 
+
+This workflow allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR. 
 
 # Authors and Contributors
 This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
