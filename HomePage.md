@@ -20,10 +20,13 @@ Topics covered
        * [PL/R Execution](#execution)
        * [Persisting R Models in the Database](#persistence)
        * [Verify Parallelization](#parallelization)
+             * [Option 1: Via Segment Hostnames](#plr_parallelization_hostnames)
+             * [Option 2: Via Timing](#plr_parallelization_timing)
+             * [Option 3: Via Pivotal Command Center](#plr_parallelization_cc)
   * [More Details](#plr_details)
        * [Data Types](#datatypes)
-             * [PL/R Input Conversion: SQL data types → R data types](#plr_datatypes_input)
-             * [PL/R Output Conversion: R data types → SQL data types](#plr_datatypes_output)
+             * [PL/R Input Conversion: SQL Data Types → R Data Types](#plr_datatypes_input)
+             * [PL/R Output Conversion: R Data Types → SQL Data Types](#plr_datatypes_output)
        * [Memory Limits](#memory)
        * [Performance Testing](#performance)
 * [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
@@ -541,7 +544,7 @@ The training, loading and scoring functions can be invoked from SQL like so :
 Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe three sanity checks to ensure that your code is actually running in parallel. 
 
 
-#### Option 1: Via Segment Hostnames 
+#### <a name="plr_parallelization_hostnames"/> Option 1: Via Segment Hostnames 
 We can quickly verify if a PL/R function is indeed running on all segment as follows:
 
 ```SQL
@@ -582,7 +585,7 @@ gpadmin=# select distinct plr_parallel_test() from abalone;
 
 We can see that all 16 segment hosts were returned in the result, which means all nodes executed our PL/R function.
 
-#### Option 2: Via Timing
+#### <a name="plr_parallelization_timing"/> Option 2: Via Timing
 An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization to a business partner or customer. Using the abalone dataset, we show how to compare the timing results from an implementation that builds models sequentially with a version that builds models in parallel. 
 
 First we create a PL/R function which builds a linear regression to predict the age of an abalone (determined by counting the number of rings) from physical measurements. The function returns the coefficients for each of the linear predictors. 
@@ -740,8 +743,15 @@ You will get a plot that looks something like the one below. Note that certain s
 
 ![alt text](https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png?raw=true "Row distribution across segments")
 
-#### Option 3: Via Pivotal Command center
-CONTENT TBD
+#### <a name="plr_parallelization_cc"/> Option 3: Via Pivotal Command Center 
+A heuristic, visual option to verify parallelism is via the Pivotal Command Center.  You would want to start by logging into Pivotal Command Center, and navigating to the 'Realtime (By Server)' menu under the 'System Metrics' tab.  Below is an example of how this page should look if your database is idle:
+
+![alt text](https://github.com/wjjung317/gp-r/blob/master/figures/commandcenter_idle.png?raw=true "Snapshot of Pivotal Command Center When DB is Idle")
+
+Suppose that you have now successfully implemented a parallelized PL/R function.  While the function is executing, check back on that same page on Pivotal Command Center - it should look like the following.  Note that the CPU panel shows activity for multiple database segments - if the function was not successfully parallelized, then only a single segment would show CPU activity.
+
+![alt text](https://github.com/wjjung317/gp-r/blob/master/figures/commandcenter_parallelized.png?raw=true "Snapshot of Pivotal Command Center When DB is Executing a Parallelized PL/R Function")
+
 
 
 ## <a name="plr_details"/> More Details
@@ -760,7 +770,7 @@ The purpose of this section is really to just help users be aware of default dat
 
 It is our subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  
 
-#### <a name="plr_datatypes_input"/> PL/R Input Conversion: SQL data types → R data types
+#### <a name="plr_datatypes_input"/> PL/R Input Conversion: SQL Data Types → R Data Types
 
 We will describe how SQL data types are converted into R data types via PL/R in this section.  
 
@@ -838,7 +848,7 @@ func_convert_example
 (1 row)
 ```
 
-#### <a name="plr_datatypes_output"/> PL/R Output Conversion: R data types → SQL data types
+#### <a name="plr_datatypes_output"/> PL/R Output Conversion: R Data Types → SQL Data Types
 For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:
 
 1.	a SQL array (in all flavors: 1D,2D,3D), or 
