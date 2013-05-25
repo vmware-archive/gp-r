@@ -1083,6 +1083,8 @@ While end users benefit from MADlib’s high performance and scalability, its au
 More details around PivotalR will be added to this guide after its debut release in June 2013.  
 
 ## <a name="pivotalr_design"/> Design 
+![alt text](https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true "PivotalR Design")
+
 At their core, R functions in PivotalR:
 
 1. Translates R model formulas into corresponding MADlib SQL statements 
