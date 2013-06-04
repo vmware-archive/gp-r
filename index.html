@@ -38,7 +38,8 @@
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
         </div>
 
-        <h1>Topics covered</h1>
+        <h1>
+<a name="topics-covered" class="anchor" href="#topics-covered"><span class="octicon octicon-link"></span></a>Topics covered</h1>
 
 <ul>
 <li><a href="#overview">Overview</a></li>
@@ -118,11 +119,11 @@
 
 <ul>
 <li><a href="#pivotalr">Introduction</a></li>
-<li><a href="#pivotalr_design">Design</a></li>
+<li><a href="#pivotalr_design">Design &amp; Features</a></li>
 </ul>
 </li>
 </ul><h1>
-<a name="overview"></a> Overview</h1>
+<a name="-overview" class="anchor" href="#-overview"><span class="octicon octicon-link"></span></a><a name="overview"></a> Overview</h1>
 
 <p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. </p>
 
@@ -136,7 +137,8 @@
 <li><a href="https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US">GPDB Administrator guide</a></li>
 </ul><p>This documentation is intended as a guide for <strong>practitioners</strong> and <strong>should not</strong> be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  </p>
 
-<h2>Getting Started with this Guide</h2>
+<h2>
+<a name="getting-started-with-this-guide" class="anchor" href="#getting-started-with-this-guide"><span class="octicon octicon-link"></span></a>Getting Started with this Guide</h2>
 
 <p>This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the <code>abalone</code> <a href="http://archive.ics.uci.edu/ml/datasets/Abalone">dataset</a> from the UC Irvine <a href="http://archive.ics.uci.edu/ml/index.html">Machine Learning Repository</a>.</p>
 
@@ -164,22 +166,23 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 </code></pre>
 
 <h1>
-<a name="plr"></a> PL/R on Pivotal Greenplum Database</h1>
+<a name="-plr-on-pivotal-greenplum-database" class="anchor" href="#-plr-on-pivotal-greenplum-database"><span class="octicon octicon-link"></span></a><a name="plr"></a> PL/R on Pivotal Greenplum Database</h1>
 
 <h2>
-<a name="plr_gettingstarted"></a> Getting Started</h2>
+<a name="-getting-started" class="anchor" href="#-getting-started"><span class="octicon octicon-link"></span></a><a name="plr_gettingstarted"></a> Getting Started</h2>
 
 <h3>
-<a name="plr_arch"></a> PL/R Architecture</h3>
+<a name="-plr-architecture" class="anchor" href="#-plr-architecture"><span class="octicon octicon-link"></span></a><a name="plr_arch"></a> PL/R Architecture</h3>
 
 <p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true" alt="alt text" title="Distributed PL/R architecture on GPDB"></p>
 
 <p>PL/R provides a connection from the database to R -- which is running on every segment of the Greenplum instance -- to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
 
 <h3>
-<a name="installation"></a> Installation</h3>
+<a name="-installation" class="anchor" href="#-installation"><span class="octicon octicon-link"></span></a><a name="installation"></a> Installation</h3>
 
-<h4>Install and verify R</h4>
+<h4>
+<a name="install-and-verify-r" class="anchor" href="#install-and-verify-r"><span class="octicon octicon-link"></span></a>Install and verify R</h4>
 
 <p>Greenplum ships R and Python as extensions and you will find R in the folder <code>/usr/local/greenplum-db/./ext/R-2.13.0.</code>
 To install PL/R you should ensure that the environment <code>R_HOME</code> is set on all the segments.</p>
@@ -204,7 +207,8 @@ a restart of gpdb (refer to the <a href="https://support.emc.com/docu36089_Green
 <p>The resulting shared object (.so file) of the library
 should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/&lt;library_name&gt;</code></p>
 
-<h4>Install and verify PL/R</h4>
+<h4>
+<a name="install-and-verify-plr" class="anchor" href="#install-and-verify-plr"><span class="octicon octicon-link"></span></a>Install and verify PL/R</h4>
 
 <p>Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
 and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
@@ -239,7 +243,7 @@ You can enable PL/R by running createlang plr -d mydatabase.
 <p>The installation can be verified by checking for the existence of the PL/R shared object in <code>/usr/local/greenplum-db/lib/postgresql/plr.so</code></p>
 
 <h3>
-<a name="permissions"></a> Note on Permissions</h3>
+<a name="-note-on-permissions" class="anchor" href="#-note-on-permissions"><span class="octicon octicon-link"></span></a><a name="permissions"></a> Note on Permissions</h3>
 
 <p>R is an <a href="http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html">untrusted language</a>. Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. </p>
 
@@ -259,7 +263,7 @@ SQL state: 42501
 <a href="http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html">http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html</a></p>
 
 <h2>
-<a name="packages"></a> Leveraging R Packages</h2>
+<a name="-leveraging-r-packages" class="anchor" href="#-leveraging-r-packages"><span class="octicon octicon-link"></span></a><a name="packages"></a> Leveraging R Packages</h2>
 
 <p>The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a Greenplum instance are:</p>
 
@@ -268,7 +272,7 @@ SQL state: 42501
 <li>Copy the tar to all the segments on the DCA (<code>gpscp</code>)</li>
 <li>Install the package (<code>gpssh</code>, then <code>R CMD INSTALL</code>)</li>
 </ol><h3>
-<a name="plr_packages_check"></a> Checking R Package Availability</h3>
+<a name="-checking-r-package-availability" class="anchor" href="#-checking-r-package-availability"><span class="octicon octicon-link"></span></a><a name="plr_packages_check"></a> Checking R Package Availability</h3>
 
 <p>R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages. The simplest way to check if the requires R packages are available for PL/R is to <code>gpssh</code> into all the nodes and test if you are able to find the version of the required package. All the nodes
 should return the correct version of the package, if the installation was successful.</p>
@@ -353,7 +357,7 @@ in our installation. As there is no such package installed, the command will not
 <p>For a hostname where <code>R_test_require</code> returned true for all ids, the value in the column <code>host_result</code> will be true. If on a certain host the package couldn't be loaded, <code>host_result</code> will be false.</p>
 
 <h3>
-<a name="plr_packages_install"></a> Installing R Packages</h3>
+<a name="-installing-r-packages" class="anchor" href="#-installing-r-packages"><span class="octicon octicon-link"></span></a><a name="plr_packages_install"></a> Installing R Packages</h3>
 
 <p>Before installing the packages for PL/R ensure that you are referring to the right R binary in your PATH and also ensure that the environment variable <code>R_HOME</code> is referring to the right location where you installed R. These paths should be identical on all master and segment nodes.</p>
 
@@ -397,7 +401,7 @@ gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
 <p>Check that the newly installed package is listed under the <code>$R_HOME/library</code> directory on all the segments (convenient to use <code>gpssh</code> here as well).</p>
 
 <h3>
-<a name="plr_packages_versions"></a> Note on R Package Versions &amp; Dependencies</h3>
+<a name="-note-on-r-package-versions--dependencies" class="anchor" href="#-note-on-r-package-versions--dependencies"><span class="octicon octicon-link"></span></a><a name="plr_packages_versions"></a> Note on R Package Versions &amp; Dependencies</h3>
 
 <p>Sometimes the current version of a package has dependencies on an earlier version of R. If this happens, you might get an error message like:</p>
 
@@ -408,7 +412,7 @@ gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
 <p>Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (<a href="http://cran.r-project.org/src/base/R-2/">http://cran.r-project.org/src/base/R-2/</a>). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package <code>glmnet</code> was released on 01-Mar-2011 and should be compatible with R v2.13 (<a href="http://cran.r-project.org/src/contrib/Archive/glmnet/">http://cran.r-project.org/src/contrib/Archive/glmnet/</a> ) and download that version. This manual heuristic works reasonably well for finding compatible package versions. </p>
 
 <h2>
-<a name="bestpractices"></a> Usage &amp; Best Practices</h2>
+<a name="-usage--best-practices" class="anchor" href="#-usage--best-practices"><span class="octicon octicon-link"></span></a><a name="bestpractices"></a> Usage &amp; Best Practices</h2>
 
 <p>Here we outline workflows that have worked well for us in past experiences using R on Greenplum.  </p>
 
@@ -423,14 +427,14 @@ gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
 <li><a href="#persistence">Persisting R Models in the Database</a></li>
 <li><a href="#parallelization">Verifying Parallelization</a></li>
 </ul><h3>
-<a name="makeplan"></a> Make a Plan</h3>
+<a name="-make-a-plan" class="anchor" href="#-make-a-plan"><span class="octicon octicon-link"></span></a><a name="makeplan"></a> Make a Plan</h3>
 
 <p>Before doing anything, ask yourself whether the problem you are solving is explicitly parallelizable.  If so, identify what you’d like to parallelize by.  In other words, what is the index of your for loop?  This will play a large role in determining how you will prepare your data and build your PL/R function.</p>
 
 <p>Using the abalone data as an example, let’s suppose you were interested in building a separate, completely independent model for each sex of abalone in the dataset.  Under this scenario, it’s clear that it would then make sense to parallelize by the abalone’s sex.  </p>
 
 <h3>
-<a name="dataprep"></a> Data Preparation</h3>
+<a name="-data-preparation" class="anchor" href="#-data-preparation"><span class="octicon octicon-link"></span></a><a name="dataprep"></a> Data Preparation</h3>
 
 <p>It’s often good practice to build another version of your table, dimensioned by the field by which you’d like to parallelize.  Let’s call this field the parallelization index for shorthand.  You essentially want to build a table where each row contains all the data for each value of the parallelization index.  This is done by array aggregation.  Using the SQL <code>array_agg()</code> function, aggregate all of the records for each unique value of the parallelization index into a single row.  </p>
 
@@ -465,7 +469,7 @@ To continue our example:</p>
 <p>The raw table is array aggregated into a table with rows equal to the number of unique values of the parallelization index.  For this specific example, there are three unique values of sex in the abalone data, and thus there are three rows in the abalone_array table.   </p>
 
 <h3>
-<a name="returntypes"></a> Return Types</h3>
+<a name="-return-types" class="anchor" href="#-return-types"><span class="octicon octicon-link"></span></a><a name="returntypes"></a> Return Types</h3>
 
 <p>As described in the Data Types section, it’s often difficult to read SQL arrays, and it's not possible to have SQL arrays containing both text and numeric entries.  For this reason, our best practice is to use custom composite types as return types for PL/R functions in Greenplum.  </p>
 
@@ -477,7 +481,7 @@ To continue our example:</p>
 </pre></div>
 
 <h3>
-<a name="udf"></a> PL/R UDF Definition</h3>
+<a name="-plr-udf-definition" class="anchor" href="#-plr-udf-definition"><span class="octicon octicon-link"></span></a><a name="udf"></a> PL/R UDF Definition</h3>
 
 <p>Now that we’ve defined the structure of our input and output values, we can go ahead and tell Greenplum and R what we want to do with this data.  We are now ready to define our PL/R function. </p>
 
@@ -500,7 +504,7 @@ To continue our example:</p>
 </pre></div>
 
 <h3>
-<a name="execution"></a> PL/R Execution</h3>
+<a name="-plr-execution" class="anchor" href="#-plr-execution"><span class="octicon octicon-link"></span></a><a name="execution"></a> PL/R Execution</h3>
 
 <p>We then execute the PL/R function by specifying the parallelization index and the function call in the SELECT statement.  </p>
 
@@ -523,7 +527,7 @@ To continue our example:</p>
 </pre></div>
 
 <h3>
-<a name="persistence"></a> Persisting R Models in the Database</h3>
+<a name="-persisting-r-models-in-the-database" class="anchor" href="#-persisting-r-models-in-the-database"><span class="octicon octicon-link"></span></a><a name="persistence"></a> Persisting R Models in the Database</h3>
 
 <p>One benefit of using PL/R on an MPP database like Greenplum is the ability to perform scoring in parallel across all the segments.
 If you've trained a GLM model for instance, you could save a serialized version of this model in a database table and de-serialize it when needed and use it for scoring.</p>
@@ -699,12 +703,12 @@ If the data to be scored is stored in a table distributed across the segments on
 </pre></div>
 
 <h3>
-<a name="parallelization"></a> Verify Parallelization</h3>
+<a name="-verify-parallelization" class="anchor" href="#-verify-parallelization"><span class="octicon octicon-link"></span></a><a name="parallelization"></a> Verify Parallelization</h3>
 
 <p>Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe three sanity checks to ensure that your code is actually running in parallel. </p>
 
 <h4>
-<a name="plr_parallelization_hostnames"></a> Option 1: Via Segment Hostnames</h4>
+<a name="-option-1-via-segment-hostnames" class="anchor" href="#-option-1-via-segment-hostnames"><span class="octicon octicon-link"></span></a><a name="plr_parallelization_hostnames"></a> Option 1: Via Segment Hostnames</h4>
 
 <p>We can quickly verify if a PL/R function is indeed running on all segment as follows:</p>
 
@@ -745,7 +749,7 @@ see all the segments in the output.</p>
 <p>We can see that all 16 segment hosts were returned in the result, which means all nodes executed our PL/R function.</p>
 
 <h4>
-<a name="plr_parallelization_timing"></a> Option 2: Via Timing</h4>
+<a name="-option-2-via-timing" class="anchor" href="#-option-2-via-timing"><span class="octicon octicon-link"></span></a><a name="plr_parallelization_timing"></a> Option 2: Via Timing</h4>
 
 <p>An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization to a business partner or customer. Using the abalone dataset, we show how to compare the timing results from an implementation that builds models sequentially with a version that builds models in parallel. </p>
 
@@ -896,7 +900,7 @@ see all the segments in the output.</p>
 <p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png?raw=true" alt="alt text" title="Row distribution across segments"></p>
 
 <h4>
-<a name="plr_parallelization_cc"></a> Option 3: Via Pivotal Command Center</h4>
+<a name="-option-3-via-pivotal-command-center" class="anchor" href="#-option-3-via-pivotal-command-center"><span class="octicon octicon-link"></span></a><a name="plr_parallelization_cc"></a> Option 3: Via Pivotal Command Center</h4>
 
 <p>A heuristic, visual option to verify parallelism is via the Pivotal Command Center.  You would want to start by logging into Pivotal Command Center, and navigating to the 'Realtime (By Server)' menu under the 'System Metrics' tab.  Below is an example of how this page should look if your database is idle:</p>
 
@@ -907,10 +911,10 @@ see all the segments in the output.</p>
 <p><img src="https://github.com/wjjung317/gp-r/blob/master/figures/commandcenter_parallelized.png?raw=true" alt="alt text" title="Snapshot of Pivotal Command Center When DB is Executing a Parallelized PL/R Function"></p>
 
 <h2>
-<a name="plr_details"></a> More Details</h2>
+<a name="-more-details" class="anchor" href="#-more-details"><span class="octicon octicon-link"></span></a><a name="plr_details"></a> More Details</h2>
 
 <h3>
-<a name="datatypes"></a> Data Types</h3>
+<a name="-data-types" class="anchor" href="#-data-types"><span class="octicon octicon-link"></span></a><a name="datatypes"></a> Data Types</h3>
 
 <p>At its core, a function takes in input, does something with this input, and produces output.  PL/R functions in Greenplum:</p>
 
@@ -926,7 +930,7 @@ see all the segments in the output.</p>
 <p>It is our subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  </p>
 
 <h4>
-<a name="plr_datatypes_input"></a> PL/R Input Conversion: SQL Data Types → R Data Types</h4>
+<a name="-plr-input-conversion-sql-data-types--r-data-types" class="anchor" href="#-plr-input-conversion-sql-data-types--r-data-types"><span class="octicon octicon-link"></span></a><a name="plr_datatypes_input"></a> PL/R Input Conversion: SQL Data Types → R Data Types</h4>
 
 <p>We will describe how SQL data types are converted into R data types via PL/R in this section.  </p>
 
@@ -1006,7 +1010,7 @@ see all the segments in the output.</p>
 </pre></div>
 
 <h4>
-<a name="plr_datatypes_output"></a> PL/R Output Conversion: R Data Types → SQL Data Types</h4>
+<a name="-plr-output-conversion-r-data-types--sql-data-types" class="anchor" href="#-plr-output-conversion-r-data-types--sql-data-types"><span class="octicon octicon-link"></span></a><a name="plr_datatypes_output"></a> PL/R Output Conversion: R Data Types → SQL Data Types</h4>
 
 <p>For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:</p>
 
@@ -1066,7 +1070,7 @@ see all the segments in the output.</p>
 <p>We see that this is identical to the set of column data types of iris_type.</p>
 
 <h3>
-<a name="memory"></a> Memory Limits</h3>
+<a name="-memory-limits" class="anchor" href="#-memory-limits"><span class="octicon octicon-link"></span></a><a name="memory"></a> Memory Limits</h3>
 
 <p>When coding in PL/R there are a couple of memory management items to keep in mind.  </p>
 
@@ -1075,21 +1079,22 @@ see all the segments in the output.</p>
 <p>Given the heavy use of arrays in a PL/R workflow, another item to keep in mind is that the maximum memory limit for each cell (i.e. each record-column tuple) in Greenplum database is 1GB.  This is a theoretical upper bound and in practice, the maximum can be less than 1GB.  </p>
 
 <h3>
-<a name="performance"></a> Performance testing</h3>
+<a name="-performance-testing" class="anchor" href="#-performance-testing"><span class="octicon octicon-link"></span></a><a name="performance"></a> Performance testing</h3>
 
 <p>CONTENT TBD</p>
 
 <h1>
-<a name="rpostgresql"></a> RPostgreSQL on Pivotal Greenplum Database</h1>
+<a name="-rpostgresql-on-pivotal-greenplum-database" class="anchor" href="#-rpostgresql-on-pivotal-greenplum-database"><span class="octicon octicon-link"></span></a><a name="rpostgresql"></a> RPostgreSQL on Pivotal Greenplum Database</h1>
 
-<h2>Overview</h2>
+<h2>
+<a name="overview" class="anchor" href="#overview"><span class="octicon octicon-link"></span></a>Overview</h2>
 
 <p>The <a href="http://cran.r-project.org/web/packages/RPostgreSQL/index.html">RPostgreSQL package</a> provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  </p>
 
 <p>Using RPostgreSQL has 3 steps: (i) create a database driver for PostgreSQL, (ii) connect to a specific database (iii) execute the query on GPDB and return results. </p>
 
 <h2>
-<a name="rpostgresql_local"></a> Local Development</h2>
+<a name="-local-development" class="anchor" href="#-local-development"><span class="octicon octicon-link"></span></a><a name="rpostgresql_local"></a> Local Development</h2>
 
 <p>RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. </p>
 
@@ -1111,12 +1116,12 @@ see all the segments in the output.</p>
 </pre></div>
 
 <h2>
-<a name="plotting"></a> Plotting</h2>
+<a name="-plotting" class="anchor" href="#-plotting"><span class="octicon octicon-link"></span></a><a name="plotting"></a> Plotting</h2>
 
 <p>It is probably best to do plotting on a single node (either the master or locally using the RPostgreSQL interface). In this context, plotting is no different from normal plotting in R. Of course, you likely have <em>a lot</em> of data which may obscure traditional visualization techniques. You may choose to experiment with packages like <a href="https://github.com/hadley/bigvis">bigviz</a> which provides tools for exploratory data analysis of large datasets. </p>
 
 <h2>
-<a name="rpostgresql_plrcaveats"></a> Caveats Around Usage Within PL/R</h2>
+<a name="-caveats-around-usage-within-plr" class="anchor" href="#-caveats-around-usage-within-plr"><span class="octicon octicon-link"></span></a><a name="rpostgresql_plrcaveats"></a> Caveats Around Usage Within PL/R</h2>
 
 <p>RPostgreSQL can also be used from within a PL/R function and deployed on the host GPDB instance. This bypasses the PL/R pipe for data exchange in favor of the DBI driver used by RPostgreSQL. In certain tests we have found the RPostgreSQL data exchange to be faster than the PL/R interface [NOTE: We should explore/verify this claim]. The primary benefit of using this interface over the standard PL/R interface is that datatype conversions happen automatically; one need not specify all of the columns and their datatypes to pass to the function ahead of time. Sensible conversions are done automatically, including conversion of strings to factors which can be helpful in downstream processes. </p>
 
@@ -1162,7 +1167,8 @@ see all the segments in the output.</p>
 
 <p>GPDB is complaining because you are trying to access a table directly from a segment, which breaks the whole notion of coordination between the master node and its segments. Therefore, you cannot specify a <code>FROM</code> clause in your PL/R function when you make an RPostgreSQL call from within that function. </p>
 
-<h4>Alternative</h4>
+<h4>
+<a name="alternative" class="anchor" href="#alternative"><span class="octicon octicon-link"></span></a>Alternative</h4>
 
 <p>For the adventerous, the RPostgreSQL package provides more granular control over execution. An equivalent to dbGetQuery is to first submit the SQL to the database engine using dbSendQuery and then fetch the results: </p>
 
@@ -1175,9 +1181,10 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <p>Note that the fetch function has a parameter, <code>n</code>, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. </p>
 
 <h1>
-<a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database</h1>
+<a name="-pivotalr-on-pivotal-greenplum-database" class="anchor" href="#-pivotalr-on-pivotal-greenplum-database"><span class="octicon octicon-link"></span></a><a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database</h1>
 
-<h2>Introduction</h2>
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
 <p><a href="http://madlib.net">MADlib</a> is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical &amp; machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  </p>
 
@@ -1186,7 +1193,9 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <p>More details around PivotalR will be added to this guide after its debut release in June 2013.  </p>
 
 <h2>
-<a name="pivotalr_design"></a> Design</h2>
+<a name="-design--features" class="anchor" href="#-design--features"><span class="octicon octicon-link"></span></a><a name="pivotalr_design"></a> Design &amp; Features</h2>
+
+<p><img src="https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true" alt="alt text" title="PivotalR Design"></p>
 
 <p>At their core, R functions in PivotalR:</p>
 
@@ -1194,9 +1203,17 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <li>Translates R model formulas into corresponding MADlib SQL statements </li>
 <li>Executes these statements on the database</li>
 <li>Returns summarized model output to R </li>
-</ol><p>This allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR. </p>
+</ol><p>This allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR.  </p>
 
-<h1>Authors and Contributors</h1>
+<p>Key features include the following:</p>
+
+<ul>
+<li>All data stays in DB: R objects merely point to DB objects</li>
+<li>All model estimation and heavy lifting done in DB by MADlib</li>
+<li>R → SQL translation done via PivotalR</li>
+<li>Only strings of SQL and model output transferred across RPostgreSQL -- trivial data transfer</li>
+</ul><h1>
+<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
 <p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>)</p>
       </section>
