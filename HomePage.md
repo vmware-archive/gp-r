@@ -1,5 +1,3 @@
-# THIS GUIDE IS A WORK IN PROGRESS. PROCEED WITH CAUTION :)
-
 Topics covered
 ==============
 * [Overview](#overview)
