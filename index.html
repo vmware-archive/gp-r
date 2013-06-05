@@ -1124,7 +1124,7 @@ see all the segments in the output.</p>
 <h2>
 <a name="-caveats-around-usage-within-plr" class="anchor" href="#-caveats-around-usage-within-plr"><span class="octicon octicon-link"></span></a><a name="rpostgresql_plrcaveats"></a> Caveats Around Usage Within PL/R</h2>
 
-<p>RPostgreSQL can also be used from within a PL/R function and deployed on the host GPDB instance. This bypasses the PL/R pipe for data exchange in favor of the DBI driver used by RPostgreSQL. In certain tests we have found the RPostgreSQL data exchange to be faster than the PL/R interface [NOTE: We should explore/verify this claim]. The primary benefit of using this interface over the standard PL/R interface is that datatype conversions happen automatically; one need not specify all of the columns and their datatypes to pass to the function ahead of time. Sensible conversions are done automatically, including conversion of strings to factors which can be helpful in downstream processes. </p>
+<p>RPostgreSQL can also be used from within a PL/R function and deployed on the host GPDB instance. This bypasses the PL/R pipe for data exchange in favor of the DBI driver used by RPostgreSQL. The primary benefit of using this interface over the standard PL/R interface is that datatype conversions happen automatically; one need not specify all of the columns and their datatypes to pass to the function ahead of time. Sensible conversions are done automatically, including conversion of strings to factors which can be helpful in downstream processes. </p>
 
 <p>While RPostgreSQL can be quite useful in a development context, don't be fooled. It is not a good path towards actual parallelization of your R code. Because the code in the PL/R function accesses database objects it cannot safely be called in a distributed manner. This will lead to errors such as:</p>
 
@@ -1216,7 +1216,7 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 </ul><h2>
 <a name="-demo" class="anchor" href="#-demo"><span class="octicon octicon-link"></span></a><a name="pivotalr_demo"></a> Demo</h2>
 
-<p>We have put together a <a href="https://github.com/zimmeee/gp-r/blob/master/videos/PivotalR_Demo_June2013.mov?raw=true">video demo</a> of the debut release of PivotalR.  We also provide the <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx">deck</a> and the <a href="https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R">code</a> used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  </p>
+<p>We have put together a <a href="https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing">video demo</a> of the debut release of PivotalR.  We also provide the <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx">deck</a> and the <a href="https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R">code</a> used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  </p>
 
 <h1>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
