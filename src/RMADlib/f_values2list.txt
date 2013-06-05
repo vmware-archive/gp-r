@@ -1,6 +1,0 @@
-values2list = function (v) { as.numeric(unlist(strsplit(substring(v, 2, nchar(v)-1), ","))) }
-
-
-
-
-
