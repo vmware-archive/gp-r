@@ -120,6 +120,7 @@
 <ul>
 <li><a href="#pivotalr">Introduction</a></li>
 <li><a href="#pivotalr_design">Design &amp; Features</a></li>
+<li><a href="#pivotalr_demo">Demo</a></li>
 </ul>
 </li>
 </ul><h1>
@@ -1190,14 +1191,14 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 
 <p>While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. <a href="https://github.com/madlib-internal/PivotalR">PivotalR</a> is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  </p>
 
-<p>More details around PivotalR will be added to this guide after its debut release in June 2013.  </p>
+<p>The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf">here</a>.  </p>
 
 <h2>
 <a name="-design--features" class="anchor" href="#-design--features"><span class="octicon octicon-link"></span></a><a name="pivotalr_design"></a> Design &amp; Features</h2>
 
 <p><img src="https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true" alt="alt text" title="PivotalR Design"></p>
 
-<p>At their core, R functions in PivotalR:</p>
+<p>At its core, an R function in PivotalR:</p>
 
 <ol>
 <li>Translates R model formulas into corresponding MADlib SQL statements </li>
@@ -1212,7 +1213,12 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <li>All model estimation and heavy lifting done in DB by MADlib</li>
 <li>R → SQL translation done via PivotalR</li>
 <li>Only strings of SQL and model output transferred across RPostgreSQL -- trivial data transfer</li>
-</ul><h1>
+</ul><h2>
+<a name="-demo" class="anchor" href="#-demo"><span class="octicon octicon-link"></span></a><a name="pivotalr_demo"></a> Demo</h2>
+
+<p>We have put together a <a href="https://github.com/wjjung317/gp-r/blob/master/videos/PivotalRDemo-20130605.arf">video demo</a> of the debut release of PivotalR.  We also provide the <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx">deck</a> and the <a href="https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R">code</a> used in the demo. Note that the demo is intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  </p>
+
+<h1>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
 <p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>)</p>
