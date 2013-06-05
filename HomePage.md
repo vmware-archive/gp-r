@@ -35,6 +35,7 @@ Topics covered
 * [PivotalR on Pivotal Greenplum Database](#pivotalr)
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
+  * [Demo](#pivotalr_demo)
 
   
 # <a name="overview"/> Overview 
@@ -1078,12 +1079,12 @@ Note that the fetch function has a parameter, `n`, which sets the maximum number
 
 While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](https://github.com/madlib-internal/PivotalR) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  
 
-More details around PivotalR will be added to this guide after its debut release in June 2013.  
+The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  
 
 ## <a name="pivotalr_design"/> Design & Features
 ![alt text](https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true "PivotalR Design")
 
-At their core, R functions in PivotalR:
+At its core, an R function in PivotalR:
 
 1. Translates R model formulas into corresponding MADlib SQL statements 
 2. Executes these statements on the database
@@ -1098,6 +1099,9 @@ Key features include the following:
 * R → SQL translation done via PivotalR
 * Only strings of SQL and model output transferred across RPostgreSQL -- trivial data transfer
 
+## <a name="pivotalr_demo"/> Demo
+
+We have put together a [video demo](https://github.com/wjjung317/gp-r/blob/master/videos/PivotalRDemo-20130605.arf) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx) and the [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R) used in the demo. Note that the demo is intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  
 
 
 
