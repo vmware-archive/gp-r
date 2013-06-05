@@ -37,6 +37,7 @@ Topics covered
 * [PivotalR on Pivotal Greenplum Database](#pivotalr)
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
+  * [Demo](#pivotalr_demo)
 
   
 # <a name="overview"/> Overview 
@@ -1102,6 +1103,9 @@ Key features include the following:
 * R → SQL translation done via PivotalR
 * Only strings of SQL and model output transferred across RPostgreSQL -- trivial data transfer
 
+## <a name="pivotalr_demo"/> Demo
+
+A demo of the debut release of PivotalR is provided here.  Note that the demo is intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  
 
 
 
