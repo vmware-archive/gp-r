@@ -1101,7 +1101,7 @@ Key features include the following:
 
 ## <a name="pivotalr_demo"/> Demo
 
-We have put together a [video demo](https://github.com/zimmeee/gp-r/blob/master/videos/PivotalR_Demo_June2013.mov) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx) and the [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  
+We have put together a [video demo](https://github.com/zimmeee/gp-r/blob/master/videos/PivotalR_Demo_June2013.mov?raw=true) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx) and the [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  
 
 
 
