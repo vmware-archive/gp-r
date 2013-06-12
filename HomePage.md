@@ -36,12 +36,14 @@ Topics covered
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
   * [Demo](#pivotalr_demo)
+  * [Download & Installation](#pivotalr_install)
+
 
   
 # <a name="overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. 
 
-The Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.
+The Pivotal Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.
 
 Official documentation can be found here:
 * [GPDB Product Page](https://support.emc.com/products/13148_Greenplum-Database/Topics/pg42716/)
@@ -1075,9 +1077,9 @@ Note that the fetch function has a parameter, `n`, which sets the maximum number
 
 # <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database
 ## Introduction
-[MADlib](http://madlib.net) is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
+[MADlib](http://madlib.net) is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
 
-While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](https://github.com/madlib-internal/PivotalR) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  
+While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](http://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  
 
 The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  
 
@@ -1103,6 +1105,9 @@ Key features include the following:
 
 We have put together a [video demo](https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx) and the [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  
 
+## <a name="pivotalr_install"/> Download & Installation
+
+PivotalR is available for download and installation from [CRAN](http://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/madlib-internal/PivotalR).
 
 
 # Authors and Contributors
