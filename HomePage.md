@@ -413,7 +413,7 @@ LANGUAGE 'plr';
 ### <a name="execution"/> PL/R Execution
 We then execute the PL/R function by specifying the parallelization index and the function call in the SELECT statement.  
 
-To conclude our example, we run the following SELECT statement to run 3 separate regression model, parallelized by the abalone’s sex:
+To conclude our example, we run the following SELECT statement to run 3 separate regression models; one model for each sex.  Under this scenario, execution is parallelized by the abalone’s sex:
 ```SQL
 SELECT  sex, (lm_abalone_plr(s_weight,rings,diameter)).* FROM abalone_array;
  sex |  variable   |       coef_est       |      std_error       |       t_stat       |        p_value        
