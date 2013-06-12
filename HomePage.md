@@ -920,8 +920,8 @@ func_convert_example
 #### <a name="plr_datatypes_output"/> PL/R Output Conversion: R Data Types → SQL Data Types
 For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:
 
-1.	a SQL array (in all flavors: 1D,2D,3D), or 
-2.	a SQL composite type.
+1.	A SQL array (in all flavors: 1D,2D,3D), or 
+2.	A SQL composite type
 
 The quickest, “hands-free” approach is to just specify your return object as a SQL array.  Regardless of whether your R object is a vector, matrix, data.frame, or array, you will be able to recover the information contained in the R object by specifying a SQL array as your RETURN data type for a given PL/R function.
 
@@ -991,7 +991,11 @@ CONTENT TBD
 ## Overview
 The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
 
-Using RPostgreSQL has 3 steps: (i) create a database driver for PostgreSQL, (ii) connect to a specific database (iii) execute the query on GPDB and return results. 
+Using RPostgreSQL with a database includes the following 3 steps: 
+
+1.      Create a database driver for PostgreSQL, 
+2.      Connect to a specific database, and 
+3.      Execute the query on GPDB and return results 
 
 ## <a name="rpostgresql_local"/> Local Development
 RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. 
