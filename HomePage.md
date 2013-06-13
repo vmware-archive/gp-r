@@ -1107,7 +1107,7 @@ Key features include the following:
 
 ## <a name="pivotalr_demo"/> Demo
 
-We have put together a [video demo](https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx) and the [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) to explore more of its features.  
+We have put together a [video demo](https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx), [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R), and [data](https://docs.google.com/file/d/0B9bfZ-YiuzxQRXVNU09kQTlQaDA/edit?usp=sharing) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) to explore more of its features.  
 
 ## <a name="pivotalr_install"/> Download & Installation
 
