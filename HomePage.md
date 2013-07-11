@@ -440,6 +440,21 @@ The simplest approach would be to serialize the entire model into a byte array a
 
 In the sample code shown below we demonstrate some of these optimizations. This guide is work in progress and in the upcoming versions we will include more examples to optimize the scoring function.
 
+First we'll define a custom record type to hold the results from a GLM model. This is equivalent to the summary() function in R.
+
+```SQL 
+	DROP TYPE IF EXISTS gpdemo.glm_result_type CASCADE;
+	CREATE TYPE gpdemo.glm_result_type 
+	AS 
+	(
+		params text, 
+		estimate float, 
+		std_Error float, 
+		z_value float, 
+		pr_gr_z float
+	);
+```
+
 Here is a PL/R function that demonstrates how a trained GLM model can be serialized as a byte array. The sample table `patient_history_train` is included in the data folder of this repository.
 
 ```SQL
