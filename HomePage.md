@@ -492,17 +492,13 @@ Here is a PL/R function that demonstrates how a trained GLM model can be seriali
 				  med_cond6 +
 				  med_cond7 
 			, family = gaussian, data=ds)
-
-             #Remove the data from the model (we only want to store the model, not the training set
-             #mdl$data = NULL
-             #mdl$qr = qr(qr.R(mdl$qr))
 	     #The model is serialized and returned as a bytearray
 	     return (serialize(mdl,NULL))
 	$$
 	LANGUAGE 'plr';
 ```
 
-Here is a PL/R function to read the serialized PL/R model and apply it for scoring.
+Here is a PL/R function to read a serialized PL/R model examine it's parameters.
 
 ```SQL
 	DROP FUNCTION IF EXISTS gpdemo.mdl_load_demo(bytea);
@@ -521,7 +517,23 @@ Here is a PL/R function to read the serialized PL/R model and apply it for scori
 	LANGUAGE 'plr';
 ```
 
-Here is the PL/R function which demonstrate the parallel scoring using the GLM model we trained in the example above.
+The function can be invoked like so:
+
+```SQL
+	select (t).params, 
+	       (t).estimate,
+	       (t).std_Error, 
+	       (t).z_value float, 
+	       (t).pr_gr_z 
+	from 
+	(
+	       -- The column 't' is of glm_result_type that we defined in step 3s.
+	       select mdl_load_demo(model) as t 
+	       from mdls
+	) q ;
+```
+
+Here is the PL/R function which demonstrate parallel scoring using the GLM model we trained in the example above.
 
 ```SQL
 	DROP FUNCTION IF EXISTS gpdemo.mdl_score_demo( bytea, 
@@ -617,7 +629,8 @@ The training, loading and scoring functions can be invoked from SQL like so :
 							med_cond6,
 							med_cond7		
 						      ) as infection_cost_predicted 
-			from gpdemo.plr_mdls mdls, gpdemo.patient_history_test test limit 10
+			from gpdemo.plr_mdls mdls, 
+			     gpdemo.patient_history_test test 
 		) q1
 	) q2 group by cnt;
 ```
