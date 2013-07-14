@@ -36,12 +36,14 @@ Topics covered
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
   * [Demo](#pivotalr_demo)
+  * [Download & Installation](#pivotalr_install)
+
 
   
 # <a name="overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. 
 
-The Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.
+The Pivotal Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.
 
 Official documentation can be found here:
 * [GPDB Product Page](https://support.emc.com/products/13148_Greenplum-Database/Topics/pg42716/)
@@ -411,7 +413,7 @@ LANGUAGE 'plr';
 ### <a name="execution"/> PL/R Execution
 We then execute the PL/R function by specifying the parallelization index and the function call in the SELECT statement.  
 
-To conclude our example, we run the following SELECT statement to run 3 separate regression model, parallelized by the abalone’s sex:
+To conclude our example, we run the following SELECT statement to run 3 separate regression models; one model for each sex.  Under this scenario, execution is parallelized by the abalone’s sex:
 ```SQL
 SELECT  sex, (lm_abalone_plr(s_weight,rings,diameter)).* FROM abalone_array;
  sex |  variable   |       coef_est       |      std_error       |       t_stat       |        p_value        
@@ -946,8 +948,8 @@ func_convert_example
 #### <a name="plr_datatypes_output"/> PL/R Output Conversion: R Data Types → SQL Data Types
 For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:
 
-1.	a SQL array (in all flavors: 1D,2D,3D), or 
-2.	a SQL composite type.
+1.	A SQL array (in all flavors: 1D,2D,3D), or 
+2.	A SQL composite type
 
 The quickest, “hands-free” approach is to just specify your return object as a SQL array.  Regardless of whether your R object is a vector, matrix, data.frame, or array, you will be able to recover the information contained in the R object by specifying a SQL array as your RETURN data type for a given PL/R function.
 
@@ -1017,7 +1019,11 @@ CONTENT TBD
 ## Overview
 The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
 
-Using RPostgreSQL has 3 steps: (i) create a database driver for PostgreSQL, (ii) connect to a specific database (iii) execute the query on GPDB and return results. 
+Using RPostgreSQL with a database includes the following 3 steps: 
+
+1.      Create a database driver for PostgreSQL, 
+2.      Connect to a specific database, and 
+3.      Execute the query on GPDB and return results 
 
 ## <a name="rpostgresql_local"/> Local Development
 RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. 
@@ -1103,18 +1109,18 @@ Note that the fetch function has a parameter, `n`, which sets the maximum number
 
 # <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database
 ## Introduction
-[MADlib](http://madlib.net) is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
+[MADlib](http://madlib.net) is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
 
-While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](https://github.com/madlib-internal/PivotalR) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  
+While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](http://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database processing.  
 
-The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  
+The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its [GitHub Page](https://github.com/madlib-internal/PivotalR).
 
 ## <a name="pivotalr_design"/> Design & Features
 ![alt text](https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true "PivotalR Design")
 
 At its core, an R function in PivotalR:
 
-1. Translates R model formulas into corresponding MADlib SQL statements 
+1. Translates R model formulas into corresponding SQL statements
 2. Executes these statements on the database
 3. Returns summarized model output to R 
 
@@ -1123,14 +1129,17 @@ This allows R users to leverage the scalability and performance of in-database a
 Key features include the following:
 
 * All data stays in DB: R objects merely point to DB objects
-* All model estimation and heavy lifting done in DB by MADlib
+* All model estimation and heavy lifting done in DB via MADlib 
 * R → SQL translation done via PivotalR
 * Only strings of SQL and model output transferred across RPostgreSQL -- trivial data transfer
 
 ## <a name="pivotalr_demo"/> Demo
 
-We have put together a [video demo](https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx) and the [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  
+We have put together a [video demo](https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx), [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R), and [data](https://docs.google.com/file/d/0B9bfZ-YiuzxQRXVNU09kQTlQaDA/edit?usp=sharing) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) to explore more of its features.  
 
+## <a name="pivotalr_install"/> Download & Installation
+
+PivotalR is available for download and installation from [CRAN](http://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/madlib-internal/PivotalR).
 
 
 # Authors and Contributors
