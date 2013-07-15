@@ -126,17 +126,10 @@ Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be 
 and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
 Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET). Once obtained, the gppkg for PL/R can be installed by following the steps below:
 
-First use `gpscp` to copy the PL/R gppkg to all hosts.
+Gppkg command can be used to install PL/R on all segments.
 
 ```
-gpscp -f <hosts file> plr-1.0-rhel5-x86_64.gppkg "=:$(pwd)"
-```
-
-Now `gpssh` into all hosts and run install PL/R
-
-```
-#gpssh -f <hosts file>
-#gppkg --install plr-1.0-rhel5-x86_64.gppkg
+gppkg --install plr-1.0-rhel5-x86_64.gppkg
 ```
 
 You should see a trace like the following for each segment
@@ -156,6 +149,14 @@ You can enable PL/R by running createlang plr -d mydatabase.
 ```
 
 The installation can be verified by checking for the existence of the PL/R shared object in `/usr/local/greenplum-db/lib/postgresql/plr.so`
+
+You can then install PL/R on your database by running
+
+```
+CREATE LANGUAGE PLRU;
+```
+
+You may also install it on the template1 database to ensure every newly created database automatically has PL/R installed in it.
 
 
 ### <a name="permissions"/> Note on Permissions
