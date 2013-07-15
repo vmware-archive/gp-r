@@ -121,6 +121,7 @@
 <li><a href="#pivotalr">Introduction</a></li>
 <li><a href="#pivotalr_design">Design &amp; Features</a></li>
 <li><a href="#pivotalr_demo">Demo</a></li>
+<li><a href="#pivotalr_install">Download &amp; Installation</a></li>
 </ul>
 </li>
 </ul><h1>
@@ -128,7 +129,7 @@
 
 <p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. </p>
 
-<p>The Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.</p>
+<p>The Pivotal Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.</p>
 
 <p>Official documentation can be found here:</p>
 
@@ -215,15 +216,9 @@ should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/librar
 and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
 Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET). Once obtained, the gppkg for PL/R can be installed by following the steps below:</p>
 
-<p>First use <code>gpscp</code> to copy the PL/R gppkg to all hosts.</p>
+<p>Gppkg command can be used to install PL/R on all segments.</p>
 
-<pre><code>gpscp -f &lt;hosts file&gt; plr-1.0-rhel5-x86_64.gppkg "=:$(pwd)"
-</code></pre>
-
-<p>Now <code>gpssh</code> into all hosts and run install PL/R</p>
-
-<pre><code>#gpssh -f &lt;hosts file&gt;
-#gppkg --install plr-1.0-rhel5-x86_64.gppkg
+<pre><code>gppkg --install plr-1.0-rhel5-x86_64.gppkg
 </code></pre>
 
 <p>You should see a trace like the following for each segment</p>
@@ -242,6 +237,13 @@ You can enable PL/R by running createlang plr -d mydatabase.
 </code></pre>
 
 <p>The installation can be verified by checking for the existence of the PL/R shared object in <code>/usr/local/greenplum-db/lib/postgresql/plr.so</code></p>
+
+<p>You can then install PL/R on your database by running</p>
+
+<pre><code>CREATE LANGUAGE PLRU;
+</code></pre>
+
+<p>You may also install it on the template1 database to ensure every newly created database automatically has PL/R installed in it.</p>
 
 <h3>
 <a name="-note-on-permissions" class="anchor" href="#-note-on-permissions"><span class="octicon octicon-link"></span></a><a name="permissions"></a> Note on Permissions</h3>
@@ -509,7 +511,7 @@ To continue our example:</p>
 
 <p>We then execute the PL/R function by specifying the parallelization index and the function call in the SELECT statement.  </p>
 
-<p>To conclude our example, we run the following SELECT statement to run 3 separate regression model, parallelized by the abalone’s sex:</p>
+<p>To conclude our example, we run the following SELECT statement to run 3 separate regression models; one model for each sex.  Under this scenario, execution is parallelized by the abalone’s sex:</p>
 
 <div class="highlight"><pre><span class="k">SELECT</span>  <span class="n">sex</span><span class="p">,</span> <span class="p">(</span><span class="n">lm_abalone_plr</span><span class="p">(</span><span class="n">s_weight</span><span class="p">,</span><span class="n">rings</span><span class="p">,</span><span class="n">diameter</span><span class="p">)).</span><span class="o">*</span> <span class="k">FROM</span> <span class="n">abalone_array</span><span class="p">;</span>
  <span class="n">sex</span> <span class="o">|</span>  <span class="k">variable</span>   <span class="o">|</span>       <span class="n">coef_est</span>       <span class="o">|</span>      <span class="n">std_error</span>       <span class="o">|</span>       <span class="n">t_stat</span>       <span class="o">|</span>        <span class="n">p_value</span>        
@@ -539,6 +541,20 @@ If the data to be scored is stored in a table distributed across the segments on
 <p>The simplest approach would be to serialize the entire model into a byte array and store it in a table, although not all parameters of the R model are required for scoring. For example, for linear or logistic regression we only need the coefficients of the features to perform scoring. Advanced users should be able to extract only the relevant parameters from the model and serialize them into a byte array on a table. This will improve scoring speed as the segment nodes won't have to de-serialize large byte arrays. Another optimization that will speed up scoring will be to pre-load the models into memory on the segment nodes - so that models are not de-serialized for every PL/R function call. In both these cases the user will have to write additional logic beside the scoring itself, for the optimization.</p>
 
 <p>In the sample code shown below we demonstrate some of these optimizations. This guide is work in progress and in the upcoming versions we will include more examples to optimize the scoring function.</p>
+
+<p>First we'll define a custom record type to hold the results from a GLM model. This is equivalent to the summary() function in R.</p>
+
+<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">glm_result_type</span> <span class="k">CASCADE</span><span class="p">;</span>
+    <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">glm_result_type</span> 
+    <span class="k">AS</span> 
+    <span class="p">(</span>
+        <span class="n">params</span> <span class="nb">text</span><span class="p">,</span> 
+        <span class="n">estimate</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">std_Error</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">z_value</span> <span class="nb">float</span><span class="p">,</span> 
+        <span class="n">pr_gr_z</span> <span class="nb">float</span>
+    <span class="p">);</span>
+</pre></div>
 
 <p>Here is a PL/R function that demonstrates how a trained GLM model can be serialized as a byte array. The sample table <code>patient_history_train</code> is included in the data folder of this repository.</p>
 
@@ -576,17 +592,13 @@ If the data to be scored is stored in a table distributed across the segments on
                   <span class="n">med_cond6</span> <span class="o">+</span>
                   <span class="n">med_cond7</span> 
             <span class="p">,</span> <span class="n">family</span> <span class="o">=</span> <span class="n">gaussian</span><span class="p">,</span> <span class="k">data</span><span class="o">=</span><span class="n">ds</span><span class="p">)</span>
-
-             <span class="o">#</span><span class="n">Remove</span> <span class="n">the</span> <span class="k">data</span> <span class="k">from</span> <span class="n">the</span> <span class="n">model</span> <span class="p">(</span><span class="n">we</span> <span class="k">only</span> <span class="n">want</span> <span class="k">to</span> <span class="n">store</span> <span class="n">the</span> <span class="n">model</span><span class="p">,</span> <span class="k">not</span> <span class="n">the</span> <span class="n">training</span> <span class="k">set</span>
-             <span class="o">#</span><span class="n">mdl</span><span class="err">$</span><span class="k">data</span> <span class="o">=</span> <span class="k">NULL</span>
-             <span class="o">#</span><span class="n">mdl</span><span class="err">$</span><span class="n">qr</span> <span class="o">=</span> <span class="n">qr</span><span class="p">(</span><span class="n">qr</span><span class="p">.</span><span class="n">R</span><span class="p">(</span><span class="n">mdl</span><span class="err">$</span><span class="n">qr</span><span class="p">))</span>
          <span class="o">#</span><span class="n">The</span> <span class="n">model</span> <span class="k">is</span> <span class="n">serialized</span> <span class="k">and</span> <span class="n">returned</span> <span class="k">as</span> <span class="n">a</span> <span class="n">bytearray</span>
          <span class="k">return</span> <span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">mdl</span><span class="p">,</span><span class="k">NULL</span><span class="p">))</span>
     <span class="err">$$</span>
     <span class="k">LANGUAGE</span> <span class="s1">'plr'</span><span class="p">;</span>
 </pre></div>
 
-<p>Here is a PL/R function to read the serialized PL/R model and apply it for scoring.</p>
+<p>Here is a PL/R function to read a serialized PL/R model examine it's parameters.</p>
 
 <div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_load_demo</span><span class="p">(</span><span class="n">bytea</span><span class="p">);</span>
     <span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_load_demo</span><span class="p">(</span><span class="n">mdl</span> <span class="n">bytea</span><span class="p">)</span> 
@@ -604,7 +616,22 @@ If the data to be scored is stored in a table distributed across the segments on
     <span class="k">LANGUAGE</span> <span class="s1">'plr'</span><span class="p">;</span>
 </pre></div>
 
-<p>Here is the PL/R function which demonstrate the parallel scoring using the GLM model we trained in the example above.</p>
+<p>The function can be invoked like so:</p>
+
+<div class="highlight"><pre>    <span class="k">select</span> <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">params</span><span class="p">,</span> 
+           <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">estimate</span><span class="p">,</span>
+           <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">std_Error</span><span class="p">,</span> 
+           <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">z_value</span> <span class="nb">float</span><span class="p">,</span> 
+           <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">pr_gr_z</span> 
+    <span class="k">from</span> 
+    <span class="p">(</span>
+           <span class="c1">-- The column 't' is of glm_result_type that we defined in step 3s.</span>
+           <span class="k">select</span> <span class="n">mdl_load_demo</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">as</span> <span class="n">t</span> 
+           <span class="k">from</span> <span class="n">mdls</span>
+    <span class="p">)</span> <span class="n">q</span> <span class="p">;</span>
+</pre></div>
+
+<p>Here is the PL/R function which demonstrate parallel scoring using the GLM model we trained in the example above.</p>
 
 <div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_score_demo</span><span class="p">(</span> <span class="n">bytea</span><span class="p">,</span> 
                             <span class="nb">integer</span><span class="p">,</span>
@@ -698,7 +725,8 @@ If the data to be scored is stored in a table distributed across the segments on
                             <span class="n">med_cond6</span><span class="p">,</span>
                             <span class="n">med_cond7</span>       
                               <span class="p">)</span> <span class="k">as</span> <span class="n">infection_cost_predicted</span> 
-            <span class="k">from</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">plr_mdls</span> <span class="n">mdls</span><span class="p">,</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">patient_history_test</span> <span class="n">test</span> <span class="k">limit</span> <span class="mi">10</span>
+            <span class="k">from</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">plr_mdls</span> <span class="n">mdls</span><span class="p">,</span> 
+                 <span class="n">gpdemo</span><span class="p">.</span><span class="n">patient_history_test</span> <span class="n">test</span> 
         <span class="p">)</span> <span class="n">q1</span>
     <span class="p">)</span> <span class="n">q2</span> <span class="k">group</span> <span class="k">by</span> <span class="n">cnt</span><span class="p">;</span>
 </pre></div>
@@ -1016,8 +1044,8 @@ see all the segments in the output.</p>
 <p>For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:</p>
 
 <ol>
-<li> a SQL array (in all flavors: 1D,2D,3D), or </li>
-<li> a SQL composite type.</li>
+<li> A SQL array (in all flavors: 1D,2D,3D), or </li>
+<li> A SQL composite type</li>
 </ol><p>The quickest, “hands-free” approach is to just specify your return object as a SQL array.  Regardless of whether your R object is a vector, matrix, data.frame, or array, you will be able to recover the information contained in the R object by specifying a SQL array as your RETURN data type for a given PL/R function.</p>
 
 <ul>
@@ -1092,9 +1120,13 @@ see all the segments in the output.</p>
 
 <p>The <a href="http://cran.r-project.org/web/packages/RPostgreSQL/index.html">RPostgreSQL package</a> provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  </p>
 
-<p>Using RPostgreSQL has 3 steps: (i) create a database driver for PostgreSQL, (ii) connect to a specific database (iii) execute the query on GPDB and return results. </p>
+<p>Using RPostgreSQL with a database includes the following 3 steps: </p>
 
-<h2>
+<ol>
+<li>     Create a database driver for PostgreSQL, </li>
+<li>     Connect to a specific database, and </li>
+<li>     Execute the query on GPDB and return results </li>
+</ol><h2>
 <a name="-local-development" class="anchor" href="#-local-development"><span class="octicon octicon-link"></span></a><a name="rpostgresql_local"></a> Local Development</h2>
 
 <p>RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. </p>
@@ -1187,11 +1219,11 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p><a href="http://madlib.net">MADlib</a> is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical &amp; machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  </p>
+<p><a href="http://madlib.net">MADlib</a> is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical &amp; machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  </p>
 
-<p>While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. <a href="https://github.com/madlib-internal/PivotalR">PivotalR</a> is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of MADlib.  </p>
+<p>While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. <a href="http://cran.r-project.org/web/packages/PivotalR/">PivotalR</a> is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database processing.  </p>
 
-<p>The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf">here</a>.  </p>
+<p>The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf">here</a>.  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its <a href="https://github.com/madlib-internal/PivotalR">GitHub Page</a>.</p>
 
 <h2>
 <a name="-design--features" class="anchor" href="#-design--features"><span class="octicon octicon-link"></span></a><a name="pivotalr_design"></a> Design &amp; Features</h2>
@@ -1201,7 +1233,7 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <p>At its core, an R function in PivotalR:</p>
 
 <ol>
-<li>Translates R model formulas into corresponding MADlib SQL statements </li>
+<li>Translates R model formulas into corresponding SQL statements</li>
 <li>Executes these statements on the database</li>
 <li>Returns summarized model output to R </li>
 </ol><p>This allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR.  </p>
@@ -1210,18 +1242,23 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 
 <ul>
 <li>All data stays in DB: R objects merely point to DB objects</li>
-<li>All model estimation and heavy lifting done in DB by MADlib</li>
+<li>All model estimation and heavy lifting done in DB via MADlib </li>
 <li>R → SQL translation done via PivotalR</li>
 <li>Only strings of SQL and model output transferred across RPostgreSQL -- trivial data transfer</li>
 </ul><h2>
 <a name="-demo" class="anchor" href="#-demo"><span class="octicon octicon-link"></span></a><a name="pivotalr_demo"></a> Demo</h2>
 
-<p>We have put together a <a href="https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing">video demo</a> of the debut release of PivotalR.  We also provide the <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx">deck</a> and the <a href="https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R">code</a> used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the documentation and explore all of its features.  </p>
+<p>We have put together a <a href="https://docs.google.com/file/d/0B9bfZ-YiuzxQc1RWTEJJZ2V1TWc/edit?usp=sharing">video demo</a> of the debut release of PivotalR.  We also provide the <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx">deck</a>, <a href="https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R">code</a>, and <a href="https://docs.google.com/file/d/0B9bfZ-YiuzxQRXVNU09kQTlQaDA/edit?usp=sharing">data</a> used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the <a href="http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf">documentation</a> to explore more of its features.  </p>
+
+<h2>
+<a name="-download--installation" class="anchor" href="#-download--installation"><span class="octicon octicon-link"></span></a><a name="pivotalr_install"></a> Download &amp; Installation</h2>
+
+<p>PivotalR is available for download and installation from <a href="http://cran.r-project.org/web/packages/PivotalR/">CRAN</a> and its <a href="https://github.com/madlib-internal/PivotalR">GitHub Page</a>.</p>
 
 <h1>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
-<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>) on behalf of Pivotal</p>
+<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>)</p>
       </section>
 
     </div>
