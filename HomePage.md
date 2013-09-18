@@ -362,9 +362,11 @@ SELECT * FROM abalone LIMIT 3;
 (3 rows)
 ```
 Let’s suppose that the end goal is to build a separate regression model for each sex with shucked_weight as the response variable and rings, diameter as explanatory variables.  Thinking ahead to this end goal, you would then create another version of the data table by:
-1.	array aggregating each variable of interest,
-2.	grouping by the parallelization index, and
-3.	distributing by the parallelization index
+
+1. Array aggregating each variable of interest,
+2. Grouping by the parallelization index, and
+3. Distributing by the parallelization index
+
 To continue our example:
 
 ```SQL
