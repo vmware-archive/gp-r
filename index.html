@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>GPDB | R by gopivotal</title>
+    <title>Pivotal GPDB | R by gopivotal</title>
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
@@ -31,7 +31,7 @@
 
       <section>
         <div id="title">
-          <h1>GPDB | R</h1>
+          <h1>Pivotal GPDB | R</h1>
           <p>A place for all things Pivotal Greenplum Database &amp; R</p>
           <hr>
           <span class="credits left">Project maintained by <a href="https://github.com/gopivotal">gopivotal</a></span>
@@ -310,7 +310,7 @@ in our installation. As there is no such package installed, the command will not
 
 <p>A simple test if a package can be loaded can be done by this function:</p>
 
-<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">R_test_require</span><span class="p">(</span><span class="n">fname</span> <span class="nb">text</span><span class="p">)</span>
+<div class="highlight highlight-SQL"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">R_test_require</span><span class="p">(</span><span class="n">fname</span> <span class="nb">text</span><span class="p">)</span>
 <span class="k">RETURNS</span> <span class="nb">boolean</span> <span class="k">AS</span>
 <span class="err">$</span><span class="n">BODY</span><span class="err">$</span>
     <span class="k">return</span><span class="p">(</span><span class="n">require</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="nb">character</span><span class="p">.</span><span class="k">only</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
@@ -320,20 +320,20 @@ in our installation. As there is no such package installed, the command will not
 
 <p>If you want to check for a package called 'rpart', you would do</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">R_test_require</span><span class="p">(</span><span class="s1">'rpart'</span><span class="p">);</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span> <span class="n">R_test_require</span><span class="p">(</span><span class="s1">'rpart'</span><span class="p">);</span>
 </pre></div>
 
 <p>And it will return <code>TRUE</code> if the package could be loaded and <code>FALSE</code> if it couldn't. However, this only works on the node that you are currently logged on to.</p>
 
 <p>To test the R installations on all nodes you would first create a dummy table with a series of integers that will be stored on different nodes in GPDB, like this:</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">simple_series</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">simple_series</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">simple_series</span> <span class="k">AS</span> <span class="p">(</span><span class="k">SELECT</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">)</span> <span class="k">AS</span> <span class="n">id</span><span class="p">);</span>
 </pre></div>
 
 <p>Also, since we want to know which host we are on we create a function to tell us:</p>
 
-<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">R_return_host</span><span class="p">()</span>
+<div class="highlight highlight-SQL"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">R_return_host</span><span class="p">()</span>
 <span class="k">RETURNS</span> <span class="nb">text</span> <span class="k">AS</span>
 <span class="err">$</span><span class="n">BODY</span><span class="err">$</span>
   <span class="k">return</span><span class="p">(</span><span class="k">system</span><span class="p">(</span><span class="ss">"hostname"</span><span class="p">,</span><span class="n">intern</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
@@ -343,7 +343,7 @@ in our installation. As there is no such package installed, the command will not
 
 <p>Now we can check for each id (ids are stored on different nodes) if rpart is installed like this:</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">result_nodes</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">result_nodes</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">result_nodes</span> <span class="k">AS</span> 
     <span class="p">(</span><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">R_return_host</span><span class="p">()</span> <span class="k">AS</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">R_test_require</span><span class="p">(</span><span class="s1">'rpart'</span><span class="p">)</span> <span class="k">AS</span> <span class="k">result</span> 
     <span class="k">FROM</span> <span class="n">simple_series</span> <span class="k">group</span> <span class="k">by</span> <span class="n">id</span><span class="p">);</span> 
@@ -351,7 +351,7 @@ in our installation. As there is no such package installed, the command will not
 
 <p><code>result_nodes</code> is a table that contains for every id, the host that it is stored on as <code>hostname</code>, and the result of <code>R_test_require</code> as result. Since we only want to know for every host once, we group by <code>hostname</code> like this:</p>
 
-<div class="highlight"><pre><span class="k">select</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">bool_and</span><span class="p">(</span><span class="k">result</span><span class="p">)</span> <span class="k">AS</span> <span class="n">host_result</span> 
+<div class="highlight highlight-SQL"><pre><span class="k">select</span> <span class="n">hostname</span><span class="p">,</span> <span class="n">bool_and</span><span class="p">(</span><span class="k">result</span><span class="p">)</span> <span class="k">AS</span> <span class="n">host_result</span> 
 <span class="k">FROM</span> <span class="n">result_nodes</span> 
 <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">hostname</span> 
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">hostname</span><span class="p">;</span>
@@ -384,16 +384,16 @@ wget http://cran.r-project.org/src/contrib/foreign_0.8-49.tar.gz
 wget http://cran.r-project.org/src/contrib/MASS_7.3-17.tar.gz
 </code></pre>
 
-<p>Using <code>gpscp</code> and the hostname file, copy the <code>tar.gz</code> files to the same directory on all nodes of the Greenplum cluster.  Note that this may require root access. (note: location of host file may be different. On our DCA its /home/gpadmin/all_hosts)</p>
+<p>Using <code>gpscp</code> and the hostname file, copy the <code>tar.gz</code> files to the same directory on all nodes of the Greenplum cluster.  Note that this may require root access. (note: location and name of host file may be different. On our DCA its /home/gpadmin/all_hosts)</p>
 
-<pre><code>gpscp -f /home/gpadmin/hosts_all lattice_0.19-33.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all Matrix_1.0-1.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all abind_1.4-0.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all coda_0.14-7.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all R2WinBUGS_2.1-18.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all lme4_0.999375-42.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all MASS_7.3-17.tar.gz =:/home/gpadmin
-gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
+<pre><code>gpscp -f /home/gpadmin/all_hosts lattice_0.19-33.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts Matrix_1.0-1.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts abind_1.4-0.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts coda_0.14-7.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts R2WinBUGS_2.1-18.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts lme4_0.999375-42.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts MASS_7.3-17.tar.gz =:/home/gpadmin
+gpscp -f /home/gpadmin/all_hosts arm_1.5-03.tar.gz =:/home/gpadmin
 </code></pre>
 
 <p><code>gpssh</code> into all segments (<code>gpssh -f /home/gpadmin/all_hosts</code>).  Install the packages from the command prompt using the <code>R CMD INSTALL</code> command.  Note that this may require root access </p>
@@ -443,7 +443,7 @@ gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
 
 <p>An example will make this more clear.  Let’s take a look at our raw abalone table:</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">abalone</span> <span class="k">LIMIT</span> <span class="mi">3</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">abalone</span> <span class="k">LIMIT</span> <span class="mi">3</span><span class="p">;</span>
  <span class="n">sex</span> <span class="o">|</span> <span class="k">length</span> <span class="o">|</span> <span class="n">diameter</span> <span class="o">|</span> <span class="n">height</span> <span class="o">|</span> <span class="n">whole_weight</span> <span class="o">|</span> <span class="n">shucked_weight</span> <span class="o">|</span> <span class="n">viscera_weight</span> <span class="o">|</span> <span class="n">shell_weight</span> <span class="o">|</span> <span class="n">rings</span> 
 <span class="c1">-----+--------+----------+--------+--------------+----------------+----------------+--------------+-------</span>
  <span class="n">M</span>   <span class="o">|</span>  <span class="mi">0</span><span class="p">.</span><span class="mi">405</span> <span class="o">|</span>     <span class="mi">0</span><span class="p">.</span><span class="mi">31</span> <span class="o">|</span>    <span class="mi">0</span><span class="p">.</span><span class="mi">1</span> <span class="o">|</span>        <span class="mi">0</span><span class="p">.</span><span class="mi">385</span> <span class="o">|</span>          <span class="mi">0</span><span class="p">.</span><span class="mi">173</span> <span class="o">|</span>         <span class="mi">0</span><span class="p">.</span><span class="mi">0915</span> <span class="o">|</span>         <span class="mi">0</span><span class="p">.</span><span class="mi">11</span> <span class="o">|</span>     <span class="mi">7</span>
@@ -452,13 +452,15 @@ gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
 <span class="p">(</span><span class="mi">3</span> <span class="k">rows</span><span class="p">)</span>
 </pre></div>
 
-<p>Let’s suppose that the end goal is to build a separate regression model for each sex with shucked_weight as the response variable and rings, diameter as explanatory variables.  Thinking ahead to this end goal, you would then create another version of the data table by:
-1.  array aggregating each variable of interest,
-2.  grouping by the parallelization index, and
-3.  distributing by the parallelization index
-To continue our example:</p>
+<p>Let’s suppose that the end goal is to build a separate regression model for each sex with shucked_weight as the response variable and rings, diameter as explanatory variables.  Thinking ahead to this end goal, you would then create another version of the data table by:</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">abalone_array</span><span class="p">;</span>
+<ol>
+<li>Array aggregating each variable of interest,</li>
+<li>Grouping by the parallelization index, and</li>
+<li>Distributing by the parallelization index</li>
+</ol><p>To continue our example:</p>
+
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">abalone_array</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">abalone_array</span> <span class="k">AS</span> <span class="k">SELECT</span> 
 <span class="n">sex</span><span class="p">::</span><span class="nb">text</span>
 <span class="p">,</span> <span class="n">array_agg</span><span class="p">(</span><span class="n">shucked_weight</span><span class="p">::</span><span class="n">float8</span><span class="p">)</span> <span class="k">as</span> <span class="n">s_weight</span>
@@ -478,7 +480,7 @@ To continue our example:</p>
 
 <p>It’s useful to think ahead and identify what the final output of your PL/R function will be.  In the case of our example, since we are running regressions, let’s suppose we want to return information that looks a lot like R’s <code>summary.lm()</code> function.  In particular, we are interested in getting back a table with each explanatory variable’s name, the coefficient estimate, standard error, t-statistic, and p-value.  With this in mind, we build a custom composite type as a template for the output we intend to get back from our PL/R function.  </p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">lm_abalone_type</span> <span class="k">CASCADE</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">lm_abalone_type</span> <span class="k">CASCADE</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">lm_abalone_type</span> <span class="k">AS</span> <span class="p">(</span>
 <span class="k">Variable</span> <span class="nb">text</span><span class="p">,</span> <span class="n">Coef_Est</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Std_Error</span> <span class="nb">float</span><span class="p">,</span> <span class="n">T_Stat</span> <span class="nb">float</span><span class="p">,</span> <span class="n">P_Value</span> <span class="nb">float</span><span class="p">);</span> 
 </pre></div>
@@ -495,7 +497,7 @@ To continue our example:</p>
 <li>The return data type of the PL/R function should be a SETOF the composite type that was created in the Return Types step</li>
 </ul><p>Continuing our example using the abalone data, we define the following PL/R function:</p>
 
-<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">lm_abalone_plr</span><span class="p">(</span><span class="n">s_weight</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">rings</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">diameter</span> <span class="n">float8</span><span class="p">[])</span> 
+<div class="highlight highlight-SQL"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">lm_abalone_plr</span><span class="p">(</span><span class="n">s_weight</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">rings</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">diameter</span> <span class="n">float8</span><span class="p">[])</span> 
 <span class="k">RETURNS</span> <span class="k">SETOF</span> <span class="n">lm_abalone_type</span> <span class="k">AS</span> 
 <span class="err">$$</span> 
     <span class="n">m1</span><span class="o">&lt;-</span> <span class="n">lm</span><span class="p">(</span><span class="n">s_weight</span><span class="o">~</span><span class="n">rings</span><span class="o">+</span><span class="n">diameter</span><span class="p">)</span>
@@ -513,7 +515,7 @@ To continue our example:</p>
 
 <p>To conclude our example, we run the following SELECT statement to run 3 separate regression models; one model for each sex.  Under this scenario, execution is parallelized by the abalone’s sex:</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span>  <span class="n">sex</span><span class="p">,</span> <span class="p">(</span><span class="n">lm_abalone_plr</span><span class="p">(</span><span class="n">s_weight</span><span class="p">,</span><span class="n">rings</span><span class="p">,</span><span class="n">diameter</span><span class="p">)).</span><span class="o">*</span> <span class="k">FROM</span> <span class="n">abalone_array</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span>  <span class="n">sex</span><span class="p">,</span> <span class="p">(</span><span class="n">lm_abalone_plr</span><span class="p">(</span><span class="n">s_weight</span><span class="p">,</span><span class="n">rings</span><span class="p">,</span><span class="n">diameter</span><span class="p">)).</span><span class="o">*</span> <span class="k">FROM</span> <span class="n">abalone_array</span><span class="p">;</span>
  <span class="n">sex</span> <span class="o">|</span>  <span class="k">variable</span>   <span class="o">|</span>       <span class="n">coef_est</span>       <span class="o">|</span>      <span class="n">std_error</span>       <span class="o">|</span>       <span class="n">t_stat</span>       <span class="o">|</span>        <span class="n">p_value</span>        
  <span class="c1">-----+-------------+----------------------+----------------------+--------------------+----------------------- </span>
  <span class="n">F</span>   <span class="o">|</span> <span class="p">(</span><span class="n">Intercept</span><span class="p">)</span> <span class="o">|</span>   <span class="o">-</span><span class="mi">0</span><span class="p">.</span><span class="mi">617050922097655</span> <span class="o">|</span>   <span class="mi">0</span><span class="p">.</span><span class="mi">0169416168113397</span> <span class="o">|</span>   <span class="o">-</span><span class="mi">36</span><span class="p">.</span><span class="mi">422198009144</span> <span class="o">|</span> <span class="mi">6</span><span class="p">.</span><span class="mi">03016903934925</span><span class="n">e</span><span class="o">-</span><span class="mi">201</span> 
@@ -544,7 +546,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>First we'll define a custom record type to hold the results from a GLM model. This is equivalent to the summary() function in R.</p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">glm_result_type</span> <span class="k">CASCADE</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">glm_result_type</span> <span class="k">CASCADE</span><span class="p">;</span>
     <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">glm_result_type</span> 
     <span class="k">AS</span> 
     <span class="p">(</span>
@@ -558,7 +560,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>Here is a PL/R function that demonstrates how a trained GLM model can be serialized as a byte array. The sample table <code>patient_history_train</code> is included in the data folder of this repository.</p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_save_demo</span><span class="p">();</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_save_demo</span><span class="p">();</span>
     <span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_save_demo</span><span class="p">()</span> 
         <span class="k">RETURNS</span> <span class="n">bytea</span> 
         <span class="k">AS</span>
@@ -600,7 +602,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>Here is a PL/R function to read a serialized PL/R model examine it's parameters.</p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_load_demo</span><span class="p">(</span><span class="n">bytea</span><span class="p">);</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_load_demo</span><span class="p">(</span><span class="n">bytea</span><span class="p">);</span>
     <span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_load_demo</span><span class="p">(</span><span class="n">mdl</span> <span class="n">bytea</span><span class="p">)</span> 
         <span class="k">RETURNS</span> <span class="k">setof</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">glm_result_type</span> 
         <span class="k">AS</span>
@@ -618,7 +620,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>The function can be invoked like so:</p>
 
-<div class="highlight"><pre>    <span class="k">select</span> <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">params</span><span class="p">,</span> 
+<div class="highlight highlight-SQL"><pre>    <span class="k">select</span> <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">params</span><span class="p">,</span> 
            <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">estimate</span><span class="p">,</span>
            <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">std_Error</span><span class="p">,</span> 
            <span class="p">(</span><span class="n">t</span><span class="p">).</span><span class="n">z_value</span> <span class="nb">float</span><span class="p">,</span> 
@@ -633,7 +635,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>Here is the PL/R function which demonstrate parallel scoring using the GLM model we trained in the example above.</p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_score_demo</span><span class="p">(</span> <span class="n">bytea</span><span class="p">,</span> 
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">gpdemo</span><span class="p">.</span><span class="n">mdl_score_demo</span><span class="p">(</span> <span class="n">bytea</span><span class="p">,</span> 
                             <span class="nb">integer</span><span class="p">,</span>
                             <span class="nb">text</span><span class="p">,</span>
                             <span class="nb">text</span><span class="p">,</span>
@@ -696,7 +698,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>The training, loading and scoring functions can be invoked from SQL like so :</p>
 
-<div class="highlight"><pre>    <span class="c1">-- Compute R square (coefficient of determination)</span>
+<div class="highlight highlight-SQL"><pre>    <span class="c1">-- Compute R square (coefficient of determination)</span>
     <span class="c1">-- R_square = (1 - SS_err/SS_tot)</span>
     <span class="k">select</span> <span class="s1">'PL/R glm model '</span><span class="p">::</span><span class="nb">text</span> <span class="k">as</span> <span class="n">model</span><span class="p">,</span> 
            <span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span> <span class="o">-</span> <span class="k">sum</span><span class="p">(</span><span class="n">ss_err</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="o">/</span><span class="k">sum</span><span class="p">(</span><span class="n">ss_tot</span><span class="p">))</span> <span class="k">as</span> <span class="n">R_square</span>
@@ -741,7 +743,7 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>We can quickly verify if a PL/R function is indeed running on all segment as follows:</p>
 
-<div class="highlight"><pre><span class="k">drop</span> <span class="k">function</span> <span class="n">if</span> <span class="k">exists</span> <span class="n">plr_parallel_test</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">drop</span> <span class="k">function</span> <span class="n">if</span> <span class="k">exists</span> <span class="n">plr_parallel_test</span><span class="p">;</span>
 <span class="k">create</span> <span class="k">function</span> <span class="n">plr_parallel_test</span><span class="p">()</span> 
 <span class="k">returns</span> <span class="nb">text</span> 
 <span class="k">as</span> 
@@ -753,7 +755,7 @@ If the data to be scored is stored in a table distributed across the segments on
 <p>The function returns the hostname of the segment node on which it is executing. By invoking the function for rows from a table that is distributed across all segments, we can verify if we indeed
 see all the segments in the output.</p>
 
-<div class="highlight"><pre><span class="n">gpadmin</span><span class="o">=#</span> <span class="k">select</span> <span class="k">distinct</span> <span class="n">plr_parallel_test</span><span class="p">()</span> <span class="k">from</span> <span class="n">abalone</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="n">gpadmin</span><span class="o">=#</span> <span class="k">select</span> <span class="k">distinct</span> <span class="n">plr_parallel_test</span><span class="p">()</span> <span class="k">from</span> <span class="n">abalone</span><span class="p">;</span>
  <span class="n">plr_parallel_test</span> 
 <span class="c1">------------------</span>
  <span class="n">sdw1</span>
@@ -784,7 +786,7 @@ see all the segments in the output.</p>
 
 <p>First we create a PL/R function which builds a linear regression to predict the age of an abalone (determined by counting the number of rings) from physical measurements. The function returns the coefficients for each of the linear predictors. </p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">plr_lm</span><span class="p">(</span> <span class="n">sex</span> <span class="nb">text</span><span class="p">[],</span> <span class="k">length</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">diameter</span> <span class="n">float8</span><span class="p">[],</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">plr_lm</span><span class="p">(</span> <span class="n">sex</span> <span class="nb">text</span><span class="p">[],</span> <span class="k">length</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">diameter</span> <span class="n">float8</span><span class="p">[],</span>
             <span class="n">height</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">whole_weight</span> <span class="n">float8</span><span class="p">[],</span> 
             <span class="n">shucked_weight</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">viscera_weight</span> <span class="n">float8</span><span class="p">[],</span> 
             <span class="n">shell_weight</span> <span class="n">float8</span><span class="p">[],</span> <span class="n">rings</span> <span class="n">float8</span><span class="p">[]</span> <span class="p">);</span>
@@ -806,7 +808,7 @@ see all the segments in the output.</p>
 
 <p>Next we convert the dataset to an array representation (as described in <a href="#dataprep">Data Preparation</a>) and store the results in a new table called <code>abalone_array</code>.</p>
 
-<div class="highlight"><pre>    <span class="c1">-- Create a vectorized version of the data</span>
+<div class="highlight highlight-SQL"><pre>    <span class="c1">-- Create a vectorized version of the data</span>
     <span class="c1">-- This table has a single row, and 9 columns</span>
     <span class="c1">-- Each element contains all of the elements for the</span>
     <span class="c1">-- respective column as an array </span>
@@ -842,7 +844,7 @@ see all the segments in the output.</p>
 
 <p>To build the models sequentially we create a simple PGSQL function that builds linear models in a loop using the <code>plr_lm</code> function we created earlier: </p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">IterativePLRModels</span><span class="p">(</span> <span class="nb">INTEGER</span> <span class="p">);</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">IterativePLRModels</span><span class="p">(</span> <span class="nb">INTEGER</span> <span class="p">);</span>
     <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">IterativePLRModels</span><span class="p">(</span> <span class="nb">INTEGER</span> <span class="p">)</span> 
     <span class="k">RETURNS</span> <span class="k">SETOF</span> <span class="nb">TEXT</span> 
     <span class="k">AS</span> <span class="err">$</span><span class="n">BODY</span><span class="err">$</span>
@@ -862,7 +864,7 @@ see all the segments in the output.</p>
 
 <p>The function accepts a single argument, which specifies the number of iterations. For this example we set that value to 64 and expect that the running time will be roughly the length of time it took to build a single model multiplied by the number of iterations: 47 * 64 = 3008 ms.</p>
 
-<div class="highlight"><pre>    <span class="k">SELECT</span> <span class="n">IterativePLRModels</span><span class="p">(</span> <span class="mi">64</span> <span class="p">);</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">SELECT</span> <span class="n">IterativePLRModels</span><span class="p">(</span> <span class="mi">64</span> <span class="p">);</span>
     <span class="c1">-----------</span>
     <span class="p">(</span><span class="mi">64</span> <span class="k">rows</span><span class="p">)</span>
 
@@ -873,7 +875,7 @@ see all the segments in the output.</p>
 
 <p>Next let's construct the models in parallel. In order to do this we must replicate the abalone data and distribute it across the GPDB segments. The PGSQL function below creates a new table called <code>abalone_array_replicates</code> that contains copies of the abalone dataset indexed by a <code>distkey</code> and distributed randomly across the segments. </p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">ReplicateAbaloneArrays</span><span class="p">(</span> <span class="nb">INTEGER</span> <span class="p">);</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">ReplicateAbaloneArrays</span><span class="p">(</span> <span class="nb">INTEGER</span> <span class="p">);</span>
     <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">ReplicateAbaloneArrays</span><span class="p">(</span> <span class="nb">INTEGER</span> <span class="p">)</span> 
     <span class="k">RETURNS</span> <span class="nb">INTEGER</span> <span class="k">AS</span>
     <span class="err">$</span><span class="n">BODY</span><span class="err">$</span>
@@ -903,7 +905,7 @@ see all the segments in the output.</p>
 
 <p>Now we have a new table <code>abalone_array_replicates</code> that contains 64 rows and 9 columns in array representation, simulating measurements of 64 different types of abalone collected from different regions. We are now ready to construct 64 models in parallel. If the parallelization were perfectly efficient, the expected running time would be the running time of a single model, multiplied by the number of models, divided by the number of segments: (47 * 64) / 96 ~= 31 ms!</p>
 
-<div class="highlight"><pre>    <span class="k">SELECT</span> <span class="n">plr_lm</span><span class="p">(</span> <span class="n">sex</span><span class="p">,</span> <span class="k">length</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">whole_weight</span><span class="p">,</span> <span class="n">shucked_weight</span><span class="p">,</span> <span class="n">viscera_weight</span><span class="p">,</span> <span class="n">shell_weight</span><span class="p">,</span> <span class="n">rings</span> <span class="p">)</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">SELECT</span> <span class="n">plr_lm</span><span class="p">(</span> <span class="n">sex</span><span class="p">,</span> <span class="k">length</span><span class="p">,</span> <span class="n">diameter</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">whole_weight</span><span class="p">,</span> <span class="n">shucked_weight</span><span class="p">,</span> <span class="n">viscera_weight</span><span class="p">,</span> <span class="n">shell_weight</span><span class="p">,</span> <span class="n">rings</span> <span class="p">)</span>
     <span class="k">FROM</span> <span class="n">abalone_array_replicates</span><span class="p">;</span>
     <span class="c1">-----------------</span>
     <span class="p">(</span><span class="mi">64</span> <span class="k">rows</span><span class="p">)</span>
@@ -913,7 +915,7 @@ see all the segments in the output.</p>
 
 <p>Of course, parallelization aint perfect! There is overhead associated with parallel processing. However, the contribution of the overhead to the overall running time of an algorithm shrinks as the size of the data increase. Additionally, since the distribution function is <code>random</code> data are not necessarily <em>uniformly</em> distributed across segments. You can see how the data are distributed by interrogating the database like this:</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="n">gp_segment_id</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span> <span class="n">gp_segment_id</span><span class="p">,</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
 <span class="k">FROM</span> <span class="n">abalone_array_replicates</span>
 <span class="k">GROUP</span> <span class="k">BY</span> <span class="n">gp_segment_id</span>
 <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">gp_segment_id</span><span class="p">;</span>
@@ -921,7 +923,7 @@ see all the segments in the output.</p>
 
 <p>If you plot the results in R:</p>
 
-<div class="highlight"><pre>barplot<span class="p">(</span> segment_distribution<span class="p">,</span> xlab<span class="o">=</span><span class="s">'Segment ID'</span><span class="p">,</span> ylab<span class="o">=</span><span class="s">'Number of rows'</span><span class="p">,</span> main <span class="o">=</span> <span class="s">'Row distribution w/ sequential dist key'</span> <span class="p">)</span>
+<div class="highlight highlight-splus"><pre>barplot<span class="p">(</span> segment_distribution<span class="p">,</span> xlab<span class="o">=</span><span class="s">'Segment ID'</span><span class="p">,</span> ylab<span class="o">=</span><span class="s">'Number of rows'</span><span class="p">,</span> main <span class="o">=</span> <span class="s">'Row distribution w/ sequential dist key'</span> <span class="p">)</span>
 </pre></div>
 
 <p>You will get a plot that looks something like the one below. Note that certain segments (64, 61) have 3 models to build, while others only have 1. The overall running time of the algorithm is bounded by the running time of the slowest node - a good reminder of why it is important to choose your distribution key wisely!</p>
@@ -965,7 +967,7 @@ see all the segments in the output.</p>
 
 <p>Let’s take a look at some examples.  We first define a PL/R function that simply returns a string of identifying the R data type:</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">func_array</span><span class="p">(</span><span class="n">arg_array</span> <span class="n">float8</span><span class="p">[]);</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">func_array</span><span class="p">(</span><span class="n">arg_array</span> <span class="n">float8</span><span class="p">[]);</span>
 <span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">func_array</span><span class="p">(</span><span class="n">arg_array</span> <span class="n">float8</span><span class="p">[])</span> 
 <span class="k">RETURNS</span> <span class="nb">text</span> <span class="k">AS</span> 
 <span class="err">$$</span> 
@@ -977,7 +979,7 @@ see all the segments in the output.</p>
 
 <p>You would think that 1D SQL arrays (i.e. a vector of values) should map to R vectors, but we see that 1D SQL arrays default-map to 1D R arrays:</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="nb">array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">];</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span> <span class="nb">array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">];</span>
    <span class="nb">array</span>   
 <span class="c1">-----------</span>
  <span class="err">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="err">}</span>
@@ -993,7 +995,7 @@ see all the segments in the output.</p>
 
 <p>Given the result for 1D SQL arrays, what are your bets on how 2D SQL arrays are mapped to R objects?  Turns out that 2D SQL arrays (i.e. a matrix) default-map to R matrices (not R 2D arrays):</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="nb">array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]];</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span> <span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="nb">array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]];</span>
      <span class="nb">array</span>     
 <span class="c1">---------------</span>
  <span class="err">{{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="err">}</span><span class="p">,</span><span class="err">{</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="err">}}</span>
@@ -1007,7 +1009,7 @@ see all the segments in the output.</p>
 
 <p>And as one would expect, 3D SQL arrays map to an R array:</p>
 
-<div class="highlight"><pre><span class="k">SELECT</span> <span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="nb">array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span><span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="nb">array</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]]];</span>
+<div class="highlight highlight-SQL"><pre><span class="k">SELECT</span> <span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="nb">array</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]],</span><span class="nb">array</span><span class="p">[</span><span class="nb">array</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],</span> <span class="nb">array</span><span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]]];</span>
              <span class="nb">array</span>             
 <span class="c1">-------------------------------</span>
  <span class="err">{{{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="err">}</span><span class="p">,</span><span class="err">{</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="err">}}</span><span class="p">,</span><span class="err">{{</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="err">}</span><span class="p">,</span><span class="err">{</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="err">}}}</span>
@@ -1021,7 +1023,7 @@ see all the segments in the output.</p>
 
 <p>You can of course convert between data types in R, so if an R function that you’d like to use in your workflow expects data to be in a certain R class, just make appropriate conversions in your PL/R code:</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">func_convert_example</span><span class="p">(</span><span class="n">arg_array</span> <span class="n">float8</span><span class="p">[]);</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">func_convert_example</span><span class="p">(</span><span class="n">arg_array</span> <span class="n">float8</span><span class="p">[]);</span>
 <span class="k">CREATE</span> <span class="k">FUNCTION</span> <span class="n">func_convert_example</span><span class="p">(</span><span class="n">arg_array</span> <span class="n">float8</span><span class="p">[])</span> 
 <span class="k">RETURNS</span> <span class="nb">text</span> <span class="k">AS</span> 
 <span class="err">$$</span> 
@@ -1056,14 +1058,14 @@ see all the segments in the output.</p>
 
 <p>A richer, more flexible approach is to use a SQL composite type as your RETURN data type for a given PL/R function.  Let’s suppose you wanted to return the equivalent of an R data frame in your PL/R function.  In other words, lets suppose you’d like to return a table where at least one of the columns contains text rather than numbers.  We allow for this return by first setting up a SQL composite type in Greenplum.  You can think of SQL composite types as a “template” or “skeleton” for SQL tables.  When setting up a type, it’s useful to think ahead and draw out the format of the output you intend to get back from your PL/R function.</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">iris_type</span> <span class="k">CASCADE</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">TYPE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">iris_type</span> <span class="k">CASCADE</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TYPE</span> <span class="n">iris_type</span> <span class="k">AS</span> <span class="p">(</span>
 <span class="n">sepal_length</span> <span class="n">float8</span><span class="p">,</span> <span class="n">sepal_width</span> <span class="n">float8</span><span class="p">,</span> <span class="n">petal_length</span> <span class="n">float8</span><span class="p">,</span> <span class="n">petal_width</span> <span class="n">float8</span><span class="p">,</span> <span class="n">specices</span> <span class="nb">text</span><span class="p">);</span>
 </pre></div>
 
 <p>We can then return output from a PL/R function which follows the structure of the type you’ve created.  You just need to specify your return type as a SETOF your custom type:</p>
 
-<div class="highlight"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">iris_trivial</span> <span class="p">()</span>  
+<div class="highlight highlight-SQL"><pre><span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">iris_trivial</span> <span class="p">()</span>  
 <span class="k">RETURNS</span> <span class="k">SETOF</span> <span class="n">iris_type</span> <span class="k">AS</span> 
 <span class="err">$$</span> 
 <span class="k">data</span><span class="p">(</span><span class="n">iris</span><span class="p">)</span>
@@ -1083,7 +1085,7 @@ see all the segments in the output.</p>
 
 <p>The data types for the individual columns are governed by those of the SQL composite defined:</p>
 
-<div class="highlight"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">iris_trivial_table</span><span class="p">;</span>
+<div class="highlight highlight-SQL"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">iris_trivial_table</span><span class="p">;</span>
 <span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">iris_trivial_table</span> <span class="k">AS</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">iris_trivial</span><span class="p">();</span>
 <span class="err">\</span><span class="n">d</span><span class="o">+</span> <span class="n">iris_trivial_table</span>
                   <span class="k">Table</span> <span class="ss">"public.iris_trivial_table"</span>
@@ -1131,7 +1133,7 @@ see all the segments in the output.</p>
 
 <p>RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. </p>
 
-<div class="highlight"><pre>    DBNAME <span class="o">=</span> <span class="s">'marketing'</span>
+<div class="highlight highlight-splus"><pre>    DBNAME <span class="o">=</span> <span class="s">'marketing'</span>
     HOST   <span class="o">=</span> <span class="s">'10.110.134.123'</span>
 
     <span class="c1"># Create a driver</span>
@@ -1160,7 +1162,7 @@ see all the segments in the output.</p>
 
 <p>While RPostgreSQL can be quite useful in a development context, don't be fooled. It is not a good path towards actual parallelization of your R code. Because the code in the PL/R function accesses database objects it cannot safely be called in a distributed manner. This will lead to errors such as:</p>
 
-<div class="highlight"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">my_plr_error_func</span><span class="p">(</span> <span class="nb">character</span> <span class="p">);</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">DROP</span> <span class="k">FUNCTION</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">my_plr_error_func</span><span class="p">(</span> <span class="nb">character</span> <span class="p">);</span>
     <span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">my_plr_error_func</span><span class="p">(</span> <span class="nb">character</span> <span class="p">)</span> 
     <span class="k">RETURNS</span> <span class="nb">INTEGER</span> <span class="k">AS</span> 
     <span class="err">$$</span>
@@ -1179,7 +1181,7 @@ see all the segments in the output.</p>
 
 <p>This returns without error, but does not run in parallel</p>
 
-<div class="highlight"><pre>    <span class="k">SELECT</span> <span class="n">my_plr_error_func</span><span class="p">(</span> <span class="s1">'zimmen'</span> <span class="p">);</span>
+<div class="highlight highlight-SQL"><pre>    <span class="k">SELECT</span> <span class="n">my_plr_error_func</span><span class="p">(</span> <span class="s1">'zimmen'</span> <span class="p">);</span>
 </pre></div>
 
 <p>This produces the error below</p>
@@ -1205,7 +1207,7 @@ see all the segments in the output.</p>
 
 <p>For the adventerous, the RPostgreSQL package provides more granular control over execution. An equivalent to dbGetQuery is to first submit the SQL to the database engine using dbSendQuery and then fetch the results: </p>
 
-<div class="highlight"><pre>drv <span class="o">&lt;-</span> dbDriver<span class="p">(</span> <span class="s">"PostgreSQL"</span> <span class="p">)</span>
+<div class="highlight highlight-splus"><pre>drv <span class="o">&lt;-</span> dbDriver<span class="p">(</span> <span class="s">"PostgreSQL"</span> <span class="p">)</span>
 con <span class="o">&lt;-</span> dbConnect<span class="p">(</span> drv <span class="p">)</span>
 res <span class="o">&lt;-</span> dbSendQuery<span class="p">(</span> con<span class="p">,</span> <span class="s">"SELECT * FROM sample_model_data;"</span> <span class="p">)</span>
 data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="p">,</span> n <span class="o">=</span> <span class="m">-1</span> <span class="p">)</span> 
