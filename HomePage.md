@@ -299,17 +299,17 @@ wget http://cran.r-project.org/src/contrib/foreign_0.8-49.tar.gz
 wget http://cran.r-project.org/src/contrib/MASS_7.3-17.tar.gz
 ```
 
-Using `gpscp` and the hostname file, copy the `tar.gz` files to the same directory on all nodes of the Greenplum cluster.  Note that this may require root access. (note: location of host file may be different. On our DCA its /home/gpadmin/all_hosts)
+Using `gpscp` and the hostname file, copy the `tar.gz` files to the same directory on all nodes of the Greenplum cluster.  Note that this may require root access. (note: location and name of host file may be different. On our DCA its /home/gpadmin/all_hosts)
 
 ```
-gpscp -f /home/gpadmin/hosts_all lattice_0.19-33.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all Matrix_1.0-1.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all abind_1.4-0.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all coda_0.14-7.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all R2WinBUGS_2.1-18.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all lme4_0.999375-42.tar.gz =:/home/gpadmin 
-gpscp -f /home/gpadmin/hosts_all MASS_7.3-17.tar.gz =:/home/gpadmin
-gpscp -f /home/gpadmin/hosts_all arm_1.5-03.tar.gz =:/home/gpadmin
+gpscp -f /home/gpadmin/all_hosts lattice_0.19-33.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts Matrix_1.0-1.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts abind_1.4-0.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts coda_0.14-7.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts R2WinBUGS_2.1-18.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts lme4_0.999375-42.tar.gz =:/home/gpadmin 
+gpscp -f /home/gpadmin/all_hosts MASS_7.3-17.tar.gz =:/home/gpadmin
+gpscp -f /home/gpadmin/all_hosts arm_1.5-03.tar.gz =:/home/gpadmin
 ```
 
 `gpssh` into all segments (`gpssh -f /home/gpadmin/all_hosts`).  Install the packages from the command prompt using the `R CMD INSTALL` command.  Note that this may require root access 
