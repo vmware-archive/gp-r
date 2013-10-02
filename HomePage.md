@@ -93,32 +93,6 @@ PL/R provides a connection from the database to R -- which is running on every s
 
 ### <a name="installation"/> Installation
 
-#### Install and verify R
-
-Greenplum ships R and Python as extensions and you will find R in the folder `/usr/local/greenplum-db/./ext/R-2.13.0.`
-To install PL/R you should ensure that the environment `R_HOME` is set on all the segments.
-
-```
-[gpadmin@mdw ~]$ echo $R_HOME
-/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R
-[gpadmin@mdw ~]$ 
-```
-
-Also, PL/R should be able to load the libraries from R at run time, so you will also need to ensure that the environment variable
-`LD_LIBRARY_PATH` contains the path to R libraries (`/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R/lib`) on all segments.
-
-Both these environment variables are defined in `/usr/local/greenplum-db/greenplum_path.sh` . You should ensure that greenplum_path.sh
-is sourced in your `.bashrc` . Please note that any new environment variable that is added will require
-a restart of gpdb (refer to the [GPDB Admin guide](https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US) for more information).
-
-Note that any time you install a new R library/package using:
-
-```
-R CMD INSTALL <package name>
-```
-
-The resulting shared object (.so file) of the library
-should be generated in `/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/<library_name>`
 
 #### Install and verify PL/R
 
@@ -131,6 +105,9 @@ Gppkg command can be used to install PL/R on all segments.
 ```
 gppkg --install plr-1.0-rhel5-x86_64.gppkg
 ```
+
+This will install both PL/R and R as well.
+You will find a folder `/usr/local/greenplum-db/ext/R-2.13/` upon the successful installation of the previous command.
 
 You should see a trace like the following for each segment
 
@@ -150,10 +127,18 @@ You can enable PL/R by running createlang plr -d mydatabase.
 
 The installation can be verified by checking for the existence of the PL/R shared object in `/usr/local/greenplum-db/lib/postgresql/plr.so`
 
+Now you'll have to source /usr/local/greenplum-db/greenplum_path.sh and restart GPDB for changes to the `LD_LIBRARY_PATH` environment variable to take effect.
+Following the installation you'll see that the environment variable `R_HOME` has been set on all segments.
+```
+[gpadmin@mdw ~]$ echo $R_HOME
+/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R
+[gpadmin@mdw ~]$ 
+```
+
 You can then install PL/R on your database by running
 
 ```
-CREATE LANGUAGE PLRU;
+CREATE LANGUAGE PLR;
 ```
 
 You may also install it on the template1 database to ensure every newly created database automatically has PL/R installed in it.
@@ -184,6 +169,16 @@ The trick to installing R packages in a distributed Greenplum environment is tha
 1. Get the package tars from CRAN (`wget`)
 2. Copy the tar to all the segments on the DCA (`gpscp`)
 3. Install the package (`gpssh`, then `R CMD INSTALL`)
+
+
+Note that any time you install a new R library/package using:
+
+```
+R CMD INSTALL <package name>
+```
+
+The resulting shared object (.so file) of the library
+should be generated in `/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/<library_name>`
 
 ### <a name="plr_packages_check"/> Checking R Package Availability
 
