@@ -184,32 +184,6 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 <a name="-installation" class="anchor" href="#-installation"><span class="octicon octicon-link"></span></a><a name="installation"></a> Installation</h3>
 
 <h4>
-<a name="install-and-verify-r" class="anchor" href="#install-and-verify-r"><span class="octicon octicon-link"></span></a>Install and verify R</h4>
-
-<p>Greenplum ships R and Python as extensions and you will find R in the folder <code>/usr/local/greenplum-db/./ext/R-2.13.0.</code>
-To install PL/R you should ensure that the environment <code>R_HOME</code> is set on all the segments.</p>
-
-<pre><code>[gpadmin@mdw ~]$ echo $R_HOME
-/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R
-[gpadmin@mdw ~]$ 
-</code></pre>
-
-<p>Also, PL/R should be able to load the libraries from R at run time, so you will also need to ensure that the environment variable
-<code>LD_LIBRARY_PATH</code> contains the path to R libraries (<code>/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R/lib</code>) on all segments.</p>
-
-<p>Both these environment variables are defined in <code>/usr/local/greenplum-db/greenplum_path.sh</code> . You should ensure that greenplum_path.sh
-is sourced in your <code>.bashrc</code> . Please note that any new environment variable that is added will require
-a restart of gpdb (refer to the <a href="https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US">GPDB Admin guide</a> for more information).</p>
-
-<p>Note that any time you install a new R library/package using:</p>
-
-<pre><code>R CMD INSTALL &lt;package name&gt;
-</code></pre>
-
-<p>The resulting shared object (.so file) of the library
-should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/&lt;library_name&gt;</code></p>
-
-<h4>
 <a name="install-and-verify-plr" class="anchor" href="#install-and-verify-plr"><span class="octicon octicon-link"></span></a>Install and verify PL/R</h4>
 
 <p>Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
@@ -220,6 +194,9 @@ Please contact support to obtain the gppkg for PL/R for your installation (inter
 
 <pre><code>gppkg --install plr-1.0-rhel5-x86_64.gppkg
 </code></pre>
+
+<p>This will install both PL/R and R as well.
+You will find a folder <code>/usr/local/greenplum-db/ext/R-2.13/</code> upon the successful installation of the previous command.</p>
 
 <p>You should see a trace like the following for each segment</p>
 
@@ -238,9 +215,17 @@ You can enable PL/R by running createlang plr -d mydatabase.
 
 <p>The installation can be verified by checking for the existence of the PL/R shared object in <code>/usr/local/greenplum-db/lib/postgresql/plr.so</code></p>
 
+<p>Now you'll have to source /usr/local/greenplum-db/greenplum_path.sh and restart GPDB for changes to the <code>LD_LIBRARY_PATH</code> environment variable to take effect.
+Following the installation you'll see that the environment variable <code>R_HOME</code> has been set on all segments.</p>
+
+<pre><code>[gpadmin@mdw ~]$ echo $R_HOME
+/usr/local/greenplum-db/./ext/R-2.13.0/lib64/R
+[gpadmin@mdw ~]$ 
+</code></pre>
+
 <p>You can then install PL/R on your database by running</p>
 
-<pre><code>CREATE LANGUAGE PLRU;
+<pre><code>CREATE LANGUAGE PLR;
 </code></pre>
 
 <p>You may also install it on the template1 database to ensure every newly created database automatically has PL/R installed in it.</p>
@@ -274,7 +259,15 @@ SQL state: 42501
 <li>Get the package tars from CRAN (<code>wget</code>)</li>
 <li>Copy the tar to all the segments on the DCA (<code>gpscp</code>)</li>
 <li>Install the package (<code>gpssh</code>, then <code>R CMD INSTALL</code>)</li>
-</ol><h3>
+</ol><p>Note that any time you install a new R library/package using:</p>
+
+<pre><code>R CMD INSTALL &lt;package name&gt;
+</code></pre>
+
+<p>The resulting shared object (.so file) of the library
+should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/&lt;library_name&gt;</code></p>
+
+<h3>
 <a name="-checking-r-package-availability" class="anchor" href="#-checking-r-package-availability"><span class="octicon octicon-link"></span></a><a name="plr_packages_check"></a> Checking R Package Availability</h3>
 
 <p>R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages. The simplest way to check if the requires R packages are available for PL/R is to <code>gpssh</code> into all the nodes and test if you are able to find the version of the required package. All the nodes
