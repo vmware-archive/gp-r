@@ -7,37 +7,38 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
+    <script src="javascripts/main.js"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/gopivotal/gp-r">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/gopivotal/gp-r/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/gopivotal/gp-r/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+
+      <header>
+        <h1>Pivotal GPDB | R</h1>
+        <p>A place for all things Pivotal Greenplum Database &amp; R</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/gopivotal/gp-r" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/gopivotal/gp-r/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/gopivotal/gp-r/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
 
     <div class="wrapper">
-
+      <nav>
+        <ul></ul>
+      </nav>
       <section>
-        <div id="title">
-          <h1>Pivotal GPDB | R</h1>
-          <p>A place for all things Pivotal Greenplum Database &amp; R</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/gopivotal">gopivotal</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
-
         <h1>
 <a name="topics-covered" class="anchor" href="#topics-covered"><span class="octicon octicon-link"></span></a>Topics covered</h1>
 
@@ -1253,11 +1254,24 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <h1>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
-<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>)</p>
+<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>) and Alex Kagoshima (<a href="https://github.com/alexkago" class="user-mention">@alexkago</a>).</p>
       </section>
-
+      <footer>
+        <p>Project maintained by <a href="https://github.com/gopivotal">gopivotal</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-39168204-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
   </body>
 </html>
