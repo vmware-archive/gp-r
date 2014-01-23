@@ -1105,11 +1105,11 @@ data <- fetch( res, n = -1 )
 
 Note that the fetch function has a parameter, `n`, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. 
 
-# <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database & PivotalHD w/ HAWQ
+# <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database & PivotalHD HAWQ
 ## Introduction
-[MADlib](http://madlib.net) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on Pivotal Greenplum Database, PivotaHD w/ HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
+[MADlib](http://madlib.net) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on Pivotal Greenplum Database, PivotalHD w/ HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
 
-While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](http://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database processing.  
+While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](http://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database/in-Hadoop processing.  
 
 The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its [GitHub Page](https://github.com/madlib-internal/PivotalR).
 
@@ -1137,7 +1137,7 @@ We have put together a [video demo](https://docs.google.com/file/d/0B9bfZ-YiuzxQ
 
 ## <a name="pivotalr_install"/> Download & Installation
 
-PivotalR is available for download and installation from [CRAN](http://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/madlib-internal/PivotalR).
+PivotalR is available for download and installation from [CRAN](http://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/gopivotal/PivotalR).
 
 
 # Authors and Contributors
