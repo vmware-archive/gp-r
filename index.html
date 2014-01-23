@@ -1,45 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pivotal GPDB | R by gopivotal</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
     <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+    <title>Pivotal | R by gopivotal</title>
   </head>
+
   <body>
+    <header>
+      <div class="inner">
+        <h1>Pivotal | R</h1>
+        <h2>A place for all things Pivotal &amp; R</h2>
+        <a href="https://github.com/gopivotal/gp-r" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
 
-      <header>
-        <h1>Pivotal GPDB | R</h1>
-        <p>A place for all things Pivotal Greenplum Database &amp; R</p>
-      </header>
-
-      <div id="banner">
-        <span id="logo"></span>
-
-        <a href="https://github.com/gopivotal/gp-r" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/gopivotal/gp-r/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/gopivotal/gp-r/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
-
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a name="topics-covered" class="anchor" href="#topics-covered"><span class="octicon octicon-link"></span></a>Topics covered</h1>
 
 <ul>
@@ -116,7 +105,7 @@
 </ul>
 </li>
 <li>
-<a href="#pivotalr">PivotalR on Pivotal Greenplum Database</a>
+<a href="#pivotalr">PivotalR on Pivotal Greenplum Database &amp; PivotalHD HAWQ</a>
 
 <ul>
 <li><a href="#pivotalr">Introduction</a></li>
@@ -130,7 +119,7 @@
 
 <p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. </p>
 
-<p>The Pivotal Greenplum database (GPDB), a massively parallelized implementation of the popular PostgreSQL database, offers several alternatives to interact with R using the in-database analytics paradigm in a distributed environment. There are many ways to use R with the Greenplum database. In this guide, we will outline the most common practices and provide code examples to help get you started.</p>
+<p>The Pivotal Greenplum database (GPDB) and PivotalHD w/ HAWQ offers several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with the Pivotal platform. In this guide, we will outline the most common practices and provide code examples to help get you started.</p>
 
 <p>Official documentation can be found here:</p>
 
@@ -1210,14 +1199,14 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <p>Note that the fetch function has a parameter, <code>n</code>, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. </p>
 
 <h1>
-<a name="-pivotalr-on-pivotal-greenplum-database" class="anchor" href="#-pivotalr-on-pivotal-greenplum-database"><span class="octicon octicon-link"></span></a><a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database</h1>
+<a name="-pivotalr-on-pivotal-greenplum-database--pivotalhd-hawq" class="anchor" href="#-pivotalr-on-pivotal-greenplum-database--pivotalhd-hawq"><span class="octicon octicon-link"></span></a><a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database &amp; PivotalHD HAWQ</h1>
 
 <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p><a href="http://madlib.net">MADlib</a> is an open-source library for highly scalable in-database analytics, and it currently runs on Pivotal Greenplum Database and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical &amp; machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  </p>
+<p><a href="http://madlib.net">MADlib</a> is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on Pivotal Greenplum Database, PivotalHD w/ HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical &amp; machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  </p>
 
-<p>While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. <a href="http://cran.r-project.org/web/packages/PivotalR/">PivotalR</a> is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database processing.  </p>
+<p>While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. <a href="http://cran.r-project.org/web/packages/PivotalR/">PivotalR</a> is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database/in-Hadoop processing.  </p>
 
 <p>The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf">here</a>.  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its <a href="https://github.com/madlib-internal/PivotalR">GitHub Page</a>.</p>
 
@@ -1249,20 +1238,32 @@ data <span class="o">&lt;-</span> fetch<span class="p">(</span> res<span class="
 <h2>
 <a name="-download--installation" class="anchor" href="#-download--installation"><span class="octicon octicon-link"></span></a><a name="pivotalr_install"></a> Download &amp; Installation</h2>
 
-<p>PivotalR is available for download and installation from <a href="http://cran.r-project.org/web/packages/PivotalR/">CRAN</a> and its <a href="https://github.com/madlib-internal/PivotalR">GitHub Page</a>.</p>
+<p>PivotalR is available for download and installation from <a href="http://cran.r-project.org/web/packages/PivotalR/">CRAN</a> and its <a href="https://github.com/gopivotal/PivotalR">GitHub Page</a>.</p>
 
 <h1>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
-<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>) and Alex Kagoshima (<a href="https://github.com/alexkago" class="user-mention">@alexkago</a>).</p>
-      </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/gopivotal">gopivotal</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
-      </footer>
+<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>), Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>), and Alex Kagoshima (<a href="https://github.com/alexkago" class="user-mention">@alexkago</a>).</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/gopivotal/gp-r/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/gopivotal/gp-r/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/gopivotal/gp-r"></a> is maintained by <a href="https://github.com/gopivotal">gopivotal</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-              <script type="text/javascript">
+
+            <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
