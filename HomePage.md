@@ -597,6 +597,66 @@ Here is the PL/R function which demonstrate parallel scoring using the GLM model
 
 ```
 
+You can also score a whole array:
+```SQL
+	DROP FUNCTION IF EXISTS gpdemo.mdl_score_demo( bytea, 
+							integer[],
+							text[],
+							text[],
+							text[],
+							double precision[],
+							integer[],
+							integer[],
+							integer[],
+							integer[],
+							integer[],
+							integer[],
+							integer[] 
+						      );
+	CREATE FUNCTION gpdemo.mdl_score_demo( mdl bytea, 
+						age integer[],
+						gender text[],
+						race text[],
+						marital_status text[],
+						bmi double precision[],
+						med_cond1 integer[],
+						med_cond2 integer[],
+						med_cond3 integer[],
+						med_cond4 integer[],
+						med_cond5 integer[],
+						med_cond6 integer[],
+						med_cond7 integer[] 
+					      ) 
+	RETURNS numeric[]
+    IMMUTABLE
+    AS
+	$$
+	    gp_plr_mdl_score <- unserialize(mdl)
+
+#Read the test set from the previously created table
+	     test_set <- data.frame(
+					age = age,
+					gender = gender,
+					race = race,
+					marital_status = marital_status, 
+					bmi =  bmi,
+					med_cond1 =  med_cond1,
+					med_cond2 =  med_cond2,
+					med_cond3 =  med_cond3,
+					med_cond4 =  med_cond4,
+					med_cond5 =  med_cond5,
+					med_cond6 =  med_cond6,
+					med_cond7 =  med_cond7  	
+			            );
+	     #Perform prediction
+	     pred <- predict(gp_plr_mdl_score, newdata=test_set, type="response"); 
+
+	     return (pred)
+	$$
+	LANGUAGE 'plr';
+
+```
+
 The training, loading and scoring functions can be invoked from SQL like so :
 
 ```SQL
@@ -1141,5 +1201,4 @@ PivotalR is available for download and installation from [CRAN](http://cran.r-pr
 
 
 # Authors and Contributors
-This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee)
-and Alex Kagoshima (@alexkago).
+This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee), Alex Kagoshima (@alexkago) and Ronert Obst (@ronert_obst).
