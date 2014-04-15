@@ -1201,4 +1201,4 @@ PivotalR is available for download and installation from [CRAN](http://cran.r-pr
 
 
 # Authors and Contributors
-This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee), Alex Kagoshima (@alexkago) and Ronert Obst (@ronert_obst).
+This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee), Alex Kagoshima (@alexkago) and Ronert Obst (@ronert).
