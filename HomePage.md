@@ -46,9 +46,10 @@ In a traditional analytics workflow using R, data are loaded from a data source,
 The Pivotal Greenplum database (GPDB) and PivotalHD w/ HAWQ offers several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with the Pivotal platform. In this guide, we will outline the most common practices and provide code examples to help get you started.
 
 Official documentation can be found here:
-* [GPDB Product Page](https://support.emc.com/products/13148_Greenplum-Database/Topics/pg42716/)
-* [GPDB Installation guide](https://support.emc.com/docu36090_Greenplum-Database-4.2-Installation-Guide.pdf)
-* [GPDB Administrator guide](https://support.emc.com/docu36089_Greenplum-Database-4.2-Administrator-Guide.pdf?language=en_US)
+* [GPDB Product Page](http://www.pivotal.io/big-data/pivotal-greenplum-database)
+* [GPDB Documentation](http://gpdb.docs.pivotal.io/index.html)
+* [GPDB Installation guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43InstallGuide.pdf)
+* [GPDB Administrator guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43AdminGuide.pdf)
 
 This documentation is intended as a guide for **practitioners** and **should not** be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  
 
