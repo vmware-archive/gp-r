@@ -27,6 +27,8 @@ Topics covered
              * [PL/R Output Conversion: R Data Types → SQL Data Types](#plr_datatypes_output)
        * [Memory Limits](#memory)
        * [Performance Testing](#performance)
+  * [Exercises]
+       [PL/R Exercises](#plrexercises)
 * [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
   * [Introduction](#rpostgresql)
   * [Local Development](#rpostgresql_local)
@@ -1072,7 +1074,9 @@ Given the heavy use of arrays in a PL/R workflow, another item to keep in mind i
 ### <a name="performance"/> Performance testing
 CONTENT TBD
 
-
+# <a name="plrexercises"/>PL/R Exercises
+The folder [PL/R Exercises]() contains 3 different exercises we developed for the [Data Science in Practice](http://pivotal.io/training) course using publicly available datasets. The first demonstrates
+using Ridge Regression from the `MASS` package, the second demonstrates using decision trees in the `rpart` package while the third is an exercises onRandom Forests using the `randomForest` package. The solutions are included inline in the same file. 
 
 # <a name="rpostgresql"/> RPostgreSQL on Pivotal Greenplum Database
 ## Overview
@@ -1202,4 +1206,9 @@ PivotalR is available for download and installation from [CRAN](http://cran.r-pr
 
 
 # Authors and Contributors
-This document is a project by Woo Jung (@wjjung317), Srivatsan 'Vatsan' Ramanujam (@vatsan) and Noah Zimmerman (@zimmeee), Alex Kagoshima (@alexkago) and Ronert Obst (@ronert).
+Woo Jung (@wjjung317)
+Srivatsan 'Vatsan' Ramanujam (@vatsan)
+Noah Zimmerman (@zimmeee)
+Alex Kagoshima (@alexkago)
+Ronert Obst (@ronert)
+Regunathan Radhakrishnan (@regu_r)
