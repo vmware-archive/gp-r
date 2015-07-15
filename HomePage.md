@@ -28,7 +28,7 @@ Topics covered
        * [Memory Limits](#memory)
        * [Performance Testing](#performance)
   * [Exercises](#plrexercises)
-       [PL/R Exercises](#plrexercises)
+       * [PL/R Exercises](#plrexercises)
 * [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
   * [Introduction](#rpostgresql)
   * [Local Development](#rpostgresql_local)
