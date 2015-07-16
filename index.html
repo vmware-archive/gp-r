@@ -1,34 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us">
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
+    <meta charset="UTF-8">
     <title>Pivotal | R by pivotalsoftware</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
-
   <body>
-    <header>
-      <div class="inner">
-        <h1>Pivotal | R</h1>
-        <h2>A place for all things Pivotal &amp; R</h2>
-        <a href="https://github.com/pivotalsoftware/gp-r" class="button"><small>View project on</small> GitHub</a>
-      </div>
-    </header>
+    <section class="page-header">
+      <h1 class="project-name">Pivotal | R</h1>
+      <h2 class="project-tagline">A place for all things Pivotal &amp; R</h2>
+      <a href="https://github.com/pivotalsoftware/gp-r" class="btn">View on GitHub</a>
+      <a href="https://github.com/pivotalsoftware/gp-r/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/pivotalsoftware/gp-r/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
+    <section class="main-content">
+      <h1>
 <a id="topics-covered" class="anchor" href="#topics-covered" aria-hidden="true"><span class="octicon octicon-link"></span></a>Topics covered</h1>
 
 <ul>
@@ -92,6 +83,13 @@
 <li><a href="#performance">Performance Testing</a></li>
 </ul>
 </li>
+<li>
+<a href="#plrexercises">Exercises</a>
+
+<ul>
+<li><a href="#plrexercises">PL/R Exercises</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li>
@@ -117,8 +115,7 @@
 </ul>
 
 <h1>
-<a id="-overview" class="anchor" href="#-overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="overview"></a> Overview</h1>
+<a id="-overview" class="anchor" href="#-overview" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="overview"></a> Overview</h1>
 
 <p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. </p>
 
@@ -164,24 +161,20 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
 </code></pre>
 
 <h1>
-<a id="-plr-on-pivotal-greenplum-database" class="anchor" href="#-plr-on-pivotal-greenplum-database" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr"></a> PL/R on Pivotal Greenplum Database</h1>
+<a id="-plr-on-pivotal-greenplum-database" class="anchor" href="#-plr-on-pivotal-greenplum-database" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr"></a> PL/R on Pivotal Greenplum Database</h1>
 
 <h2>
-<a id="-getting-started" class="anchor" href="#-getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_gettingstarted"></a> Getting Started</h2>
+<a id="-getting-started" class="anchor" href="#-getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_gettingstarted"></a> Getting Started</h2>
 
 <h3>
-<a id="-plr-architecture" class="anchor" href="#-plr-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_arch"></a> PL/R Architecture</h3>
+<a id="-plr-architecture" class="anchor" href="#-plr-architecture" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_arch"></a> PL/R Architecture</h3>
 
 <p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true" alt="alt text" title="Distributed PL/R architecture on GPDB"></p>
 
 <p>PL/R provides a connection from the database to R -- which is running on every segment of the Greenplum instance -- to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
 
 <h3>
-<a id="-installation" class="anchor" href="#-installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="installation"></a> Installation</h3>
+<a id="-installation" class="anchor" href="#-installation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="installation"></a> Installation</h3>
 
 <h4>
 <a id="install-and-verify-plr" class="anchor" href="#install-and-verify-plr" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install and verify PL/R</h4>
@@ -231,8 +224,7 @@ Following the installation you'll see that the environment variable <code>R_HOME
 <p>You may also install it on the template1 database to ensure every newly created database automatically has PL/R installed in it.</p>
 
 <h3>
-<a id="-note-on-permissions" class="anchor" href="#-note-on-permissions" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="permissions"></a> Note on Permissions</h3>
+<a id="-note-on-permissions" class="anchor" href="#-note-on-permissions" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="permissions"></a> Note on Permissions</h3>
 
 <p>R is an <a href="http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html">untrusted language</a>. Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. </p>
 
@@ -252,8 +244,7 @@ SQL state: 42501
 <a href="http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html">http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html</a></p>
 
 <h2>
-<a id="-leveraging-r-packages" class="anchor" href="#-leveraging-r-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="packages"></a> Leveraging R Packages</h2>
+<a id="-leveraging-r-packages" class="anchor" href="#-leveraging-r-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="packages"></a> Leveraging R Packages</h2>
 
 <p>The trick to installing R packages in a distributed Greenplum environment is that each segment has it's own R instance running and thus each segment needs its own version of all of the required packages. At a high-level, the steps for installing R packages on a Greenplum instance are:</p>
 
@@ -272,8 +263,7 @@ SQL state: 42501
 should be generated in <code>/usr/local/greenplum-db/ext/R-2.13.0/lib64/R/library/&lt;library_name&gt;</code></p>
 
 <h3>
-<a id="-checking-r-package-availability" class="anchor" href="#-checking-r-package-availability" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_packages_check"></a> Checking R Package Availability</h3>
+<a id="-checking-r-package-availability" class="anchor" href="#-checking-r-package-availability" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_packages_check"></a> Checking R Package Availability</h3>
 
 <p>R packages are the special sauce of R. This section explains how to check whether a package is installed and how to install new packages. The simplest way to check if the requires R packages are available for PL/R is to <code>gpssh</code> into all the nodes and test if you are able to find the version of the required package. All the nodes
 should return the correct version of the package, if the installation was successful.</p>
@@ -308,16 +298,16 @@ in our installation. As there is no such package installed, the command will not
 
 <p>A simple test if a package can be loaded can be done by this function:</p>
 
-<div class="highlight highlight-SQL"><pre><span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">R_test_require</span>(fname <span class="pl-st">text</span>)
-RETURNS <span class="pl-st">boolean</span> <span class="pl-k">AS</span>
+<div class="highlight highlight-SQL"><pre><span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">R_test_require</span>(fname <span class="pl-k">text</span>)
+RETURNS <span class="pl-k">boolean</span> <span class="pl-k">AS</span>
 $BODY$
     return(require(fname,<span class="pl-c1">character</span>.<span class="pl-c1">only</span><span class="pl-k">=</span>T))
 $BODY$
-LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>If you want to check for a package called 'rpart', you would do</p>
 
-<div class="highlight highlight-SQL"><pre><span class="pl-k">SELECT</span> R_test_require(<span class="pl-s1"><span class="pl-pds">'</span>rpart<span class="pl-pds">'</span></span>);</pre></div>
+<div class="highlight highlight-SQL"><pre><span class="pl-k">SELECT</span> R_test_require(<span class="pl-s"><span class="pl-pds">'</span>rpart<span class="pl-pds">'</span></span>);</pre></div>
 
 <p>And it will return <code>TRUE</code> if the package could be loaded and <code>FALSE</code> if it couldn't. However, this only works on the node that you are currently logged on to.</p>
 
@@ -329,17 +319,17 @@ LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds
 <p>Also, since we want to know which host we are on we create a function to tell us:</p>
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">R_return_host</span>()
-RETURNS <span class="pl-st">text</span> <span class="pl-k">AS</span>
+RETURNS <span class="pl-k">text</span> <span class="pl-k">AS</span>
 $BODY$
-  return(system(<span class="pl-s1"><span class="pl-pds">"</span>hostname<span class="pl-pds">"</span></span>,intern<span class="pl-k">=</span>T))
+  return(system(<span class="pl-s"><span class="pl-pds">"</span>hostname<span class="pl-pds">"</span></span>,intern<span class="pl-k">=</span>T))
 $BODY$
-LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>Now we can check for each id (ids are stored on different nodes) if rpart is installed like this:</p>
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS result_nodes;
 <span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">result_nodes</span> <span class="pl-k">AS</span> 
-    (<span class="pl-k">SELECT</span> id, R_return_host() <span class="pl-k">AS</span> hostname, R_test_require(<span class="pl-s1"><span class="pl-pds">'</span>rpart<span class="pl-pds">'</span></span>) <span class="pl-k">AS</span> result 
+    (<span class="pl-k">SELECT</span> id, R_return_host() <span class="pl-k">AS</span> hostname, R_test_require(<span class="pl-s"><span class="pl-pds">'</span>rpart<span class="pl-pds">'</span></span>) <span class="pl-k">AS</span> result 
     <span class="pl-k">FROM</span> simple_series <span class="pl-k">group by</span> id); </pre></div>
 
 <p><code>result_nodes</code> is a table that contains for every id, the host that it is stored on as <code>hostname</code>, and the result of <code>R_test_require</code> as result. Since we only want to know for every host once, we group by <code>hostname</code> like this:</p>
@@ -352,8 +342,7 @@ LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds
 <p>For a hostname where <code>R_test_require</code> returned true for all ids, the value in the column <code>host_result</code> will be true. If on a certain host the package couldn't be loaded, <code>host_result</code> will be false.</p>
 
 <h3>
-<a id="-installing-r-packages" class="anchor" href="#-installing-r-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_packages_install"></a> Installing R Packages</h3>
+<a id="-installing-r-packages" class="anchor" href="#-installing-r-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_packages_install"></a> Installing R Packages</h3>
 
 <p>Before installing the packages for PL/R ensure that you are referring to the right R binary in your PATH and also ensure that the environment variable <code>R_HOME</code> is referring to the right location where you installed R. These paths should be identical on all master and segment nodes.</p>
 
@@ -397,8 +386,7 @@ gpscp -f /home/gpadmin/all_hosts arm_1.5-03.tar.gz =:/home/gpadmin
 <p>Check that the newly installed package is listed under the <code>$R_HOME/library</code> directory on all the segments (convenient to use <code>gpssh</code> here as well).</p>
 
 <h3>
-<a id="-note-on-r-package-versions--dependencies" class="anchor" href="#-note-on-r-package-versions--dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_packages_versions"></a> Note on R Package Versions &amp; Dependencies</h3>
+<a id="-note-on-r-package-versions--dependencies" class="anchor" href="#-note-on-r-package-versions--dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_packages_versions"></a> Note on R Package Versions &amp; Dependencies</h3>
 
 <p>Sometimes the current version of a package has dependencies on an earlier version of R. If this happens, you might get an error message like:</p>
 
@@ -409,8 +397,7 @@ gpscp -f /home/gpadmin/all_hosts arm_1.5-03.tar.gz =:/home/gpadmin
 <p>Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (<a href="http://cran.r-project.org/src/base/R-2/">http://cran.r-project.org/src/base/R-2/</a>). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package <code>glmnet</code> was released on 01-Mar-2011 and should be compatible with R v2.13 (<a href="http://cran.r-project.org/src/contrib/Archive/glmnet/">http://cran.r-project.org/src/contrib/Archive/glmnet/</a> ) and download that version. This manual heuristic works reasonably well for finding compatible package versions. </p>
 
 <h2>
-<a id="-usage--best-practices" class="anchor" href="#-usage--best-practices" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="bestpractices"></a> Usage &amp; Best Practices</h2>
+<a id="-usage--best-practices" class="anchor" href="#-usage--best-practices" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="bestpractices"></a> Usage &amp; Best Practices</h2>
 
 <p>Here we outline workflows that have worked well for us in past experiences using R on Greenplum.  </p>
 
@@ -427,16 +414,14 @@ gpscp -f /home/gpadmin/all_hosts arm_1.5-03.tar.gz =:/home/gpadmin
 </ul>
 
 <h3>
-<a id="-make-a-plan" class="anchor" href="#-make-a-plan" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="makeplan"></a> Make a Plan</h3>
+<a id="-make-a-plan" class="anchor" href="#-make-a-plan" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="makeplan"></a> Make a Plan</h3>
 
 <p>Before doing anything, ask yourself whether the problem you are solving is explicitly parallelizable.  If so, identify what you’d like to parallelize by.  In other words, what is the index of your for loop?  This will play a large role in determining how you will prepare your data and build your PL/R function.</p>
 
 <p>Using the abalone data as an example, let’s suppose you were interested in building a separate, completely independent model for each sex of abalone in the dataset.  Under this scenario, it’s clear that it would then make sense to parallelize by the abalone’s sex.  </p>
 
 <h3>
-<a id="-data-preparation" class="anchor" href="#-data-preparation" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="dataprep"></a> Data Preparation</h3>
+<a id="-data-preparation" class="anchor" href="#-data-preparation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="dataprep"></a> Data Preparation</h3>
 
 <p>It’s often good practice to build another version of your table, dimensioned by the field by which you’d like to parallelize.  Let’s call this field the parallelization index for shorthand.  You essentially want to build a table where each row contains all the data for each value of the parallelization index.  This is done by array aggregation.  Using the SQL <code>array_agg()</code> function, aggregate all of the records for each unique value of the parallelization index into a single row.  </p>
 
@@ -462,7 +447,7 @@ gpscp -f /home/gpadmin/all_hosts arm_1.5-03.tar.gz =:/home/gpadmin
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS abalone_array;
 <span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">abalone_array</span> <span class="pl-k">AS</span> <span class="pl-k">SELECT</span> 
-sex::<span class="pl-st">text</span>
+sex::<span class="pl-k">text</span>
 , array_agg(shucked_weight::float8) <span class="pl-k">as</span> s_weight
 , array_agg(rings::float8) <span class="pl-k">as</span> rings
 , array_agg(diameter::float8) <span class="pl-k">as</span> diameter 
@@ -473,8 +458,7 @@ DISTRIBUTED BY (sex);</pre></div>
 <p>The raw table is array aggregated into a table with rows equal to the number of unique values of the parallelization index.  For this specific example, there are three unique values of sex in the abalone data, and thus there are three rows in the abalone_array table.   </p>
 
 <h3>
-<a id="-return-types" class="anchor" href="#-return-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="returntypes"></a> Return Types</h3>
+<a id="-return-types" class="anchor" href="#-return-types" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="returntypes"></a> Return Types</h3>
 
 <p>As described in the Data Types section, it’s often difficult to read SQL arrays, and it's not possible to have SQL arrays containing both text and numeric entries.  For this reason, our best practice is to use custom composite types as return types for PL/R functions in Greenplum.  </p>
 
@@ -482,11 +466,10 @@ DISTRIBUTED BY (sex);</pre></div>
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">TYPE</span> IF EXISTS lm_abalone_type CASCADE;
 <span class="pl-k">CREATE</span> <span class="pl-k">TYPE</span> <span class="pl-en">lm_abalone_type</span> <span class="pl-k">AS</span> (
-Variable <span class="pl-st">text</span>, Coef_Est float, Std_Error float, T_Stat float, P_Value float); </pre></div>
+Variable <span class="pl-k">text</span>, Coef_Est float, Std_Error float, T_Stat float, P_Value float); </pre></div>
 
 <h3>
-<a id="-plr-udf-definition" class="anchor" href="#-plr-udf-definition" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="udf"></a> PL/R UDF Definition</h3>
+<a id="-plr-udf-definition" class="anchor" href="#-plr-udf-definition" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="udf"></a> PL/R UDF Definition</h3>
 
 <p>Now that we’ve defined the structure of our input and output values, we can go ahead and tell Greenplum and R what we want to do with this data.  We are now ready to define our PL/R function. </p>
 
@@ -507,11 +490,10 @@ $$
     temp_m1<span class="pl-k">&lt;</span><span class="pl-k">-</span> <span class="pl-c1">data</span>.<span class="pl-c1">frame</span>(rownames(m1_s), m1_s)
     return(temp_m1)
 $$ 
-LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <h3>
-<a id="-plr-execution" class="anchor" href="#-plr-execution" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="execution"></a> PL/R Execution</h3>
+<a id="-plr-execution" class="anchor" href="#-plr-execution" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="execution"></a> PL/R Execution</h3>
 
 <p>We then execute the PL/R function by specifying the parallelization index and the function call in the SELECT statement.  </p>
 
@@ -533,8 +515,7 @@ LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds
 </pre></div>
 
 <h3>
-<a id="-persisting-r-models-in-the-database" class="anchor" href="#-persisting-r-models-in-the-database" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="persistence"></a> Persisting R Models in the Database</h3>
+<a id="-persisting-r-models-in-the-database" class="anchor" href="#-persisting-r-models-in-the-database" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="persistence"></a> Persisting R Models in the Database</h3>
 
 <p>One benefit of using PL/R on an MPP database like Greenplum is the ability to perform scoring in parallel across all the segments.
 If you've trained a GLM model for instance, you could save a serialized version of this model in a database table and de-serialize it when needed and use it for scoring.</p>
@@ -552,7 +533,7 @@ If the data to be scored is stored in a table distributed across the segments on
     <span class="pl-k">CREATE</span> <span class="pl-k">TYPE</span> <span class="pl-en">gpdemo</span>.glm_result_type 
     <span class="pl-k">AS</span> 
     (
-        params <span class="pl-st">text</span>, 
+        params <span class="pl-k">text</span>, 
         estimate float, 
         std_Error float, 
         z_value float, 
@@ -563,11 +544,11 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_save_demo</span>();
     <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_save_demo() 
-        RETURNS <span class="pl-st">bytea</span> 
+        RETURNS <span class="pl-k">bytea</span> 
         <span class="pl-k">AS</span>
     $$
          <span class="pl-c">#Read the previously created patient_history training set</span>
-         dataset <span class="pl-k">&lt;</span><span class="pl-k">-</span> <span class="pl-c1">pg</span>.<span class="pl-c1">spi</span>.exec(<span class="pl-s1"><span class="pl-pds">'</span>select * from gpdemo.patient_history_train<span class="pl-pds">'</span></span>);
+         dataset <span class="pl-k">&lt;</span><span class="pl-k">-</span> <span class="pl-c1">pg</span>.<span class="pl-c1">spi</span>.exec(<span class="pl-s"><span class="pl-pds">'</span>select * from gpdemo.patient_history_train<span class="pl-pds">'</span></span>);
 
          <span class="pl-c"># Use the subset function to select a subset of the columns</span>
              <span class="pl-c"># Indices 2:6 are age, gender, race, marital status and bmi</span>
@@ -598,12 +579,12 @@ If the data to be scored is stored in a table distributed across the segments on
          <span class="pl-c">#The model is serialized and returned as a bytearray</span>
          return (serialize(mdl,<span class="pl-k">NULL</span>))
     $$
-    LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+    LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>Here is a PL/R function to read a serialized PL/R model examine it's parameters.</p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_load_demo</span>(<span class="pl-st">bytea</span>);
-    <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_load_demo(mdl <span class="pl-st">bytea</span>) 
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_load_demo</span>(<span class="pl-k">bytea</span>);
+    <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_load_demo(mdl <span class="pl-k">bytea</span>) 
         RETURNS setof <span class="pl-c1">gpdemo</span>.<span class="pl-c1">glm_result_type</span> 
         <span class="pl-k">AS</span>
     $$
@@ -615,7 +596,7 @@ If the data to be scored is stored in a table distributed across the segments on
          result <span class="pl-k">=</span> <span class="pl-c1">data</span>.<span class="pl-c1">frame</span>(params<span class="pl-k">=</span>rows[[<span class="pl-c1">1</span>]],estimate<span class="pl-k">=</span>cf[,<span class="pl-c1">1</span>],error<span class="pl-k">=</span>cf[,<span class="pl-c1">2</span>],z_val<span class="pl-k">=</span>cf[,<span class="pl-c1">3</span>],pr_z<span class="pl-k">=</span>cf[,<span class="pl-c1">4</span>])
          return (result)
     $$
-    LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+    LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>The function can be invoked like so:</p>
 
@@ -633,40 +614,40 @@ If the data to be scored is stored in a table distributed across the segments on
 
 <p>Here is the PL/R function which demonstrate parallel scoring using the GLM model we trained in the example above.</p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_score_demo</span>( <span class="pl-st">bytea</span>, 
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">text</span>,
-                            <span class="pl-st">text</span>,
-                            <span class="pl-st">text</span>,
-                            <span class="pl-st">double precision</span>,
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">integer</span>,
-                            <span class="pl-st">integer</span>
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_score_demo</span>( <span class="pl-k">bytea</span>, 
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">text</span>,
+                            <span class="pl-k">text</span>,
+                            <span class="pl-k">text</span>,
+                            <span class="pl-k">double precision</span>,
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">integer</span>,
+                            <span class="pl-k">integer</span>
                               );
-    <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_score_demo( mdl <span class="pl-st">bytea</span>, 
-                        age <span class="pl-st">integer</span>,
-                        gender <span class="pl-st">text</span>,
-                        race <span class="pl-st">text</span>,
-                        marital_status <span class="pl-st">text</span>,
-                        bmi <span class="pl-st">double precision</span>,
-                        med_cond1 <span class="pl-st">integer</span>,
-                        med_cond2 <span class="pl-st">integer</span>,
-                        med_cond3 <span class="pl-st">integer</span>,
-                        med_cond4 <span class="pl-st">integer</span>,
-                        med_cond5 <span class="pl-st">integer</span>,
-                        med_cond6 <span class="pl-st">integer</span>,
-                        med_cond7 <span class="pl-st">integer</span>   
+    <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_score_demo( mdl <span class="pl-k">bytea</span>, 
+                        age <span class="pl-k">integer</span>,
+                        gender <span class="pl-k">text</span>,
+                        race <span class="pl-k">text</span>,
+                        marital_status <span class="pl-k">text</span>,
+                        bmi <span class="pl-k">double precision</span>,
+                        med_cond1 <span class="pl-k">integer</span>,
+                        med_cond2 <span class="pl-k">integer</span>,
+                        med_cond3 <span class="pl-k">integer</span>,
+                        med_cond4 <span class="pl-k">integer</span>,
+                        med_cond5 <span class="pl-k">integer</span>,
+                        med_cond6 <span class="pl-k">integer</span>,
+                        med_cond7 <span class="pl-k">integer</span>   
                           ) 
-    RETURNS <span class="pl-st">numeric</span> <span class="pl-k">AS</span>
+    RETURNS <span class="pl-k">numeric</span> <span class="pl-k">AS</span>
     $$
          if (<span class="pl-c1">pg</span>.<span class="pl-c1">state</span>.firstpass <span class="pl-k">==</span> TRUE) {
             <span class="pl-c">#Unserialize the model (i.e reconstruct it from its binary form).</span>
-            assign(<span class="pl-s1"><span class="pl-pds">"</span>gp_plr_mdl_score<span class="pl-pds">"</span></span>, unserialize(mdl) ,env<span class="pl-k">=</span>.GlobalEnv)
-            assign(<span class="pl-s1"><span class="pl-pds">"</span>pg.state.firstpass<span class="pl-pds">"</span></span>, FALSE, env<span class="pl-k">=</span>.GlobalEnv)
+            assign(<span class="pl-s"><span class="pl-pds">"</span>gp_plr_mdl_score<span class="pl-pds">"</span></span>, unserialize(mdl) ,env<span class="pl-k">=</span>.GlobalEnv)
+            assign(<span class="pl-s"><span class="pl-pds">"</span>pg.state.firstpass<span class="pl-pds">"</span></span>, FALSE, env<span class="pl-k">=</span>.GlobalEnv)
          }
 
 
@@ -686,44 +667,44 @@ If the data to be scored is stored in a table distributed across the segments on
                     med_cond7 <span class="pl-k">=</span>  med_cond7      
                         );
          <span class="pl-c">#Perform prediction</span>
-         pred <span class="pl-k">&lt;</span><span class="pl-k">-</span> predict(gp_plr_mdl_score, newdata<span class="pl-k">=</span>test_set, type<span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>response<span class="pl-pds">"</span></span>); 
+         pred <span class="pl-k">&lt;</span><span class="pl-k">-</span> predict(gp_plr_mdl_score, newdata<span class="pl-k">=</span>test_set, type<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>response<span class="pl-pds">"</span></span>); 
 
          return (pred)
     $$
-    LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
+    LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
 </pre></div>
 
 <p>You can also score a whole array:</p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_score_demo</span>( <span class="pl-st">bytea</span>, 
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">text</span>[],
-                            <span class="pl-st">text</span>[],
-                            <span class="pl-st">text</span>[],
-                            <span class="pl-st">double precision</span>[],
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">integer</span>[],
-                            <span class="pl-st">integer</span>[] 
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS <span class="pl-c1">gpdemo</span>.<span class="pl-c1">mdl_score_demo</span>( <span class="pl-k">bytea</span>, 
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">text</span>[],
+                            <span class="pl-k">text</span>[],
+                            <span class="pl-k">text</span>[],
+                            <span class="pl-k">double precision</span>[],
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">integer</span>[],
+                            <span class="pl-k">integer</span>[] 
                               );
-    <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_score_demo( mdl <span class="pl-st">bytea</span>, 
-                        age <span class="pl-st">integer</span>[],
-                        gender <span class="pl-st">text</span>[],
-                        race <span class="pl-st">text</span>[],
-                        marital_status <span class="pl-st">text</span>[],
-                        bmi <span class="pl-st">double precision</span>[],
-                        med_cond1 <span class="pl-st">integer</span>[],
-                        med_cond2 <span class="pl-st">integer</span>[],
-                        med_cond3 <span class="pl-st">integer</span>[],
-                        med_cond4 <span class="pl-st">integer</span>[],
-                        med_cond5 <span class="pl-st">integer</span>[],
-                        med_cond6 <span class="pl-st">integer</span>[],
-                        med_cond7 <span class="pl-st">integer</span>[] 
+    <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">gpdemo</span>.mdl_score_demo( mdl <span class="pl-k">bytea</span>, 
+                        age <span class="pl-k">integer</span>[],
+                        gender <span class="pl-k">text</span>[],
+                        race <span class="pl-k">text</span>[],
+                        marital_status <span class="pl-k">text</span>[],
+                        bmi <span class="pl-k">double precision</span>[],
+                        med_cond1 <span class="pl-k">integer</span>[],
+                        med_cond2 <span class="pl-k">integer</span>[],
+                        med_cond3 <span class="pl-k">integer</span>[],
+                        med_cond4 <span class="pl-k">integer</span>[],
+                        med_cond5 <span class="pl-k">integer</span>[],
+                        med_cond6 <span class="pl-k">integer</span>[],
+                        med_cond7 <span class="pl-k">integer</span>[] 
                           ) 
-    RETURNS <span class="pl-st">numeric</span>[]
+    RETURNS <span class="pl-k">numeric</span>[]
     IMMUTABLE
     <span class="pl-k">AS</span>
     $$
@@ -745,23 +726,23 @@ If the data to be scored is stored in a table distributed across the segments on
                     med_cond7 <span class="pl-k">=</span>  med_cond7      
                         );
          <span class="pl-c">#Perform prediction</span>
-         pred <span class="pl-k">&lt;</span><span class="pl-k">-</span> predict(gp_plr_mdl_score, newdata<span class="pl-k">=</span>test_set, type<span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">"</span>response<span class="pl-pds">"</span></span>); 
+         pred <span class="pl-k">&lt;</span><span class="pl-k">-</span> predict(gp_plr_mdl_score, newdata<span class="pl-k">=</span>test_set, type<span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">"</span>response<span class="pl-pds">"</span></span>); 
 
          return (pred)
     $$
-    LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
+    LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
 </pre></div>
 
 <p>The training, loading and scoring functions can be invoked from SQL like so :</p>
 
 <div class="highlight highlight-SQL"><pre>    <span class="pl-c">-- Compute R square (coefficient of determination)</span>
     <span class="pl-c">-- R_square = (1 - SS_err/SS_tot)</span>
-    <span class="pl-k">select</span> <span class="pl-s1"><span class="pl-pds">'</span>PL/R glm model <span class="pl-pds">'</span></span>::<span class="pl-st">text</span> <span class="pl-k">as</span> model, 
-           (<span class="pl-c1">1</span>.<span class="pl-c1">0</span> <span class="pl-k">-</span> <span class="pl-s3">sum</span>(ss_err)<span class="pl-k">*</span><span class="pl-c1">1</span>.<span class="pl-c1">0</span><span class="pl-k">/</span><span class="pl-s3">sum</span>(ss_tot)) <span class="pl-k">as</span> R_square
+    <span class="pl-k">select</span> <span class="pl-s"><span class="pl-pds">'</span>PL/R glm model <span class="pl-pds">'</span></span>::<span class="pl-k">text</span> <span class="pl-k">as</span> model, 
+           (<span class="pl-c1">1</span>.<span class="pl-c1">0</span> <span class="pl-k">-</span> <span class="pl-c1">sum</span>(ss_err)<span class="pl-k">*</span><span class="pl-c1">1</span>.<span class="pl-c1">0</span><span class="pl-k">/</span><span class="pl-c1">sum</span>(ss_tot)) <span class="pl-k">as</span> R_square
     <span class="pl-k">from</span>
     (
         <span class="pl-k">select</span> instance_num, 
-        (infection_cost_actual <span class="pl-k">-</span> (<span class="pl-k">select</span> <span class="pl-s3">avg</span>(infection_cost) <span class="pl-k">from</span> <span class="pl-c1">gpdemo</span>.<span class="pl-c1">patient_history_test</span>) )^<span class="pl-c1">2</span>.<span class="pl-c1">0</span> <span class="pl-k">as</span> ss_tot,
+        (infection_cost_actual <span class="pl-k">-</span> (<span class="pl-k">select</span> <span class="pl-c1">avg</span>(infection_cost) <span class="pl-k">from</span> <span class="pl-c1">gpdemo</span>.<span class="pl-c1">patient_history_test</span>) )^<span class="pl-c1">2</span>.<span class="pl-c1">0</span> <span class="pl-k">as</span> ss_tot,
         (infection_cost_actual <span class="pl-k">-</span>  infection_cost_predicted)^<span class="pl-c1">2</span>.<span class="pl-c1">0</span> <span class="pl-k">as</span> ss_err,      
         <span class="pl-c1">1</span> <span class="pl-k">as</span> cnt
         <span class="pl-k">from</span>
@@ -789,24 +770,22 @@ If the data to be scored is stored in a table distributed across the segments on
     ) q2 <span class="pl-k">group by</span> cnt;</pre></div>
 
 <h3>
-<a id="-verify-parallelization" class="anchor" href="#-verify-parallelization" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="parallelization"></a> Verify Parallelization</h3>
+<a id="-verify-parallelization" class="anchor" href="#-verify-parallelization" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="parallelization"></a> Verify Parallelization</h3>
 
 <p>Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe three sanity checks to ensure that your code is actually running in parallel. </p>
 
 <h4>
-<a id="-option-1-via-segment-hostnames" class="anchor" href="#-option-1-via-segment-hostnames" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_parallelization_hostnames"></a> Option 1: Via Segment Hostnames</h4>
+<a id="-option-1-via-segment-hostnames" class="anchor" href="#-option-1-via-segment-hostnames" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_parallelization_hostnames"></a> Option 1: Via Segment Hostnames</h4>
 
 <p>We can quickly verify if a PL/R function is indeed running on all segment as follows:</p>
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">drop</span> <span class="pl-k">function</span> if exists plr_parallel_test;
 <span class="pl-k">create</span> <span class="pl-k">function</span> <span class="pl-en">plr_parallel_test</span>() 
-returns <span class="pl-st">text</span> 
+returns <span class="pl-k">text</span> 
 <span class="pl-k">as</span> 
 $$ 
-    return (system(<span class="pl-s1"><span class="pl-pds">'</span>hostname<span class="pl-pds">'</span></span>,intern<span class="pl-k">=</span>TRUE)) 
-$$ language <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+    return (system(<span class="pl-s"><span class="pl-pds">'</span>hostname<span class="pl-pds">'</span></span>,intern<span class="pl-k">=</span>TRUE)) 
+$$ language <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>The function returns the hostname of the segment node on which it is executing. By invoking the function for rows from a table that is distributed across all segments, we can verify if we indeed
 see all the segments in the output.</p>
@@ -835,18 +814,17 @@ see all the segments in the output.</p>
 <p>We can see that all 16 segment hosts were returned in the result, which means all nodes executed our PL/R function.</p>
 
 <h4>
-<a id="-option-2-via-timing" class="anchor" href="#-option-2-via-timing" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_parallelization_timing"></a> Option 2: Via Timing</h4>
+<a id="-option-2-via-timing" class="anchor" href="#-option-2-via-timing" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_parallelization_timing"></a> Option 2: Via Timing</h4>
 
 <p>An alternative way to verify whether your code is running in parallel is to do timed performance testing. This method is laborious, but can be helpful in precisely communicating the speedup achieved through parallelization to a business partner or customer. Using the abalone dataset, we show how to compare the timing results from an implementation that builds models sequentially with a version that builds models in parallel. </p>
 
 <p>First we create a PL/R function which builds a linear regression to predict the age of an abalone (determined by counting the number of rings) from physical measurements. The function returns the coefficients for each of the linear predictors. </p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS plr_lm( sex <span class="pl-st">text</span>[], length float8[], diameter float8[],
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS plr_lm( sex <span class="pl-k">text</span>[], length float8[], diameter float8[],
             height float8[], whole_weight float8[], 
             shucked_weight float8[], viscera_weight float8[], 
             shell_weight float8[], rings float8[] );
-    <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">plr_lm</span>( sex <span class="pl-st">text</span>[], length float8[], 
+    <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">plr_lm</span>( sex <span class="pl-k">text</span>[], length float8[], 
             diameter float8[], height float8[], whole_weight float8[], 
             shucked_weight float8[], viscera_weight float8[], 
             shell_weight float8[], rings float8[] ) 
@@ -859,7 +837,7 @@ see all the segments in the output.</p>
 
       coef( m )
     $$
-    LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+    LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>Next we convert the dataset to an array representation (as described in <a href="#dataprep">Data Preparation</a>) and store the results in a new table called <code>abalone_array</code>.</p>
 
@@ -870,7 +848,7 @@ see all the segments in the output.</p>
     <span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS abalone_array;
     <span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">abalone_array</span> <span class="pl-k">AS</span> 
     <span class="pl-k">SELECT</span> 
-      array_agg(sex)::<span class="pl-st">text</span>[] <span class="pl-k">as</span> sex, 
+      array_agg(sex)::<span class="pl-k">text</span>[] <span class="pl-k">as</span> sex, 
       array_agg(length)::float8[] <span class="pl-k">as</span> length,
       array_agg(diameter)::float8[] <span class="pl-k">as</span> diameter, 
       array_agg(height)::float8[] <span class="pl-k">as</span> height,
@@ -898,18 +876,18 @@ see all the segments in the output.</p>
 
 <p>To build the models sequentially we create a simple PGSQL function that builds linear models in a loop using the <code>plr_lm</code> function we created earlier: </p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS IterativePLRModels( <span class="pl-st">INTEGER</span> );
-    <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">IterativePLRModels</span>( <span class="pl-st">INTEGER</span> ) 
-    RETURNS SETOF <span class="pl-st">TEXT</span> 
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS IterativePLRModels( <span class="pl-k">INTEGER</span> );
+    <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">IterativePLRModels</span>( <span class="pl-k">INTEGER</span> ) 
+    RETURNS SETOF <span class="pl-k">TEXT</span> 
     <span class="pl-k">AS</span> $BODY$
     DECLARE
       n ALIAS FOR $<span class="pl-c1">1</span>;
     <span class="pl-k">BEGIN</span>
       FOR i <span class="pl-k">IN</span> <span class="pl-c1">1</span>..n LOOP
-        RAISE NOTICE <span class="pl-s1"><span class="pl-pds">'</span>Processing %<span class="pl-pds">'</span></span>, i;
+        RAISE NOTICE <span class="pl-s"><span class="pl-pds">'</span>Processing %<span class="pl-pds">'</span></span>, i;
         PERFORM plr_lm( sex, length, diameter, height, whole_weight, shucked_weight, viscera_weight, shell_weight, rings )
         <span class="pl-k">FROM</span> abalone_array;
-        RETURN NEXT i::<span class="pl-st">TEXT</span>;
+        RETURN NEXT i::<span class="pl-k">TEXT</span>;
       END LOOP;
     END
     $BODY$
@@ -921,15 +899,15 @@ see all the segments in the output.</p>
     <span class="pl-c">-----------</span>
     (<span class="pl-c1">64</span> rows)
 
-    <span class="pl-st">Time</span>: <span class="pl-c1">2875</span>.<span class="pl-c1">609</span> ms</pre></div>
+    <span class="pl-k">Time</span>: <span class="pl-c1">2875</span>.<span class="pl-c1">609</span> ms</pre></div>
 
 <p>Pretty darn close!</p>
 
 <p>Next let's construct the models in parallel. In order to do this we must replicate the abalone data and distribute it across the GPDB segments. The PGSQL function below creates a new table called <code>abalone_array_replicates</code> that contains copies of the abalone dataset indexed by a <code>distkey</code> and distributed randomly across the segments. </p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS ReplicateAbaloneArrays( <span class="pl-st">INTEGER</span> );
-    <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">ReplicateAbaloneArrays</span>( <span class="pl-st">INTEGER</span> ) 
-    RETURNS <span class="pl-st">INTEGER</span> <span class="pl-k">AS</span>
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS ReplicateAbaloneArrays( <span class="pl-k">INTEGER</span> );
+    <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">ReplicateAbaloneArrays</span>( <span class="pl-k">INTEGER</span> ) 
+    RETURNS <span class="pl-k">INTEGER</span> <span class="pl-k">AS</span>
     $BODY$
     DECLARE
       n ALIAS FOR $<span class="pl-c1">1</span>;
@@ -961,26 +939,25 @@ see all the segments in the output.</p>
     <span class="pl-c">-----------------</span>
     (<span class="pl-c1">64</span> rows)
 
-    <span class="pl-st">Time</span>: <span class="pl-c1">183</span>.<span class="pl-c1">937</span> ms</pre></div>
+    <span class="pl-k">Time</span>: <span class="pl-c1">183</span>.<span class="pl-c1">937</span> ms</pre></div>
 
 <p>Of course, parallelization aint perfect! There is overhead associated with parallel processing. However, the contribution of the overhead to the overall running time of an algorithm shrinks as the size of the data increase. Additionally, since the distribution function is <code>random</code> data are not necessarily <em>uniformly</em> distributed across segments. You can see how the data are distributed by interrogating the database like this:</p>
 
-<div class="highlight highlight-SQL"><pre><span class="pl-k">SELECT</span> gp_segment_id, <span class="pl-s3">count</span>(<span class="pl-k">*</span>)
+<div class="highlight highlight-SQL"><pre><span class="pl-k">SELECT</span> gp_segment_id, <span class="pl-c1">count</span>(<span class="pl-k">*</span>)
 <span class="pl-k">FROM</span> abalone_array_replicates
 <span class="pl-k">GROUP BY</span> gp_segment_id
 <span class="pl-k">ORDER BY</span> gp_segment_id;</pre></div>
 
 <p>If you plot the results in R:</p>
 
-<div class="highlight highlight-splus"><pre>barplot( <span class="pl-vo">segment_distribution</span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">'</span>Segment ID<span class="pl-pds">'</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s1"><span class="pl-pds">'</span>Number of rows<span class="pl-pds">'</span></span>, <span class="pl-v">main</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>Row distribution w/ sequential dist key<span class="pl-pds">'</span></span> )</pre></div>
+<div class="highlight highlight-splus"><pre>barplot( <span class="pl-smi">segment_distribution</span>, <span class="pl-v">xlab</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>Segment ID<span class="pl-pds">'</span></span>, <span class="pl-v">ylab</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>Number of rows<span class="pl-pds">'</span></span>, <span class="pl-v">main</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>Row distribution w/ sequential dist key<span class="pl-pds">'</span></span> )</pre></div>
 
 <p>You will get a plot that looks something like the one below. Note that certain segments (64, 61) have 3 models to build, while others only have 1. The overall running time of the algorithm is bounded by the running time of the slowest node - a good reminder of why it is important to choose your distribution key wisely!</p>
 
 <p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/RowDistAcrossSegments.png?raw=true" alt="alt text" title="Row distribution across segments"></p>
 
 <h4>
-<a id="-option-3-via-pivotal-command-center" class="anchor" href="#-option-3-via-pivotal-command-center" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_parallelization_cc"></a> Option 3: Via Pivotal Command Center</h4>
+<a id="-option-3-via-pivotal-command-center" class="anchor" href="#-option-3-via-pivotal-command-center" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_parallelization_cc"></a> Option 3: Via Pivotal Command Center</h4>
 
 <p>A heuristic, visual option to verify parallelism is via the Pivotal Command Center.  You would want to start by logging into Pivotal Command Center, and navigating to the 'Realtime (By Server)' menu under the 'System Metrics' tab.  Below is an example of how this page should look if your database is idle:</p>
 
@@ -991,12 +968,10 @@ see all the segments in the output.</p>
 <p><img src="https://github.com/wjjung317/gp-r/blob/master/figures/commandcenter_parallelized.png?raw=true" alt="alt text" title="Snapshot of Pivotal Command Center When DB is Executing a Parallelized PL/R Function"></p>
 
 <h2>
-<a id="-more-details" class="anchor" href="#-more-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_details"></a> More Details</h2>
+<a id="-more-details" class="anchor" href="#-more-details" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_details"></a> More Details</h2>
 
 <h3>
-<a id="-data-types" class="anchor" href="#-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="datatypes"></a> Data Types</h3>
+<a id="-data-types" class="anchor" href="#-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="datatypes"></a> Data Types</h3>
 
 <p>At its core, a function takes in input, does something with this input, and produces output.  PL/R functions in Greenplum:</p>
 
@@ -1014,8 +989,7 @@ see all the segments in the output.</p>
 <p>It is our subjective view that being familiar with the treatment of multi-element data types is generally more useful for day-to-day data science.  We focus on PL/R’s default treatment of multi-element numeric data types rather than scalars or text values.  Material on scalars and text will soon follow.  </p>
 
 <h4>
-<a id="-plr-input-conversion-sql-data-types--r-data-types" class="anchor" href="#-plr-input-conversion-sql-data-types--r-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_datatypes_input"></a> PL/R Input Conversion: SQL Data Types → R Data Types</h4>
+<a id="-plr-input-conversion-sql-data-types--r-data-types" class="anchor" href="#-plr-input-conversion-sql-data-types--r-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_datatypes_input"></a> PL/R Input Conversion: SQL Data Types → R Data Types</h4>
 
 <p>We will describe how SQL data types are converted into R data types via PL/R in this section.  </p>
 
@@ -1023,12 +997,12 @@ see all the segments in the output.</p>
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS func_array(arg_array float8[]);
 <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">func_array</span>(arg_array float8[]) 
-RETURNS <span class="pl-st">text</span> <span class="pl-k">AS</span> 
+RETURNS <span class="pl-k">text</span> <span class="pl-k">AS</span> 
 $$ 
 d<span class="pl-k">&lt;</span><span class="pl-k">-</span> arg_array
 return(class(d))
 $$
-LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>You would think that 1D SQL arrays (i.e. a vector of values) should map to R vectors, but we see that 1D SQL arrays default-map to 1D R arrays:</p>
 
@@ -1075,13 +1049,13 @@ func_array
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS func_convert_example(arg_array float8[]);
 <span class="pl-k">CREATE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">func_convert_example</span>(arg_array float8[]) 
-RETURNS <span class="pl-st">text</span> <span class="pl-k">AS</span> 
+RETURNS <span class="pl-k">text</span> <span class="pl-k">AS</span> 
 $$ 
 d<span class="pl-k">&lt;</span><span class="pl-k">-</span> arg_array
 d<span class="pl-k">&lt;</span><span class="pl-k">-</span> <span class="pl-k">as</span>.<span class="pl-c1">data</span>.<span class="pl-c1">frame</span>(d)
 return(class(d))
 $$
-LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
+LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
 
 <span class="pl-k">SELECT</span> func_convert_example(array[array[<span class="pl-c1">1</span>,<span class="pl-c1">2</span>], array[<span class="pl-c1">3</span>,<span class="pl-c1">4</span>]]); 
 func_convert_example 
@@ -1090,8 +1064,7 @@ func_convert_example
 (<span class="pl-c1">1</span> row)</pre></div>
 
 <h4>
-<a id="-plr-output-conversion-r-data-types--sql-data-types" class="anchor" href="#-plr-output-conversion-r-data-types--sql-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plr_datatypes_output"></a> PL/R Output Conversion: R Data Types → SQL Data Types</h4>
+<a id="-plr-output-conversion-r-data-types--sql-data-types" class="anchor" href="#-plr-output-conversion-r-data-types--sql-data-types" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plr_datatypes_output"></a> PL/R Output Conversion: R Data Types → SQL Data Types</h4>
 
 <p>For multi-element returns from a PL/R function, you generally have two options.  Multi-element return objects from PL/R can be expressed as:</p>
 
@@ -1114,7 +1087,7 @@ func_convert_example
 
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">TYPE</span> IF EXISTS iris_type CASCADE;
 <span class="pl-k">CREATE</span> <span class="pl-k">TYPE</span> <span class="pl-en">iris_type</span> <span class="pl-k">AS</span> (
-sepal_length float8, sepal_width float8, petal_length float8, petal_width float8, specices <span class="pl-st">text</span>);</pre></div>
+sepal_length float8, sepal_width float8, petal_length float8, petal_width float8, specices <span class="pl-k">text</span>);</pre></div>
 
 <p>We can then return output from a PL/R function which follows the structure of the type you’ve created.  You just need to specify your return type as a SETOF your custom type:</p>
 
@@ -1125,7 +1098,7 @@ data(iris)
 d<span class="pl-k">&lt;</span><span class="pl-k">-</span> iris
 return(d[c(<span class="pl-c1">1</span>,<span class="pl-c1">51</span>,<span class="pl-c1">100</span>),])
 $$
-LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
+LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;
 
 <span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">from</span> iris_trivial();
 sepal_length | sepal_width | petal_length | petal_width |  specices  
@@ -1140,20 +1113,19 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 <div class="highlight highlight-SQL"><pre><span class="pl-k">DROP</span> <span class="pl-k">TABLE</span> IF EXISTS iris_trivial_table;
 <span class="pl-k">CREATE</span> <span class="pl-k">TABLE</span> <span class="pl-en">iris_trivial_table</span> <span class="pl-k">AS</span> <span class="pl-k">SELECT</span> <span class="pl-k">*</span> <span class="pl-k">FROM</span> iris_trivial();
 \d<span class="pl-k">+</span> iris_trivial_table
-                  Table <span class="pl-s1"><span class="pl-pds">"</span>public.iris_trivial_table<span class="pl-pds">"</span></span>
+                  Table <span class="pl-s"><span class="pl-pds">"</span>public.iris_trivial_table<span class="pl-pds">"</span></span>
     Column    |       Type       | Modifiers | Storage  | Description 
 <span class="pl-c">--------------+------------------+-----------+----------+-------------</span>
- sepal_length | <span class="pl-st">double precision</span> |           | plain    | 
- sepal_width  | <span class="pl-st">double precision</span> |           | plain    | 
- petal_length | <span class="pl-st">double precision</span> |           | plain    | 
- petal_width  | <span class="pl-st">double precision</span> |           | plain    | 
- specices     | <span class="pl-st">text</span>             |           | extended | </pre></div>
+ sepal_length | <span class="pl-k">double precision</span> |           | plain    | 
+ sepal_width  | <span class="pl-k">double precision</span> |           | plain    | 
+ petal_length | <span class="pl-k">double precision</span> |           | plain    | 
+ petal_width  | <span class="pl-k">double precision</span> |           | plain    | 
+ specices     | <span class="pl-k">text</span>             |           | extended | </pre></div>
 
 <p>We see that this is identical to the set of column data types of iris_type.</p>
 
 <h3>
-<a id="-memory-limits" class="anchor" href="#-memory-limits" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="memory"></a> Memory Limits</h3>
+<a id="-memory-limits" class="anchor" href="#-memory-limits" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="memory"></a> Memory Limits</h3>
 
 <p>When coding in PL/R there are a couple of memory management items to keep in mind.  </p>
 
@@ -1162,14 +1134,18 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 <p>Given the heavy use of arrays in a PL/R workflow, another item to keep in mind is that the maximum memory limit for each cell (i.e. each record-column tuple) in Greenplum database is 1GB.  This is a theoretical upper bound and in practice, the maximum can be less than 1GB.  </p>
 
 <h3>
-<a id="-performance-testing" class="anchor" href="#-performance-testing" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="performance"></a> Performance testing</h3>
+<a id="-performance-testing" class="anchor" href="#-performance-testing" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="performance"></a> Performance testing</h3>
 
 <p>CONTENT TBD</p>
 
 <h1>
-<a id="-rpostgresql-on-pivotal-greenplum-database" class="anchor" href="#-rpostgresql-on-pivotal-greenplum-database" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="rpostgresql"></a> RPostgreSQL on Pivotal Greenplum Database</h1>
+<a id="plr-exercises" class="anchor" href="#plr-exercises" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plrexercises"></a>PL/R Exercises</h1>
+
+<p>The folder <a href="https://github.com/pivotalsoftware/gp-r/tree/master/exercises">PL/R Exercises</a> contains 3 different exercises we developed for the <a href="http://pivotal.io/training">Data Science in Practice</a> course using publicly available datasets. The first demonstrates
+using Ridge Regression from the <code>MASS</code> package, the second demonstrates using decision trees in the <code>rpart</code> package while the third is an exercises onRandom Forests using the <code>randomForest</code> package. The solutions are included inline in the same file. </p>
+
+<h1>
+<a id="-rpostgresql-on-pivotal-greenplum-database" class="anchor" href="#-rpostgresql-on-pivotal-greenplum-database" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="rpostgresql"></a> RPostgreSQL on Pivotal Greenplum Database</h1>
 
 <h2>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
@@ -1185,36 +1161,33 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 </ol>
 
 <h2>
-<a id="-local-development" class="anchor" href="#-local-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="rpostgresql_local"></a> Local Development</h2>
+<a id="-local-development" class="anchor" href="#-local-development" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="rpostgresql_local"></a> Local Development</h2>
 
 <p>RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. </p>
 
-<div class="highlight highlight-splus"><pre>    <span class="pl-v">DBNAME</span> <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>marketing<span class="pl-pds">'</span></span>
-    <span class="pl-v">HOST</span>   <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>10.110.134.123<span class="pl-pds">'</span></span>
+<div class="highlight highlight-splus"><pre>    <span class="pl-v">DBNAME</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>marketing<span class="pl-pds">'</span></span>
+    <span class="pl-v">HOST</span>   <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>10.110.134.123<span class="pl-pds">'</span></span>
 
     <span class="pl-c"># Create a driver</span>
-    <span class="pl-vo">drv</span> <span class="pl-k">&lt;-</span> dbDriver( <span class="pl-s1"><span class="pl-pds">"</span>PostgreSQL<span class="pl-pds">"</span></span> )
+    <span class="pl-smi">drv</span> <span class="pl-k">&lt;-</span> dbDriver( <span class="pl-s"><span class="pl-pds">"</span>PostgreSQL<span class="pl-pds">"</span></span> )
     <span class="pl-c"># Create the database connection</span>
-    <span class="pl-vo">con</span> <span class="pl-k">&lt;-</span> dbConnect( <span class="pl-vo">drv</span>, <span class="pl-v">dbname</span> <span class="pl-k">=</span> <span class="pl-vo">DBNAME</span>, <span class="pl-v">host</span> <span class="pl-k">=</span> <span class="pl-vo">HOST</span> )
+    <span class="pl-smi">con</span> <span class="pl-k">&lt;-</span> dbConnect( <span class="pl-smi">drv</span>, <span class="pl-v">dbname</span> <span class="pl-k">=</span> <span class="pl-smi">DBNAME</span>, <span class="pl-v">host</span> <span class="pl-k">=</span> <span class="pl-smi">HOST</span> )
 
     <span class="pl-c"># Create the SQL query string. Include a semi-colon to terminate</span>
-    <span class="pl-v">querystring</span> <span class="pl-k">=</span>   <span class="pl-s1"><span class="pl-pds">'</span>SELECT countryname, income, babies FROM country_table;<span class="pl-pds">'</span></span>
+    <span class="pl-v">querystring</span> <span class="pl-k">=</span>   <span class="pl-s"><span class="pl-pds">'</span>SELECT countryname, income, babies FROM country_table;<span class="pl-pds">'</span></span>
     <span class="pl-c"># Execute the query and return results as a data frame</span>
-    <span class="pl-v">countries</span>   <span class="pl-k">=</span> dbGetQuery( <span class="pl-vo">con</span>, <span class="pl-vo">querystring</span> )
+    <span class="pl-v">countries</span>   <span class="pl-k">=</span> dbGetQuery( <span class="pl-smi">con</span>, <span class="pl-smi">querystring</span> )
 
     <span class="pl-c"># Plot the results</span>
-    plot( <span class="pl-vo">countries</span><span class="pl-k">$</span><span class="pl-vo">income</span>, <span class="pl-vo">countries</span><span class="pl-k">$</span><span class="pl-vo">babies</span> )</pre></div>
+    plot( <span class="pl-smi">countries</span><span class="pl-k">$</span><span class="pl-smi">income</span>, <span class="pl-smi">countries</span><span class="pl-k">$</span><span class="pl-smi">babies</span> )</pre></div>
 
 <h2>
-<a id="-plotting" class="anchor" href="#-plotting" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="plotting"></a> Plotting</h2>
+<a id="-plotting" class="anchor" href="#-plotting" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="plotting"></a> Plotting</h2>
 
 <p>It is probably best to do plotting on a single node (either the master or locally using the RPostgreSQL interface). In this context, plotting is no different from normal plotting in R. Of course, you likely have <em>a lot</em> of data which may obscure traditional visualization techniques. You may choose to experiment with packages like <a href="https://github.com/hadley/bigvis">bigviz</a> which provides tools for exploratory data analysis of large datasets. </p>
 
 <h2>
-<a id="-caveats-around-usage-within-plr" class="anchor" href="#-caveats-around-usage-within-plr" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="rpostgresql_plrcaveats"></a> Caveats Around Usage Within PL/R</h2>
+<a id="-caveats-around-usage-within-plr" class="anchor" href="#-caveats-around-usage-within-plr" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="rpostgresql_plrcaveats"></a> Caveats Around Usage Within PL/R</h2>
 
 <p>RPostgreSQL can also be used from within a PL/R function and deployed on the host GPDB instance. This bypasses the PL/R pipe for data exchange in favor of the DBI driver used by RPostgreSQL. The primary benefit of using this interface over the standard PL/R interface is that datatype conversions happen automatically; one need not specify all of the columns and their datatypes to pass to the function ahead of time. Sensible conversions are done automatically, including conversion of strings to factors which can be helpful in downstream processes. </p>
 
@@ -1222,23 +1195,23 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 
 <div class="highlight highlight-SQL"><pre>    <span class="pl-k">DROP</span> <span class="pl-k">FUNCTION</span> IF EXISTS my_plr_error_func( character );
     <span class="pl-k">CREATE OR REPLACE</span> <span class="pl-k">FUNCTION</span> <span class="pl-en">my_plr_error_func</span>( character ) 
-    RETURNS <span class="pl-st">INTEGER</span> <span class="pl-k">AS</span> 
+    RETURNS <span class="pl-k">INTEGER</span> <span class="pl-k">AS</span> 
     $$
-      library(<span class="pl-s1"><span class="pl-pds">"</span>RPostgreSQL<span class="pl-pds">"</span></span>)
+      library(<span class="pl-s"><span class="pl-pds">"</span>RPostgreSQL<span class="pl-pds">"</span></span>)
 
-      drv <span class="pl-k">&lt;</span><span class="pl-k">-</span> dbDriver( <span class="pl-s1"><span class="pl-pds">"</span>PostgreSQL<span class="pl-pds">"</span></span> )
+      drv <span class="pl-k">&lt;</span><span class="pl-k">-</span> dbDriver( <span class="pl-s"><span class="pl-pds">"</span>PostgreSQL<span class="pl-pds">"</span></span> )
       con <span class="pl-k">&lt;</span><span class="pl-k">-</span> dbConnect( drv, dbname <span class="pl-k">=</span> arg1 )
 
-      querystring <span class="pl-k">=</span> <span class="pl-s1"><span class="pl-pds">'</span>SELECT reviewid FROM sample_model_data;<span class="pl-pds">'</span></span>
+      querystring <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>SELECT reviewid FROM sample_model_data;<span class="pl-pds">'</span></span>
       <span class="pl-c1">model</span>.<span class="pl-c1">data</span>  <span class="pl-k">=</span> dbGetQuery( con, querystring )
 
       <span class="pl-c1">16</span>
     $$
-    LANGUAGE <span class="pl-s1"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
+    LANGUAGE <span class="pl-s"><span class="pl-pds">'</span>plr<span class="pl-pds">'</span></span>;</pre></div>
 
 <p>This returns without error, but does not run in parallel</p>
 
-<div class="highlight highlight-SQL"><pre>    <span class="pl-k">SELECT</span> my_plr_error_func( <span class="pl-s1"><span class="pl-pds">'</span>zimmen<span class="pl-pds">'</span></span> );</pre></div>
+<div class="highlight highlight-SQL"><pre>    <span class="pl-k">SELECT</span> my_plr_error_func( <span class="pl-s"><span class="pl-pds">'</span>zimmen<span class="pl-pds">'</span></span> );</pre></div>
 
 <p>This produces the error below</p>
 
@@ -1263,16 +1236,15 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 
 <p>For the adventerous, the RPostgreSQL package provides more granular control over execution. An equivalent to dbGetQuery is to first submit the SQL to the database engine using dbSendQuery and then fetch the results: </p>
 
-<div class="highlight highlight-splus"><pre><span class="pl-vo">drv</span> <span class="pl-k">&lt;-</span> dbDriver( <span class="pl-s1"><span class="pl-pds">"</span>PostgreSQL<span class="pl-pds">"</span></span> )
-<span class="pl-vo">con</span> <span class="pl-k">&lt;-</span> dbConnect( <span class="pl-vo">drv</span> )
-<span class="pl-vo">res</span> <span class="pl-k">&lt;-</span> dbSendQuery( <span class="pl-vo">con</span>, <span class="pl-s1"><span class="pl-pds">"</span>SELECT * FROM sample_model_data;<span class="pl-pds">"</span></span> )
-<span class="pl-vo">data</span> <span class="pl-k">&lt;-</span> fetch( <span class="pl-vo">res</span>, <span class="pl-v">n</span> <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-c1">1</span> ) </pre></div>
+<div class="highlight highlight-splus"><pre><span class="pl-smi">drv</span> <span class="pl-k">&lt;-</span> dbDriver( <span class="pl-s"><span class="pl-pds">"</span>PostgreSQL<span class="pl-pds">"</span></span> )
+<span class="pl-smi">con</span> <span class="pl-k">&lt;-</span> dbConnect( <span class="pl-smi">drv</span> )
+<span class="pl-smi">res</span> <span class="pl-k">&lt;-</span> dbSendQuery( <span class="pl-smi">con</span>, <span class="pl-s"><span class="pl-pds">"</span>SELECT * FROM sample_model_data;<span class="pl-pds">"</span></span> )
+<span class="pl-smi">data</span> <span class="pl-k">&lt;-</span> fetch( <span class="pl-smi">res</span>, <span class="pl-v">n</span> <span class="pl-k">=</span> <span class="pl-k">-</span><span class="pl-c1">1</span> ) </pre></div>
 
 <p>Note that the fetch function has a parameter, <code>n</code>, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. </p>
 
 <h1>
-<a id="-pivotalr-on-pivotal-greenplum-database--pivotalhd-hawq" class="anchor" href="#-pivotalr-on-pivotal-greenplum-database--pivotalhd-hawq" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database &amp; PivotalHD HAWQ</h1>
+<a id="-pivotalr-on-pivotal-greenplum-database--pivotalhd-hawq" class="anchor" href="#-pivotalr-on-pivotal-greenplum-database--pivotalhd-hawq" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="pivotalr"></a> PivotalR on Pivotal Greenplum Database &amp; PivotalHD HAWQ</h1>
 
 <h2>
 <a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h2>
@@ -1284,8 +1256,7 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 <p>The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf">here</a>.  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its <a href="https://github.com/madlib-internal/PivotalR">GitHub Page</a>.</p>
 
 <h2>
-<a id="-design--features" class="anchor" href="#-design--features" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="pivotalr_design"></a> Design &amp; Features</h2>
+<a id="-design--features" class="anchor" href="#-design--features" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="pivotalr_design"></a> Design &amp; Features</h2>
 
 <p><img src="https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true" alt="alt text" title="PivotalR Design"></p>
 
@@ -1309,39 +1280,34 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 </ul>
 
 <h2>
-<a id="-demo" class="anchor" href="#-demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="pivotalr_demo"></a> Demo</h2>
+<a id="-demo" class="anchor" href="#-demo" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="pivotalr_demo"></a> Demo</h2>
 
 <p>We have put together a <a href="http://www.youtube.com/watch?v=6cmyRCMY6j0">video demo</a> of the debut release of PivotalR.  We also provide the <a href="https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx">deck</a>, <a href="https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R">code</a>, and <a href="https://drive.google.com/file/d/0B76GEdSVCa8NUlZhQnFBaGgyTk0/view?usp=sharing">data</a> used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the <a href="http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf">documentation</a> to explore more of its features.  </p>
 
 <h2>
-<a id="-download--installation" class="anchor" href="#-download--installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>
-<a name="pivotalr_install"></a> Download &amp; Installation</h2>
+<a id="-download--installation" class="anchor" href="#-download--installation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a name="pivotalr_install"></a> Download &amp; Installation</h2>
 
 <p>PivotalR is available for download and installation from <a href="http://cran.r-project.org/web/packages/PivotalR/">CRAN</a> and its <a href="https://github.com/gopivotal/PivotalR">GitHub Page</a>.</p>
 
 <h1>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h1>
 
-<p>This document is a project by Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>), Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>) and Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>), Alex Kagoshima (<a href="https://github.com/alexkago" class="user-mention">@alexkago</a>) and Ronert Obst (<a href="https://github.com/ronert" class="user-mention">@ronert</a>).</p>
-        </section>
+<ul>
+<li>Woo Jung (<a href="https://github.com/wjjung317" class="user-mention">@wjjung317</a>)</li>
+<li>Srivatsan 'Vatsan' Ramanujam (<a href="https://github.com/vatsan" class="user-mention">@vatsan</a>)</li>
+<li>Noah Zimmerman (<a href="https://github.com/zimmeee" class="user-mention">@zimmeee</a>)</li>
+<li>Alex Kagoshima (<a href="https://github.com/alexkago" class="user-mention">@alexkago</a>)</li>
+<li>Ronert Obst (<a href="https://github.com/ronert" class="user-mention">@ronert</a>)</li>
+<li>Regunathan Radhakrishnan (@regu_r)</li>
+</ul>
 
-        <aside id="sidebar">
-          <a href="https://github.com/pivotalsoftware/gp-r/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/pivotalsoftware/gp-r/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/pivotalsoftware/gp-r">Pivotal | R</a> is maintained by <a href="https://github.com/pivotalsoftware">pivotalsoftware</a>.</span>
 
-          <p class="repo-owner"><a href="https://github.com/pivotalsoftware/gp-r"></a> is maintained by <a href="https://github.com/pivotalsoftware">pivotalsoftware</a>.</p>
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
 
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
+    </section>
 
             <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
@@ -1356,3 +1322,4 @@ sepal_length | sepal_width | petal_length | petal_width |  specices
 
   </body>
 </html>
+
