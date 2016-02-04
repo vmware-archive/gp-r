@@ -1,7 +1,7 @@
 Topics covered
 ==============
 * [Overview](#overview)
-* [PL/R on Pivotal Greenplum Database](#plr)
+* [PL/R on HAWQ & Greenplum Database](#plr)
   * [Getting Started](#plr_gettingstarted)
        * [PL/R Architecture](#plr_arch)
        * [PL/R Installation](#installation)
@@ -34,7 +34,7 @@ Topics covered
   * [Local Development](#rpostgresql_local)
   * [Plotting](#plotting)
   * [Caveats Around Usage Within PL/R](#rpostgresql_plrcaveats)
-* [PivotalR on Pivotal Greenplum Database & PivotalHD HAWQ](#pivotalr)
+* [PivotalR on HAWQ & Greenplum Database](#pivotalr)
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
   * [Demo](#pivotalr_demo)
@@ -45,7 +45,7 @@ Topics covered
 # <a name="overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. 
 
-The Pivotal Greenplum database (GPDB) and PivotalHD w/ HAWQ offers several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with the Pivotal platform. In this guide, we will outline the most common practices and provide code examples to help get you started.
+[Greenplum Database (GPDB)](http://pivotal.io/big-data/pivotal-greenplum) and [Apache HAWQ](http://hawq.incubator.apache.org) offer several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with these platforms. In this guide, we will outline the most common practices and provide code examples to help get you started.
 
 Official documentation can be found here:
 * [GPDB Product Page](http://www.pivotal.io/big-data/pivotal-greenplum-database)
@@ -99,9 +99,9 @@ PL/R provides a connection from the database to R -- which is running on every s
 
 #### Install and verify PL/R
 
-Greenplum Engineering ships our own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
-and compile it against the postgres headers supplied by Greenplum. Although Greenplum is based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Greenplum supplied postgres headers will not be successful.
-Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from SUBSCRIBENET). Once obtained, the gppkg for PL/R can be installed by following the steps below:
+Pivotal Engineering ships its own version of PL/R as a gppkg. You will not be able to download the source from Joe Conway's website
+and compile it against the postgres headers supplied by Pivotal. Although HAWQ and Greenplum are based on Postgres 8.2, the source codes have diverged enough that your compilation of PL/R source (for Postgres 8.2) with Pivotal-supplied postgres headers will not be successful.
+Please contact support to obtain the gppkg for PL/R for your installation (internally, it can also be downloaded from Pivotal Network). Once obtained, the gppkg for PL/R can be installed by following the steps below:
 
 Gppkg command can be used to install PL/R on all segments.
 
