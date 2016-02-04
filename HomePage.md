@@ -1,7 +1,7 @@
 Topics covered
 ==============
 * [Overview](#overview)
-* [PL/R on Apache HAWQ & Greenplum Database](#plr)
+* [PL/R on Greenplum & HAWQ](#plr)
   * [Getting Started](#plr_gettingstarted)
        * [PL/R Architecture](#plr_arch)
        * [PL/R Installation](#installation)
@@ -28,12 +28,12 @@ Topics covered
        * [Memory Limits](#memory)
   * [Exercises](#plrexercises)
        * [PL/R Exercises](#plrexercises)
-* [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
+* [RPostgreSQL on Greenplum & HAWQ](#rpostgresql)
   * [Introduction](#rpostgresql)
   * [Local Development](#rpostgresql_local)
   * [Plotting](#plotting)
   * [Caveats Around Usage Within PL/R](#rpostgresql_plrcaveats)
-* [PivotalR on Apache HAWQ & Greenplum Database](#pivotalr)
+* [PivotalR on Greenplum & HAWQ](#pivotalr)
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
   * [Demo](#pivotalr_demo)
@@ -91,7 +91,7 @@ user# select count(*) from abalone;
 (1 row)
 ```
 
-# <a name="plr"/> PL/R on Pivotal Greenplum Database
+# <a name="plr"/> PL/R on Greenplum & HAWQ
 
 ## <a name="plr_gettingstarted"/> Getting Started
 
@@ -1083,7 +1083,7 @@ Given the heavy use of arrays in a PL/R workflow, another item to keep in mind i
 The folder [PL/R Exercises](https://github.com/pivotalsoftware/gp-r/tree/master/exercises) contains 3 different exercises we developed for the [Data Science in Practice](http://pivotal.io/training) course using publicly available datasets. The first demonstrates
 using Ridge Regression from the `MASS` package, the second demonstrates using decision trees in the `rpart` package while the third is an exercises onRandom Forests using the `randomForest` package. The solutions are included inline in the same file. 
 
-# <a name="rpostgresql"/> RPostgreSQL on Pivotal Greenplum Database
+# <a name="rpostgresql"/> RPostgreSQL on Greenplum & HAWQ
 ## Overview
 The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with GDPB/HAWQ. This connection can be used to query GDPB/HAWQ in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
 
@@ -1175,7 +1175,7 @@ data <- fetch( res, n = -1 )
 
 Note that the fetch function has a parameter, `n`, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. 
 
-# <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database & PivotalHD HAWQ
+# <a name="pivotalr"/> PivotalR on Greenplum & HAWQ
 ## Introduction
 [Apache MADlib](http://madlib.incubator.apache.org) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on GPDB, HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside of GPDB, HAWQ, and PostgreSQL. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, time series analysis, conditional random fields, association rules, and latent dirichlet allocation.  
 
