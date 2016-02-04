@@ -1,7 +1,7 @@
 Topics covered
 ==============
 * [Overview](#overview)
-* [PL/R on HAWQ & Greenplum Database](#plr)
+* [PL/R on Apache HAWQ & Greenplum Database](#plr)
   * [Getting Started](#plr_gettingstarted)
        * [PL/R Architecture](#plr_arch)
        * [PL/R Installation](#installation)
@@ -26,7 +26,6 @@ Topics covered
              * [PL/R Input Conversion: SQL Data Types → R Data Types](#plr_datatypes_input)
              * [PL/R Output Conversion: R Data Types → SQL Data Types](#plr_datatypes_output)
        * [Memory Limits](#memory)
-       * [Performance Testing](#performance)
   * [Exercises](#plrexercises)
        * [PL/R Exercises](#plrexercises)
 * [RPostgreSQL on Pivotal Greenplum Database](#rpostgresql)
@@ -34,7 +33,7 @@ Topics covered
   * [Local Development](#rpostgresql_local)
   * [Plotting](#plotting)
   * [Caveats Around Usage Within PL/R](#rpostgresql_plrcaveats)
-* [PivotalR on HAWQ & Greenplum Database](#pivotalr)
+* [PivotalR on Apache HAWQ & Greenplum Database](#pivotalr)
   * [Introduction](#pivotalr)
   * [Design & Features](#pivotalr_design)
   * [Demo](#pivotalr_demo)
@@ -48,24 +47,32 @@ In a traditional analytics workflow using R, data are loaded from a data source,
 [Greenplum Database (GPDB)](http://pivotal.io/big-data/pivotal-greenplum) and [Apache HAWQ](http://hawq.incubator.apache.org) offer several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with these platforms. In this guide, we will outline the most common practices and provide code examples to help get you started.
 
 Official documentation can be found here:
-* [GPDB Product Page](http://www.pivotal.io/big-data/pivotal-greenplum-database)
-* [GPDB Documentation](http://gpdb.docs.pivotal.io/index.html)
-* [GPDB Installation guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43InstallGuide.pdf)
-* [GPDB Administrator guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43AdminGuide.pdf)
 
-This documentation is intended as a guide for **practitioners** and **should not** be considered official documentation. The intention is to give pragmatic tips on how to use the Greenplum Database with the R statistical programming environment.  
+* GPDB
+  * [Product Page](http://pivotal.io/big-data/pivotal-greenplum)
+  * [Documentation](http://gpdb.docs.pivotal.io/index.html)
+  * [Installation guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43InstallGuide.pdf)
+  * [Administrator guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43AdminGuide.pdf)
+* Apache HAWQ
+  * [Product Page](http://hawq.incubator.apache.org)
+  * [Documentation](http://hawq.docs.pivotal.io/index.html)
+  * [Installation guide](http://hawq.docs.pivotal.io/docs-hawq/topics/HAWQInstallationandUpgrade.html)
+  * [Administrator guide](http://hawq.docs.pivotal.io/docs-hawq/topics/HAWQAdministration.html)
+  * [Github Repository](https://github.com/apache/incubator-hawq) 
+  
+Note that this Github page is intended as a guide for **practitioners** and **should not** be considered official documentation. The intention is to give pragmatic tips on how to use the GPDB and HAWQ with the R statistical programming environment.  
 
 ## Getting Started with this Guide
 
 This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the `abalone` [dataset](http://archive.ics.uci.edu/ml/datasets/Abalone) from the UC Irvine [Machine Learning Repository](http://archive.ics.uci.edu/ml/index.html).
 
-To get started, download the data onto the file system of the GPDB host machine, and note the path: 
+To get started, download the data onto the file system of the GPDB/HAWQ host machine, and note the path: 
 ```
 wget http://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
 pwd
 ```
 
-Next, create a table in GPDB to store the abalone data. Note that `/path/to/data` is the path returned by `pwd` in the previous line of code. 
+Next, create a table in GPDB/HAWQ to store the abalone data. Note that `/path/to/data` is the path returned by `pwd` in the previous line of code. 
 
 ```
 DROP TABLE IF EXISTS abalone;
@@ -297,7 +304,7 @@ wget http://cran.r-project.org/src/contrib/foreign_0.8-49.tar.gz
 wget http://cran.r-project.org/src/contrib/MASS_7.3-17.tar.gz
 ```
 
-Using `gpscp` and the hostname file, copy the `tar.gz` files to the same directory on all nodes of the Greenplum cluster.  Note that this may require root access. (note: location and name of host file may be different. On our DCA its /home/gpadmin/all_hosts)
+Using `gpscp` and the hostname file, copy the `tar.gz` files to the same directory on all nodes of the GPDB/HAWQ cluster.  Note that this may require root access. (note: location and name of host file may be different. On our DCA its /home/gpadmin/all_hosts)
 
 ```
 gpscp -f /home/gpadmin/all_hosts lattice_0.19-33.tar.gz =:/home/gpadmin 
@@ -329,16 +336,16 @@ In getDependencies(pkgs, dependencies, available, lib) :
 Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (http://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (http://cran.r-project.org/src/contrib/Archive/glmnet/ ) and download that version. This manual heuristic works reasonably well for finding compatible package versions. 
 
 ## <a name="bestpractices"/> Usage & Best Practices
-Here we outline workflows that have worked well for us in past experiences using R on Greenplum.  
+Here we outline workflows that have worked well for us in past experiences using R on GPDB & HAWQ.  
 
-One overarching theme for PL/R on Greenplum is that it is best suited in scenarios where the problem that you want to solve is one that is embarrassingly parallelizable. A simple way to think about PL/R is that it is provides functionality akin to MapReduce or R’s apply family of functions – with the added bonus of leveraging Greenplum native architecture to execute each mapper. In other words, it provides a nice framework for you to run parallelized `for` loops containing R jobs in Greenplum.  We focus our description of best practices around this theme.
+One overarching theme for PL/R on GPDB/HAWQ is that it is best suited in scenarios where the problem that you want to solve is one that is embarrassingly parallelizable. A simple way to think about PL/R is that it is provides functionality akin to MapReduce or R’s apply family of functions – with the added bonus of leveraging GPDB/HAWQ native architecture to execute each mapper. In other words, it provides a nice framework for you to run parallelized `for` loops containing R jobs in GPDB/HAWQ.  We focus our description of best practices around this theme.
 
   * [Make a plan](#makeplan)
   * [Data prep](#dataprep)
   * [Return types](#returntypes)
   * [PL/R UDF Definition](#udf)
   * [PL/R Execution](#execution)
-  * [Persisting R Models in the Database](#persistence)
+  * [Persisting R Models in GPDB & HAWQ](#persistence)
   * [Verifying Parallelization](#parallelization)
 
 ### <a name="makeplan"/> Make a Plan
@@ -391,7 +398,7 @@ Variable text, Coef_Est float, Std_Error float, T_Stat float, P_Value float);
 ```
 
 ### <a name="udf"/> PL/R UDF Definition
-Now that we’ve defined the structure of our input and output values, we can go ahead and tell Greenplum and R what we want to do with this data.  We are now ready to define our PL/R function. 
+Now that we’ve defined the structure of our input and output values, we can go ahead and tell GPDB/HAWQ and R what we want to do with this data.  We are now ready to define our PL/R function. 
 
 A couple of helpful rules to follow here:
 * Each argument of the PL/R function and its specified data type should correspond to a column that exists in the array aggregated table that was created in the Data Prep step
@@ -433,11 +440,11 @@ SELECT  sex, (lm_abalone_plr(s_weight,rings,diameter)).* FROM abalone_array;
 ```
 
 ### <a name="persistence"/> Persisting R Models in the Database
-One benefit of using PL/R on an MPP database like Greenplum is the ability to perform scoring in parallel across all the segments.
+One benefit of using PL/R on a parallelized platform like GPDB/HAWQ is the ability to perform scoring in parallel across all the segments.
 If you've trained a GLM model for instance, you could save a serialized version of this model in a database table and de-serialize it when needed and use it for scoring.
 
 Typically the models are built once or are trained periodically depending on what the application may be, but the scoring may have to happen in real-time as new data becomes available.
-If the data to be scored is stored in a table distributed across the segments on GPDB, then by ensuring the trained models are also distributed across the same segments, we can achieve parallel scoring through PL/R.
+If the data to be scored is stored in a table distributed across the segments on GPDB/HAWQ, then by ensuring the trained models are also distributed across the same segments, we can achieve parallel scoring through PL/R.
 
 The simplest approach would be to serialize the entire model into a byte array and store it in a table, although not all parameters of the R model are required for scoring. For example, for linear or logistic regression we only need the coefficients of the features to perform scoring. Advanced users should be able to extract only the relevant parameters from the model and serialize them into a byte array on a table. This will improve scoring speed as the segment nodes won't have to de-serialize large byte arrays. Another optimization that will speed up scoring will be to pre-load the models into memory on the segment nodes - so that models are not de-serialized for every PL/R function call. In both these cases the user will have to write additional logic beside the scoring itself, for the optimization.
 
@@ -699,7 +706,7 @@ The training, loading and scoring functions can be invoked from SQL like so :
 ```
 
 ### <a name="parallelization"/> Verify Parallelization
-Congratulations, you've just parallelized your first PL/R algorithm in GPDB. Or have you? In this section we will describe three sanity checks to ensure that your code is actually running in parallel. 
+Congratulations, you've just parallelized your first PL/R algorithm in GPDB/HAWQ!  Or have you? In this section we will describe three sanity checks to ensure that your code is actually running in parallel. 
 
 
 #### <a name="plr_parallelization_hostnames"/> Option 1: Via Segment Hostnames 
@@ -915,7 +922,7 @@ Suppose that you have now successfully implemented a parallelized PL/R function.
 ## <a name="plr_details"/> More Details
 
 ### <a name="datatypes"/> Data Types
-At its core, a function takes in input, does something with this input, and produces output.  PL/R functions in Greenplum:
+At its core, a function takes in input, does something with this input, and produces output.  PL/R functions in GPDB/HAWQ:
 
 1.	Take SQL data types as input
 2.	Converts SQL data types to R data types
@@ -1069,10 +1076,8 @@ When coding in PL/R there are a couple of memory management items to keep in min
 
 Recall that R is installed on each and every host of the Greenplum database - one corrollary is that each "mapper" job which you wish to execute in parallel via PL/R must fit in the memory of the R on each host.  
 
-Given the heavy use of arrays in a PL/R workflow, another item to keep in mind is that the maximum memory limit for each cell (i.e. each record-column tuple) in Greenplum database is 1GB.  This is a theoretical upper bound and in practice, the maximum can be less than 1GB.  
+Given the heavy use of arrays in a PL/R workflow, another item to keep in mind is that the maximum memory limit for each cell (i.e. each record-column tuple) in GPDB/HAWQ database is 1GB.  This is a theoretical upper bound and in practice, the maximum can be less than 1GB.  
 
-### <a name="performance"/> Performance testing
-CONTENT TBD
 
 # <a name="plrexercises"/>PL/R Exercises
 The folder [PL/R Exercises](https://github.com/pivotalsoftware/gp-r/tree/master/exercises) contains 3 different exercises we developed for the [Data Science in Practice](http://pivotal.io/training) course using publicly available datasets. The first demonstrates
@@ -1080,16 +1085,16 @@ using Ridge Regression from the `MASS` package, the second demonstrates using de
 
 # <a name="rpostgresql"/> RPostgreSQL on Pivotal Greenplum Database
 ## Overview
-The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with the Greenplum database. This connection can be used to query the database in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
+The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with GDPB/HAWQ. This connection can be used to query GDPB/HAWQ in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
 
 Using RPostgreSQL with a database includes the following 3 steps: 
 
 1.      Create a database driver for PostgreSQL, 
 2.      Connect to a specific database, and 
-3.      Execute the query on GPDB and return results 
+3.      Execute the query on GPDB/HAWQ and return results 
 
 ## <a name="rpostgresql_local"/> Local Development
-RPostgreSQL can be used in a local development environment to connect to a remote GPDB instance. Queries are processed in parallel on GPDB and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. 
+RPostgreSQL can be used in a local development environment to connect to a remote GPDB/HAWQ instance. Queries are processed in parallel on GPDB/HAWQ and results are returned in the familiar R data frame format. Use caution when returning large resultsets as you may run into the memory limitations of your local R instance. To ease troubleshooting, it can be helpful to develop/debug the SQL using your GPDB tool of choice (e.g. pgAdmin) before using it in R. 
 
 ```splus
     DBNAME = 'marketing'
@@ -1172,11 +1177,11 @@ Note that the fetch function has a parameter, `n`, which sets the maximum number
 
 # <a name="pivotalr"/> PivotalR on Pivotal Greenplum Database & PivotalHD HAWQ
 ## Introduction
-[MADlib](http://madlib.net) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on Pivotal Greenplum Database, PivotalHD w/ HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside the database. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, conditional random fields, association rules, and latent dirichlet allocation.  
+[Apache MADlib](http://madlib.incubator.apache.org) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on GPDB, HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside of GPDB, HAWQ, and PostgreSQL. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, time series analysis, conditional random fields, association rules, and latent dirichlet allocation.  
 
 While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](http://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database/in-Hadoop processing.  
 
-The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its [GitHub Page](https://github.com/madlib-internal/PivotalR).
+The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its [GitHub Page](https://github.com/pivotalsoftware/PivotalR).
 
 ## <a name="pivotalr_design"/> Design & Features
 ![alt text](https://github.com/wjjung317/gp-r/blob/master/figures/PivotalR.png?raw=true "PivotalR Design")
@@ -1184,10 +1189,10 @@ The debut release of PivotalR was shipped out in June 2013.  A quickstart guide 
 At its core, an R function in PivotalR:
 
 1. Translates R model formulas into corresponding SQL statements
-2. Executes these statements on the database
+2. Executes these statements on the cluster
 3. Returns summarized model output to R 
 
-This allows R users to leverage the scalability and performance of in-database analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours for big data -- is eliminated via PivotalR.  
+This allows R users to leverage the scalability and performance of in-database/in-Hadoop analytics without leaving the R command line. All of the computational heavy lifting is executed in-database, while the end user benefits from a familiar R interface.  Compared with respective native R functions, we observe a dramatic increase in scalability and a decrease in running time, even after normalizing for hardware differences. Furthermore, data movement -- which can take hours/days for big data -- is eliminated via PivotalR.  
 
 Key features include the following:
 
@@ -1198,7 +1203,7 @@ Key features include the following:
 
 ## <a name="pivotalr_demo"/> Demo
 
-We have put together a [video demo](http://www.youtube.com/watch?v=6cmyRCMY6j0) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx), [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R), and [data](https://drive.google.com/file/d/0B76GEdSVCa8NUlZhQnFBaGgyTk0/view?usp=sharing) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) to explore more of its features.  
+We have put together a [video demo](http://www.youtube.com/watch?v=6cmyRCMY6j0) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx), [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R), and [data](https://drive.google.com/file/d/0B76GEdSVCa8NUlZhQnFBaGgyTk0/view?usp=sharing) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) and this [paper](https://journal.r-project.org/archive/2014-1/qian.pdf) published in the R Journal to explore more of its features.  
 
 ## <a name="pivotalr_install"/> Download & Installation
 
