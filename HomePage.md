@@ -1248,7 +1248,7 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 [more details to be filled out]
 
 ### manifest.yml file
-[more details to be filled out]
+The manifest.yml file tells cf push what to do with your app. This includes everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this would be the runApp() command).
 
 ## Steps to push your shiny app to CF [more details to be filled out]
 1.  Make sure your shiny app works on your laptop
