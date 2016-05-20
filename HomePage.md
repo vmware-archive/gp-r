@@ -1235,16 +1235,19 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 
 ### CF environment
 * Set API endpoint 
-* Login with your login/password
+* Login with your username/password
 
 ### R buildpack
 * https://github.com/wjjung317/heroku-buildpack-r
 [more details to be filled out]
 
 ### Shiny Code
+Create a folder within your app directory and store the following two files (the required two files for any shiny app).   
+* server.r
+* ui.r
 [more details to be filled out]
 
-### init.R file
+### init.r file
 [more details to be filled out]
 
 ### manifest.yml file
