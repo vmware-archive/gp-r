@@ -111,14 +111,17 @@
 <li><a href="#pivotalr_install">Download &amp; Installation</a></li>
 </ul>
 </li>
+<li><a href="#shiny_cf">Shiny Apps on Cloud Foundry</a></li>
 </ul>
 
 <h1>
 <a id="-overview" class="anchor" href="#-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="overview"></a> Overview</h1>
 
-<p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast. Here we explore the situation involving large data sets where these two assumptions are violated. </p>
+<p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast.  One of the major focus areas of this guide is to explore the situation involving large data sets where these two assumptions are violated. </p>
 
 <p><a href="http://pivotal.io/big-data/pivotal-greenplum">Greenplum Database (GPDB)</a> and <a href="http://hawq.incubator.apache.org">Apache HAWQ</a> offer several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with these platforms. In this guide, we will outline the most common practices and provide code examples to help get you started.</p>
+
+<p>Regardless of the size of data, the "last mile" of operationalizing data-driven discoveries has traditionally often been an area of challenge.  With the advent of lightweight web frameworks for data scientists such as <a href="http://shiny.rstudio.com/">Shiny</a> and highly automated hosting platforms such as <a href="https://www.cloudfoundry.org/">Cloud Foundry (CF)</a>, the effort involved in developing data-driven smart apps for end users has been reduced vastly.  In this document, we will also outline some guidelines to help you get started on pushing your Shiny apps to the cloud.  </p>
 
 <p>Official documentation can be found here:</p>
 
@@ -143,12 +146,36 @@
 <a href="https://github.com/apache/incubator-hawq">Github Repository</a> </li>
 </ul>
 </li>
+<li>Cloud Foundry
+
+<ul>
+<li><a href="https://www.cloudfoundry.org/">Product Page</a></li>
+<li><a href="http://docs.cloudfoundry.org/">Documentation</a></li>
+<li><a href="https://docs.pivotal.io/pcf-dev/">Installing PCF-Dev (i.e. CF in a VM)</a></li>
+<li>
+<a href="https://github.com/cloudfoundry">Github Repository</a> </li>
+<li><a href="https://github.com/wjjung317/heroku-buildpack-r">R Buildpack</a></li>
+</ul>
+</li>
 </ul>
 
-<p>Note that this Github page is intended as a guide for <strong>practitioners</strong> and <strong>should not</strong> be considered official documentation. The intention is to give pragmatic tips on how to use the GPDB and HAWQ with the R statistical programming environment.  </p>
+<p>Note that this Github page is intended as a guide for <strong>practitioners</strong> and <strong>should not</strong> be considered official documentation. The intention is to give pragmatic tips on how to use the GPDB, HAWQ, and Cloud Foundry with the R statistical programming environment.  </p>
+
+<h1>
+<a id="-plr-on-greenplum--hawq" class="anchor" href="#-plr-on-greenplum--hawq" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="plr"></a> PL/R on Greenplum &amp; HAWQ</h1>
 
 <h2>
-<a id="getting-started-with-this-guide" class="anchor" href="#getting-started-with-this-guide" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Getting Started with this Guide</h2>
+<a id="-getting-started" class="anchor" href="#-getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="plr_gettingstarted"></a> Getting Started</h2>
+
+<h3>
+<a id="-plr-architecture" class="anchor" href="#-plr-architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="plr_arch"></a> PL/R Architecture</h3>
+
+<p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true" alt="alt text" title="Distributed PL/R architecture on GPDB"></p>
+
+<p>PL/R provides a connection from the database to R -- which is running on every segment of the Greenplum instance -- to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
+
+<h3>
+<a id="datasets-for-examples" class="anchor" href="#datasets-for-examples" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Datasets for Examples</h3>
 
 <p>This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the <code>abalone</code> <a href="http://archive.ics.uci.edu/ml/datasets/Abalone">dataset</a> from the UC Irvine <a href="http://archive.ics.uci.edu/ml/index.html">Machine Learning Repository</a>.</p>
 
@@ -174,19 +201,6 @@ COPY abalone FROM '/path/to/data/abalone.data' WITH CSV;
   4177
 (1 row)
 </code></pre>
-
-<h1>
-<a id="-plr-on-greenplum--hawq" class="anchor" href="#-plr-on-greenplum--hawq" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="plr"></a> PL/R on Greenplum &amp; HAWQ</h1>
-
-<h2>
-<a id="-getting-started" class="anchor" href="#-getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="plr_gettingstarted"></a> Getting Started</h2>
-
-<h3>
-<a id="-plr-architecture" class="anchor" href="#-plr-architecture" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="plr_arch"></a> PL/R Architecture</h3>
-
-<p><img src="https://github.com/zimmeee/gp-r/blob/master/figures/PLR_GPDB_Architecture.png?raw=true" alt="alt text" title="Distributed PL/R architecture on GPDB"></p>
-
-<p>PL/R provides a connection from the database to R -- which is running on every segment of the Greenplum instance -- to allow you to write procedural functions in R. In this setup R is not a client application that runs on the desktop like pgadmin. It runs on each segment of the server.</p>
 
 <h3>
 <a id="-installation" class="anchor" href="#-installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="installation"></a> Installation</h3>
@@ -1298,6 +1312,77 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 <a id="-download--installation" class="anchor" href="#-download--installation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="pivotalr_install"></a> Download &amp; Installation</h2>
 
 <p>PivotalR is available for download and installation from <a href="http://cran.r-project.org/web/packages/PivotalR/">CRAN</a> and its <a href="https://github.com/gopivotal/PivotalR">GitHub Page</a>.</p>
+
+<h1>
+<a id="-work-in-progress-shiny-apps-on-cloud-foundry" class="anchor" href="#-work-in-progress-shiny-apps-on-cloud-foundry" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf"></a> [WORK IN PROGRESS] Shiny Apps on Cloud Foundry</h1>
+
+<h2>
+<a id="overview-1" class="anchor" href="#overview-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h2>
+
+<p>In this guide, we will assume that the reader is familiar with the <a href="http://shiny.rstudio.com/">Shiny</a> framework for building apps and dashboards.  Background on Shiny and those who need a refresher are encouraged to look <a href="http://shiny.rstudio.com/tutorial/">here</a>.  </p>
+
+<p>We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. <a href="http://12factor.net/">here</a>) and ideally your <a href="http://pivotallabs.com">developer &amp; designer</a> buddies to improve and optimize.</p>
+
+<h2>
+<a id="bare-mininum-requirements-for-hosting-shiny-apps-on-cf" class="anchor" href="#bare-mininum-requirements-for-hosting-shiny-apps-on-cf" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Bare Mininum Requirements for Hosting Shiny Apps on CF</h2>
+
+<ul>
+<li>CF environment</li>
+<li>R buildpack</li>
+<li>Shiny Code</li>
+<li>init.R file</li>
+<li>manifest.yml file </li>
+</ul>
+
+<h3>
+<a id="cf-environment" class="anchor" href="#cf-environment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>CF environment</h3>
+
+<ul>
+<li>Set API endpoint </li>
+<li>Login with your login/password</li>
+</ul>
+
+<h3>
+<a id="r-buildpack" class="anchor" href="#r-buildpack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>R buildpack</h3>
+
+<ul>
+<li>
+<a href="https://github.com/wjjung317/heroku-buildpack-r">https://github.com/wjjung317/heroku-buildpack-r</a>
+[more details to be filled out]</li>
+</ul>
+
+<h3>
+<a id="shiny-code" class="anchor" href="#shiny-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Shiny Code</h3>
+
+<p>[more details to be filled out]</p>
+
+<h3>
+<a id="initr-file" class="anchor" href="#initr-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>init.R file</h3>
+
+<p>[more details to be filled out]</p>
+
+<h3>
+<a id="manifestyml-file" class="anchor" href="#manifestyml-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>manifest.yml file</h3>
+
+<p>[more details to be filled out]</p>
+
+<h2>
+<a id="steps-to-push-your-shiny-app-to-cf-more-details-to-be-filled-out" class="anchor" href="#steps-to-push-your-shiny-app-to-cf-more-details-to-be-filled-out" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Steps to push your shiny app to CF [more details to be filled out]</h2>
+
+<ol>
+<li> Make sure your shiny app works on your laptop</li>
+<li> Call out required R libraries and other initialization settings in your init.R file</li>
+<li> Reference your shiny app's runApp() R script in the manifest.yml file</li>
+</ol>
+
+<h2>
+<a id="common-mistakes-to-avoid" class="anchor" href="#common-mistakes-to-avoid" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Common mistakes to avoid</h2>
+
+<ul>
+<li>Don't assume that the latest version of buildpacks are good to go and when you push a new app or update an existing one -- you may need to mess around with the buildpack compile script.  After some trial-and-error, I needed to revert to an older version of the R buildpack as the latest version had a compatibility bug with one of the dependent libraries of Shiny.</li>
+<li>When referring to file names in scripts that are used in your app, keep in mind case sensitivity of file names and file extensions.<br>
+</li>
+</ul>
 
 <h1>
 <a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h1>
