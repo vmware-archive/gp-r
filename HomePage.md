@@ -1243,11 +1243,12 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 
 ### Shiny Code
 Create a folder within your app directory and store the following two files (the required two files for any shiny app).   
-* server.r
-* ui.r
+* server.R
+* ui.R
 [more details to be filled out]
 
 ### init.r file
+* Keep in mind that '.r' in the file extension for init.r should be lowercase, as this is what is expected by the buildpack's compile script
 [more details to be filled out]
 
 ### manifest.yml file
