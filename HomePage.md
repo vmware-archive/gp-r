@@ -1230,7 +1230,8 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 * CF environment
 * R buildpack
 * Shiny Code
-* init.R file
+* init.r file
+* startscript.r file
 * manifest.yml file 
 
 ### CF environment
@@ -1251,8 +1252,46 @@ Create a folder within your app directory and store the following two files (the
 * Keep in mind that '.r' in the file extension for init.r should be lowercase, as this is what is expected by the buildpack's compile script
 [more details to be filled out]
 
+### startscript.r file
+* Contains R commands needed to start your shiny app -- in most cases this will include a runApp() function call.
+* Should be contained in the root of your app directory
+* Note that manifest.yml will point to this file
+[more details to be filled out.  show example of startscript.r file]
+
+
 ### manifest.yml file
-The manifest.yml file tells cf push what to do with your app. This includes everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this would be the runApp() command).
+The manifest.yml file tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the [CF documentation](http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html) for more details and information on additional attribute entries that you can include in the manifest.yml file. 
+
+* 'name' attribute
+  * The name of your app, preceded by a single dash and one space
+  * Subsequent lines (i.e. attribute entries) in the manifest.yml file are indented with two spaces to align with 'name'
+  * ex) `name: name_of_your_app`
+* 'buildpack' attribute 
+  * Here you can specify the URL of the buildpack
+  * For shiny apps, it should point to a valid, compatible R buildpack for CF, i.e. git://github.com/wjjung317/heroku-buildpack-r.git
+  * ex) `buildpack: git://github.com/wjjung317/heroku-buildpack-r.git`
+* 'command' attribute
+  * Inculdes commands required to start your Shiny app by pointing to the startscript.r file
+  * ex) `command: R --no-save --gui-none < /app/startscript.r`
+* 'instances' attribute (optional)
+  * Specify the number of app instances that you want to start upon push
+  * If left blank, will be set to default value of 1
+  * ex) `instances: 1`
+* 'memory' attribute (optional)
+  * Specify the memory limit for all instances of the app
+  * If left blank, will be set to default value of 1G
+  * ex) `memory: 1G`
+
+Using the examples provided above, below is a full template of a manifest.yml file that you can use as a suitable starting point for your shiny app:
+```
+applications:
+ - name: name_of_your_app
+   buildpack: git://github.com/wjjung317/heroku-buildpack-r.git
+   command: R --no-save --gui-none < /app/startscript.r
+   instances: 1
+   memory: 1G
+```
+#### 
 
 ## Steps to push your shiny app to CF [more details to be filled out]
 1.  Make sure your shiny app works on your laptop
