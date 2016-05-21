@@ -1245,7 +1245,9 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 ### Shiny Code
 Create a folder within your app directory and store the following two files (the required two files for any shiny app).   
 * server.R
+  * Need to include options(device='cairo') to prevent x11 errors
 * ui.R
+  * Need to include options(device='cairo') to prevent x11 errors
 [more details to be filled out]
 
 ### init.r file
