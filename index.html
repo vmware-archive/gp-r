@@ -1330,7 +1330,8 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 <li>CF environment</li>
 <li>R buildpack</li>
 <li>Shiny Code</li>
-<li>init.R file</li>
+<li>init.r file</li>
+<li>startscript.r file</li>
 <li>manifest.yml file </li>
 </ul>
 
@@ -1339,7 +1340,7 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 
 <ul>
 <li>Set API endpoint </li>
-<li>Login with your login/password</li>
+<li>Login with your username/password</li>
 </ul>
 
 <h3>
@@ -1354,17 +1355,93 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 <h3>
 <a id="shiny-code" class="anchor" href="#shiny-code" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Shiny Code</h3>
 
-<p>[more details to be filled out]</p>
+<p>Create a folder within your app directory and store the following two files (the required two files for any shiny app).   </p>
+
+<ul>
+<li>server.R</li>
+<li>ui.R
+[more details to be filled out]</li>
+</ul>
 
 <h3>
-<a id="initr-file" class="anchor" href="#initr-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>init.R file</h3>
+<a id="initr-file" class="anchor" href="#initr-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>init.r file</h3>
 
-<p>[more details to be filled out]</p>
+<ul>
+<li>Keep in mind that '.r' in the file extension for init.r should be lowercase, as this is what is expected by the buildpack's compile script
+[more details to be filled out]</li>
+</ul>
+
+<h3>
+<a id="startscriptr-file" class="anchor" href="#startscriptr-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>startscript.r file</h3>
+
+<ul>
+<li>Contains R commands needed to start your shiny app -- in most cases this will include a runApp() function call.</li>
+<li>Should be contained in the root of your app directory</li>
+<li>Note that manifest.yml will point to this file
+[more details to be filled out.  show example of startscript.r file]</li>
+</ul>
 
 <h3>
 <a id="manifestyml-file" class="anchor" href="#manifestyml-file" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>manifest.yml file</h3>
 
-<p>[more details to be filled out]</p>
+<p>The manifest.yml file tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the <a href="http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html">CF documentation</a> for more details and information on additional attribute entries that you can include in the manifest.yml file. </p>
+
+<ul>
+<li>'name' attribute
+
+<ul>
+<li>The name of your app, preceded by a single dash and one space</li>
+<li>Subsequent lines (i.e. attribute entries) in the manifest.yml file are indented with two spaces to align with 'name'</li>
+<li>ex) <code>name: name_of_your_app</code>
+</li>
+</ul>
+</li>
+<li>'buildpack' attribute 
+
+<ul>
+<li>Here you can specify the URL of the buildpack</li>
+<li>For shiny apps, it should point to a valid, compatible R buildpack for CF, i.e. git://github.com/wjjung317/heroku-buildpack-r.git</li>
+<li>ex) <code>buildpack: git://github.com/wjjung317/heroku-buildpack-r.git</code>
+</li>
+</ul>
+</li>
+<li>'command' attribute
+
+<ul>
+<li>Inculdes commands required to start your Shiny app by pointing to the startscript.r file</li>
+<li>ex) <code>command: R --no-save --gui-none &lt; /app/startscript.r</code>
+</li>
+</ul>
+</li>
+<li>'instances' attribute (optional)
+
+<ul>
+<li>Specify the number of app instances that you want to start upon push</li>
+<li>If left blank, will be set to default value of 1</li>
+<li>ex) <code>instances: 1</code>
+</li>
+</ul>
+</li>
+<li>'memory' attribute (optional)
+
+<ul>
+<li>Specify the memory limit for all instances of the app</li>
+<li>If left blank, will be set to default value of 1G</li>
+<li>ex) <code>memory: 1G</code>
+</li>
+</ul>
+</li>
+</ul>
+
+<p>Using the examples provided above, below is a full template of a manifest.yml file that you can use as a suitable starting point for your shiny app:</p>
+
+<pre><code>applications:
+ - name: name_of_your_app
+   buildpack: git://github.com/wjjung317/heroku-buildpack-r.git
+   command: R --no-save --gui-none &lt; /app/startscript.r
+   instances: 1
+   memory: 1G
+</code></pre>
 
 <h2>
 <a id="steps-to-push-your-shiny-app-to-cf-more-details-to-be-filled-out" class="anchor" href="#steps-to-push-your-shiny-app-to-cf-more-details-to-be-filled-out" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Steps to push your shiny app to CF [more details to be filled out]</h2>
