@@ -1299,13 +1299,13 @@ applications:
 3.  Reference your shiny app's runApp() R script in the manifest.yml file
 
 ## Common mistakes to avoid
-* Don't assume that the latest version of buildpacks are good to go and when you push a new app or update an existing one -- you may need to mess around with the buildpack compile script.  After some trial-and-error, I needed to revert to an older version of the R buildpack as the latest version had a compatibility bug with one of the dependent libraries of Shiny.
+* Don't assume that the latest version of buildpacks are good to go when you push a new app or update an existing one -- you may need to mess around with the buildpack compile script.  After some trial-and-error, I needed to revert to an older version of the R buildpack as the latest version had a compatibility bug with one of the dependent libraries of Shiny.
 * When referring to file names in scripts that are used in your app, keep in mind case sensitivity of file names and file extensions.  
 
 # Authors and Contributors
-* Woo Jung (@wjjung317)
+* Woo J. Jung (@wjjung317)
 * Srivatsan 'Vatsan' Ramanujam (@vatsan)
 * Noah Zimmerman (@zimmeee)
 * Alex Kagoshima (@alexkago)
 * Ronert Obst (@ronert)
-* Regunathan Radhakrishnan (@regu_r)
+* Regunathan Radhakrishnan (@regunathanr)
