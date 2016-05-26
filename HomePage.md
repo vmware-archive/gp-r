@@ -1238,6 +1238,7 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 Create a folder within your app directory and store the following two files (the required two files for any shiny app).   
 * server.R
 * ui.R
+
 These files should be exactly the same as the files you would use, say to run a Shiny app locally from your laptop, with only the following modifications in both the server.R and ui.R files:
 * Set cairo as the graphics device for your plots to prevent ``'X11 not found'`` errors:
   * Include the following line of code before any graphics related calls are made in the scripts (i.e. plot() or ggplot()):  ``options(device='cairo')``
