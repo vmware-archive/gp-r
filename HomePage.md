@@ -1243,7 +1243,7 @@ These files should be exactly the same as the files you would use, say to run a 
 * Set cairo as the graphics device for your plots to prevent ``'X11 not found'`` errors:
   * Include the following line of code before any graphics related calls are made in the scripts (i.e. plot() or ggplot()):  ``options(device='cairo')``
   * In calls to the [png() family of functions](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/png.html), add a ``type='cairo'`` argument in the function.  For example:  ``png(file.name, width=plot.width, height=plot.height, type="cairo")``.  In theory, the previous bullet point should preclude the need for the modifications proposed in this current bulletpoint -- after some testing, we will remove this line if that is the case.
-* If you absolutely need to save files locally, one potential path to leverage is the default working directory of R.  For example, suppose that you need to save files to a path named ``path_to_save_files``.  Create an alias for the path  ``path_to_save_files<-getwd()`` and refer to this alias in any part of your code that requires a path in which to save files
+* If you absolutely need to save files locally, one potential path to leverage is the default working directory of R.  Create an alias for the working directory,  ``path_to_save_files<-getwd()``, and refer to this alias in any part of your code that requires a path in which to save files.
 
 ### CF environment
 
