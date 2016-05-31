@@ -23,7 +23,7 @@
 <a id="topics-covered" class="anchor" href="#topics-covered" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Topics covered</h1>
 
 <ul>
-<li><a href="#overview">Overview</a></li>
+<li><a href="#all_overview">Overview</a></li>
 <li>
 <a href="#plr">PL/R on Greenplum &amp; HAWQ</a>
 
@@ -141,7 +141,7 @@
 </ul>
 
 <h1>
-<a id="-overview" class="anchor" href="#-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="overview"></a> Overview</h1>
+<a id="-overview" class="anchor" href="#-overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="all_overview"></a> Overview</h1>
 
 <p>In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast.  One of the major focus areas of this guide is to explore the situation involving large data sets where these two assumptions are violated. </p>
 
@@ -1553,7 +1553,7 @@ shiny::runApp('whatif', host = '0.0.0.0', port = as.numeric(port))
 
 <ol>
 <li> Confirm that your shiny app works locally on your laptop</li>
-<li> Confirm that you've fulfilled the tasks described in <a href="shiny_cf_requirements">Mininum Requirements for Hosting Shiny Apps on CF</a>
+<li> Confirm that you've fulfilled the tasks described in <a href="#shiny_cf_requirements">Mininum Requirements for Hosting Shiny Apps on CF</a>
 </li>
 <li> In Terminal, <code>cd</code> into the root folder of your <a href="#shiny_cf_requirements_appdir">App directory</a>
 </li>
