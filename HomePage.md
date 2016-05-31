@@ -1,6 +1,6 @@
 Topics covered
 ==============
-* [Overview](#overview)
+* [Overview](#all_overview)
 * [PL/R on Greenplum & HAWQ](#plr)
   * [Getting Started](#plr_gettingstarted)
        * [PL/R Architecture](#plr_arch)
@@ -52,7 +52,7 @@ Topics covered
   * [Common mistakes to avoid](#shiny_cf_commonmistakes)
 
   
-# <a name="overview"/> Overview 
+# <a name="all_overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast.  One of the major focus areas of this guide is to explore the situation involving large data sets where these two assumptions are violated. 
 
 [Greenplum Database (GPDB)](http://pivotal.io/big-data/pivotal-greenplum) and [Apache HAWQ](http://hawq.incubator.apache.org) offer several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with these platforms. In this guide, we will outline the most common practices and provide code examples to help get you started.
