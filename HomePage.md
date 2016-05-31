@@ -1238,13 +1238,13 @@ In this guide, we will assume that the reader is familiar with the [Shiny](http:
 We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. [here](http://12factor.net/)) and ideally your [developer & designer](http://pivotallabs.com) buddies to improve and optimize.
 
 ## <a name="shiny_cf_requirements"/> Mininum Requirements for Hosting Shiny Apps on CF
-* CF environment
-* R buildpack
+* [CF environment](#shiny_cf_requirements_cfenv)
+* [R buildpack](#shiny_cf_requirements_buildpack)
 * App directory, containing the following:
-  * a subdirectory containing your Shiny code
-  * init.r file
-  * startscript.R file
-  * manifest.yml file 
+  * a subdirectory containing your [Shiny code](#shiny_cf_requirements_shinycode)
+  * [init.r file](#shiny_cf_requirements_init)
+  * [startscript.R file](#shiny_cf_requirements_startscript)
+  * [manifest.yml file](#shiny_cf_requirements_mani) 
 
 ### <a name="shiny_cf_requirements_cfenv"/> Mininum Requirements for Hosting Shiny Apps on CF: CF environment
 An obvious prerequisite for pushing shiny apps to CF is that you'll need a CF environment to push the app to.  If your team uses a CF environment to host applications, request push access to the environment from your administrator.  
@@ -1257,10 +1257,10 @@ For development & exploratory work, you can also run CF locally on your laptop u
 
 ### <a name="shiny_cf_requirements_appdir"/> Mininum Requirements for Hosting Shiny Apps on CF: App directory
 Create a directory (say on your laptop) where you will store the code and scripts needed to push your shiny app to CF.  As described earlier, this directory (i.e. the App directory) will contain:
-* a subdirectory containing your Shiny code
-* init.r file in the root folder
-* startscript.R file in the root folder
-* manifest.yml file in the root folder 
+* a subdirectory containing your [Shiny code](#shiny_cf_requirements_shinycode)
+* [init.r file](#shiny_cf_requirements_init) in the root folder
+* [startscript.R file](#shiny_cf_requirements_startscript) in the root folder
+* [manifest.yml file](#shiny_cf_requirements_mani) in the root folder 
 
 #### <a name="shiny_cf_requirements_shinycode"/> Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code
 Create a subdirectory within your app directory and store the following two files (the required two files for any shiny app).  Remember the name of this subdirectory as you will reference it when you eventually push your app to CF.
@@ -1354,8 +1354,8 @@ applications:
 2.  Confirm that you've fulfilled the tasks described in [Mininum Requirements for Hosting Shiny Apps on CF](shiny_cf_requirements)
 3.  In Terminal, ``cd`` into the root folder of your [App directory](#shiny_cf_requirements_appdir)
 4.  In Terminal, run a command like the following: ``cf push <shiny_app_name> -b <url_to_R_buildpack>``
-    * <shiny_app_name> is the name of the subdirectory created in [Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code](#shiny_cf_requirements_shinycode)
-    * <url_to_R_buildpack> is the link to the R buildpack for CF -- one example would be to set this to https://github.com/wjjung317/heroku-buildpack-r 
+    * ``<shiny_app_name>`` is the name of the subdirectory created in [Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code](#shiny_cf_requirements_shinycode)
+    * ``<url_to_R_buildpack>`` is the link to the R buildpack for CF -- one example would be to set this to https://github.com/wjjung317/heroku-buildpack-r 
     * Say the name of your shiny app subdirectory is 'my_shiny_subdirectory'.  Then an example of a command that you'd run in this step is the following:  ``cf push my_shiny_subdirectory -b https://github.com/wjjung317/heroku-buildpack-r``
 5.  Wait until the CLI has indicated that your your app has started.  If the CLI indicates that you've  run into issues/errors, debug and repeat steps 1-4.  See [next section](#shiny_cf_commonmistakes) for common sources of issues/errors.
 
