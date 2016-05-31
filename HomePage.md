@@ -1356,7 +1356,7 @@ applications:
 4.  In Terminal, run a command like the following: ``cf push <shiny_app_name> -b <url_to_R_buildpack>``
     * ``<shiny_app_name>`` is the name of the subdirectory created in [Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code](#shiny_cf_requirements_shinycode)
     * ``<url_to_R_buildpack>`` is the link to the R buildpack for CF -- one example would be to set this to https://github.com/wjjung317/heroku-buildpack-r 
-    * Say the name of your shiny app subdirectory is 'my_shiny_subdirectory'.  Then an example of a command that you'd run in this step is the following:  ``cf push my_shiny_subdirectory -b https://github.com/wjjung317/heroku-buildpack-r``
+    * Suppose that the name of your shiny app subdirectory is 'my_shiny_subdirectory'.  Then an example of a command that you'd run in this step is the following:  ``cf push my_shiny_subdirectory -b https://github.com/wjjung317/heroku-buildpack-r``
 5.  Wait until the CLI has indicated that your your app has started.  If the CLI indicates that you've  run into issues/errors, debug and repeat steps 1-4.  See [next section](#shiny_cf_commonmistakes) for common sources of issues/errors.
 
 ## <a name="shiny_cf_commonmistakes"/> Common mistakes to avoid
