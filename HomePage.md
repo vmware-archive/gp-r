@@ -1238,9 +1238,10 @@ In this guide, we will assume that the reader is familiar with the [Shiny](http:
 We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. [here](http://12factor.net/)) and ideally your [developer & designer](http://pivotallabs.com) buddies to improve and optimize.
 
 ## <a name="shiny_cf_requirements"/> Mininum Requirements for Hosting Shiny Apps on CF
+Listed below are the minimum requirements needed to host a Shiny app on CF:
 * [CF environment](#shiny_cf_requirements_cfenv)
 * [R buildpack](#shiny_cf_requirements_buildpack)
-* App directory, containing the following:
+* [App directory](#shiny_cf_requirements_appdir), containing the following:
   * a subdirectory containing your [Shiny code](#shiny_cf_requirements_shinycode)
   * [init.r file](#shiny_cf_requirements_init)
   * [startscript.R file](#shiny_cf_requirements_startscript)
