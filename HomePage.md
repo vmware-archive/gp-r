@@ -1227,15 +1227,29 @@ In this guide, we will assume that the reader is familiar with the [Shiny](http:
 We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. [here](http://12factor.net/)) and ideally your [developer & designer](http://pivotallabs.com) buddies to improve and optimize.
 
 ## Bare Mininum Requirements for Hosting Shiny Apps on CF
-* Shiny Code
 * CF environment
 * R buildpack
-* init.r file
-* startscript.r file
-* manifest.yml file 
+* App directory, containing the following:
+  * a subdirectory containing your Shiny code
+  * init.r file
+  * startscript.r file
+  * manifest.yml file 
 
-### Shiny Code
-Create a folder within your app directory and store the following two files (the required two files for any shiny app).   
+### CF environment
+
+### R buildpack
+* https://github.com/wjjung317/heroku-buildpack-r
+[more details to be filled out]
+
+### App directory
+Create a directory (say on your laptop) where you will store the code and scripts needed to push your shiny app to CF.  As described earlier, this directory (i.e. the App directory) will contain:
+* a subdirectory containing your Shiny code
+* init.r file in the root folder
+* startscript.r file in the root folder
+* manifest.yml file in the root folder 
+
+#### Shiny Code
+Create a subdirectory within your app directory and store the following two files (the required two files for any shiny app).   
 * server.R
 * ui.R
 
@@ -1245,18 +1259,30 @@ These files should be exactly the same as the files you would use, say to run a 
   * In calls to the [png() family of functions](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/png.html), add a ``type='cairo'`` argument in the function.  For example:  ``png(file.name, width=plot.width, height=plot.height, type="cairo")``.  In theory, the previous bullet point should preclude the need for the modifications proposed in this current bulletpoint -- after some testing, we will remove this line if that is the case.
 * If you absolutely need to save files locally, one potential path to leverage is the default working directory of R.  Create an alias for the working directory,  ``path_to_save_files<-getwd()``, and refer to this alias in any part of your code that requires a path in which to save files.
 
-### CF environment
+#### init.r file
+This file is an R script and should be saved in the root folder of your app directory.  It should contain the following:
+* ``install.packages()`` calls to add-on R libraries that are needed in your shiny code.  
+  * One line per package
+  * Always explicitly set ``dependencies = TRUE`` within each ``install.packages()`` call
+  * Within the context of shiny apps on CF, ``install.packages("shiny", dependencies = TRUE)`` and ``install.packages("Cairo", dependencies = TRUE)`` will invariably be included in all init.r files 
+* Any other required initialization calls, such as adjustments to default options settings.
+  * For example, it is good practice to add ``options(device='cairo')`` as a line in your init.r file
 
+Please keep in mind that '.r' in the file extension for init.r should be lowercase, as this is what is expected by default in the buildpack's compile script.
 
-### R buildpack
-* https://github.com/wjjung317/heroku-buildpack-r
-[more details to be filled out]
+Below is an example of an init.r file:
+```
+install.packages("Cairo", dependencies = TRUE)
+install.packages("reshape", dependencies = TRUE)
+install.packages("shiny", dependencies = TRUE)
+install.packages("data/shiny-incubator-master.tar.gz", repos = NULL, type="source")
+install.packages("RPostgreSQL", dependencies = TRUE)
+install.packages("PivotalR", dependencies = TRUE)
+install.packages("lubridate", dependencies = TRUE)
+install.packages("googleVis", dependencies = TRUE)
 
-
-
-### init.r file
-* Keep in mind that '.r' in the file extension for init.r should be lowercase, as this is what is expected by the buildpack's compile script
-[more details to be filled out]
+options(device='cairo')
+```
 
 ### startscript.r file
 * Contains R commands needed to start your shiny app -- in most cases this will include a runApp() function call.
