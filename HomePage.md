@@ -1351,7 +1351,7 @@ applications:
 
 ## <a name="shiny_cf_steps"/> Steps to push your shiny app to CF 
 1.  Confirm that your shiny app works locally on your laptop
-2.  Confirm that you've fulfilled the tasks described in [Mininum Requirements for Hosting Shiny Apps on CF](shiny_cf_requirements)
+2.  Confirm that you've fulfilled the tasks described in [Mininum Requirements for Hosting Shiny Apps on CF](#shiny_cf_requirements)
 3.  In Terminal, ``cd`` into the root folder of your [App directory](#shiny_cf_requirements_appdir)
 4.  In Terminal, run a command like the following: ``cf push <shiny_app_name> -b <url_to_R_buildpack>``
     * ``<shiny_app_name>`` is the name of the subdirectory created in [Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code](#shiny_cf_requirements_shinycode)
