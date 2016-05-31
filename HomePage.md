@@ -1232,10 +1232,13 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 * App directory, containing the following:
   * a subdirectory containing your Shiny code
   * init.r file
-  * startscript.r file
+  * startscript.R file
   * manifest.yml file 
 
 ### CF environment
+An obvious prerequisite for pushing shiny apps to CF is that you'll need a CF environment to push the app to.  If your team uses a CF environment to host applications, request push access to the environment from your administrator.  
+
+For development & exploratory work, you can also run CF locally on your laptop using [PCF-dev](https://docs.pivotal.io/pcf-dev/) and host your shiny app in that environment.  
 
 ### R buildpack
 * https://github.com/wjjung317/heroku-buildpack-r
@@ -1245,7 +1248,7 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
 Create a directory (say on your laptop) where you will store the code and scripts needed to push your shiny app to CF.  As described earlier, this directory (i.e. the App directory) will contain:
 * a subdirectory containing your Shiny code
 * init.r file in the root folder
-* startscript.r file in the root folder
+* startscript.R file in the root folder
 * manifest.yml file in the root folder 
 
 #### Shiny Code
@@ -1270,12 +1273,11 @@ This file is an R script and should be saved in the root folder of your app dire
 
 Please keep in mind that '.r' in the file extension for init.r should be lowercase, as this is what is expected by default in the buildpack's compile script.
 
-Below is an example of an init.r file:
+With the above guidelines in mind, below is an example of an init.r file:
 ```
 install.packages("Cairo", dependencies = TRUE)
 install.packages("reshape", dependencies = TRUE)
 install.packages("shiny", dependencies = TRUE)
-install.packages("data/shiny-incubator-master.tar.gz", repos = NULL, type="source")
 install.packages("RPostgreSQL", dependencies = TRUE)
 install.packages("PivotalR", dependencies = TRUE)
 install.packages("lubridate", dependencies = TRUE)
@@ -1284,15 +1286,26 @@ install.packages("googleVis", dependencies = TRUE)
 options(device='cairo')
 ```
 
-### startscript.r file
-* Contains R commands needed to start your shiny app -- in most cases this will include a runApp() function call.
-* Should be contained in the root of your app directory
-* Note that manifest.yml will point to this file
-[more details to be filled out.  show example of startscript.r file]
+#### startscript.R file
+This file is an R script and should be saved in the root folder of your app directory.  Below are some details about this file:
+* `library()` calls to bring up required libaries that are needed in your server.R and ui.R shiny files
+* R commands needed to start your shiny app -- in most cases this will include a ``runApp()`` function call
+* Assignment of the port number to use in the aforementioned ``runApp()`` call, via the ``Sys.getenv()`` function
 
+Note that manifest.yml (which we describe in the next subsection) will point to this file
 
-### manifest.yml file
-The manifest.yml file tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the [CF documentation](http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html) for more details and information on additional attribute entries that you can include in the manifest.yml file. 
+With the above guidelines in mind, below is an example of a startscript.R file:
+```
+library(shiny)
+library(PivotalR)
+
+port <- Sys.getenv('PORT') 
+
+shiny::runApp('whatif', host = '0.0.0.0', port = as.numeric(port))
+```
+
+#### manifest.yml file
+The manifest.yml file should be saved in the root folder of your app directory, and tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the [CF documentation](http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html) for more details and information on additional attribute entries that you can include in the manifest.yml file. 
 
 * 'name' attribute
   * The name of your app, preceded by a single dash and one space
@@ -1303,8 +1316,8 @@ The manifest.yml file tells cf push what to do with your app by defining a set o
   * For shiny apps, it should point to a valid, compatible R buildpack for CF, i.e. git://github.com/wjjung317/heroku-buildpack-r.git
   * ex) `buildpack: git://github.com/wjjung317/heroku-buildpack-r.git`
 * 'command' attribute
-  * Inculdes commands required to start your Shiny app by pointing to the startscript.r file
-  * ex) `command: R --no-save --gui-none < /app/startscript.r`
+  * Inculdes commands required to start your Shiny app by pointing to the startscript.R file
+  * ex) `command: R --no-save --gui-none < /app/startscript.R`
 * 'instances' attribute (optional)
   * Specify the number of app instances that you want to start upon push
   * If left blank, will be set to default value of 1
@@ -1319,11 +1332,11 @@ Using the examples provided above, below is a full template of a manifest.yml fi
 applications:
  - name: name_of_your_app
    buildpack: git://github.com/wjjung317/heroku-buildpack-r.git
-   command: R --no-save --gui-none < /app/startscript.r
+   command: R --no-save --gui-none < /app/startscript.R
    instances: 1
    memory: 1G
 ```
-#### 
+
 
 ## Steps to push your shiny app to CF [more details to be filled out]
 1.  Make sure your shiny app works on your laptop
