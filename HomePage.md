@@ -39,6 +39,17 @@ Topics covered
   * [Demo](#pivotalr_demo)
   * [Download & Installation](#pivotalr_install)
 * [Shiny Apps on Cloud Foundry](#shiny_cf)
+  * [Overview](#shiny_cf_overview)
+  * [Mininum Requirements for Hosting Shiny Apps on CF](#shiny_cf_requirements)
+    * [CF environment](#shiny_cf_requirements_cfenv)
+    * [R buildpack](#shiny_cf_requirements_buildpack)
+    * [App directory](#shiny_cf_requirements_appdir)
+      * [Shiny Code](#shiny_cf_requirements_shinycode)
+      * [init.r file](#shiny_cf_requirements_init)
+      * [startscript.R file](#shiny_cf_requirements_startscript)
+      * [manifest.yml file](#shiny_cf_requirements_mani)
+  * [Steps to push your shiny app to CF](#shiny_cf_steps)
+  * [Common mistakes to avoid](#shiny_cf_commonmistakes)
 
   
 # <a name="overview"/> Overview 
@@ -1220,13 +1231,13 @@ PivotalR is available for download and installation from [CRAN](http://cran.r-pr
 
 # <a name="shiny_cf"/> [WORK IN PROGRESS] Shiny Apps on Cloud Foundry 
 
-## Overview
+##  <a name="shiny_cf_overview"/> Overview 
 
 In this guide, we will assume that the reader is familiar with the [Shiny](http://shiny.rstudio.com/) framework for building apps and dashboards.  Background on Shiny and those who need a refresher are encouraged to look [here](http://shiny.rstudio.com/tutorial/).  
 
 We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. [here](http://12factor.net/)) and ideally your [developer & designer](http://pivotallabs.com) buddies to improve and optimize.
 
-## Bare Mininum Requirements for Hosting Shiny Apps on CF
+## <a name="shiny_cf_requirements"/> Mininum Requirements for Hosting Shiny Apps on CF
 * CF environment
 * R buildpack
 * App directory, containing the following:
@@ -1235,24 +1246,24 @@ We place our focus on helping you get started on hosting Shiny apps on Cloud Fou
   * startscript.R file
   * manifest.yml file 
 
-### CF environment
+### <a name="shiny_cf_requirements_cfenv"/> Mininum Requirements for Hosting Shiny Apps on CF: CF environment
 An obvious prerequisite for pushing shiny apps to CF is that you'll need a CF environment to push the app to.  If your team uses a CF environment to host applications, request push access to the environment from your administrator.  
 
 For development & exploratory work, you can also run CF locally on your laptop using [PCF-dev](https://docs.pivotal.io/pcf-dev/) and host your shiny app in that environment.  
 
-### R buildpack
+### <a name="shiny_cf_requirements_buildpack"/> Mininum Requirements for Hosting Shiny Apps on CF: R buildpack
 * https://github.com/wjjung317/heroku-buildpack-r
 [more details to be filled out]
 
-### App directory
+### <a name="shiny_cf_requirements_appdir"/> Mininum Requirements for Hosting Shiny Apps on CF: App directory
 Create a directory (say on your laptop) where you will store the code and scripts needed to push your shiny app to CF.  As described earlier, this directory (i.e. the App directory) will contain:
 * a subdirectory containing your Shiny code
 * init.r file in the root folder
 * startscript.R file in the root folder
 * manifest.yml file in the root folder 
 
-#### Shiny Code
-Create a subdirectory within your app directory and store the following two files (the required two files for any shiny app).   
+#### <a name="shiny_cf_requirements_shinycode"/> Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code
+Create a subdirectory within your app directory and store the following two files (the required two files for any shiny app).  Remember the name of this subdirectory as you will reference it when you eventually push your app to CF.
 * server.R
 * ui.R
 
@@ -1262,7 +1273,7 @@ These files should be exactly the same as the files you would use, say to run a 
   * In calls to the [png() family of functions](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/png.html), add a ``type='cairo'`` argument in the function.  For example:  ``png(file.name, width=plot.width, height=plot.height, type="cairo")``.  In theory, the previous bullet point should preclude the need for the modifications proposed in this current bulletpoint -- after some testing, we will remove this line if that is the case.
 * If you absolutely need to save files locally, one potential path to leverage is the default working directory of R.  Create an alias for the working directory,  ``path_to_save_files<-getwd()``, and refer to this alias in any part of your code that requires a path in which to save files.
 
-#### init.r file
+#### <a name="shiny_cf_requirements_init"/> Mininum Requirements for Hosting Shiny Apps on CF: init.r file
 This file is an R script and should be saved in the root folder of your app directory.  It should contain the following:
 * ``install.packages()`` calls to add-on R libraries that are needed in your shiny code.  
   * One line per package
@@ -1286,7 +1297,7 @@ install.packages("googleVis", dependencies = TRUE)
 options(device='cairo')
 ```
 
-#### startscript.R file
+#### <a name="shiny_cf_requirements_startscript"/> Mininum Requirements for Hosting Shiny Apps on CF: startscript.R file
 This file is an R script and should be saved in the root folder of your app directory.  Below are some details about this file:
 * `library()` calls to bring up required libaries that are needed in your server.R and ui.R shiny files
 * R commands needed to start your shiny app -- in most cases this will include a ``runApp()`` function call
@@ -1304,7 +1315,7 @@ port <- Sys.getenv('PORT')
 shiny::runApp('whatif', host = '0.0.0.0', port = as.numeric(port))
 ```
 
-#### manifest.yml file
+#### <a name="shiny_cf_requirements_mani"/> Mininum Requirements for Hosting Shiny Apps on CF: manifest.yml file
 The manifest.yml file should be saved in the root folder of your app directory, and tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the [CF documentation](http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html) for more details and information on additional attribute entries that you can include in the manifest.yml file. 
 
 * 'name' attribute
@@ -1338,12 +1349,17 @@ applications:
 ```
 
 
-## Steps to push your shiny app to CF [more details to be filled out]
-1.  Make sure your shiny app works on your laptop
-2.  Call out required R libraries and other initialization settings in your init.R file
-3.  Reference your shiny app's runApp() R script in the manifest.yml file
+## <a name="shiny_cf_steps"/> Steps to push your shiny app to CF 
+1.  Confirm that your shiny app works locally on your laptop
+2.  Confirm that you've fulfilled the tasks described in [Mininum Requirements for Hosting Shiny Apps on CF](shiny_cf_requirements)
+3.  In Terminal, ``cd`` into the root folder of your [App directory](#shiny_cf_requirements_appdir)
+4.  In Terminal, run a command like the following: ``cf push <shiny_app_name> -b <url_to_R_buildpack>``
+    * <shiny_app_name> is the name of the subdirectory created in [Mininum Requirements for Hosting Shiny Apps on CF: Shiny Code](#shiny_cf_requirements_shinycode)
+    * <url_to_R_buildpack> is the link to the R buildpack for CF -- one example would be to set this to https://github.com/wjjung317/heroku-buildpack-r 
+    * Say the name of your shiny app subdirectory is 'my_shiny_subdirectory'.  Then an example of a command that you'd run in this step is the following:  ``cf push my_shiny_subdirectory -b https://github.com/wjjung317/heroku-buildpack-r``
+5.  Wait until the CLI has indicated that your your app has started.  If the CLI indicates that you've  run into issues/errors, debug and repeat steps 1-4.  See [next section](#shiny_cf_commonmistakes) for common sources of issues/errors.
 
-## Common mistakes to avoid
+## <a name="shiny_cf_commonmistakes"/> Common mistakes to avoid
 * Don't assume that the latest version of buildpacks are good to go when you push a new app or update an existing one -- you may need to mess around with the buildpack compile script.  After some trial-and-error, I needed to revert to an older version of the R buildpack as the latest version had a compatibility bug with one of the dependent libraries of Shiny.
 * When referring to file names in scripts that are used in your app, keep in mind case sensitivity of file names and file extensions.  
 
