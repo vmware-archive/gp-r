@@ -1340,7 +1340,9 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 <p>PivotalR is available for download and installation from <a href="http://cran.r-project.org/web/packages/PivotalR/">CRAN</a> and its <a href="https://github.com/gopivotal/PivotalR">GitHub Page</a>.</p>
 
 <h1>
-<a id="-work-in-progress-shiny-apps-on-cloud-foundry" class="anchor" href="#-work-in-progress-shiny-apps-on-cloud-foundry" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf"></a> [WORK IN PROGRESS] Shiny Apps on Cloud Foundry</h1>
+<a id="-shiny-apps-on-cloud-foundry" class="anchor" href="#-shiny-apps-on-cloud-foundry" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf"></a> Shiny Apps on Cloud Foundry</h1>
+
+<p><img src="https://github.com/pivotalsoftware/whatif-shiny/blob/gh-pages/data/whatif_demo_720.gif" alt="Alt Text"></p>
 
 <h2>
 <a id="-overview-1" class="anchor" href="#-overview-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf_overview"></a> Overview</h2>
@@ -1352,10 +1354,13 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 <h2>
 <a id="-mininum-requirements-for-hosting-shiny-apps-on-cf" class="anchor" href="#-mininum-requirements-for-hosting-shiny-apps-on-cf" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf_requirements"></a> Mininum Requirements for Hosting Shiny Apps on CF</h2>
 
+<p>Listed below are the minimum requirements needed to host a Shiny app on CF:</p>
+
 <ul>
 <li><a href="#shiny_cf_requirements_cfenv">CF environment</a></li>
 <li><a href="#shiny_cf_requirements_buildpack">R buildpack</a></li>
-<li>App directory, containing the following:
+<li>
+<a href="#shiny_cf_requirements_appdir">App directory</a>, containing the following:
 
 <ul>
 <li>a subdirectory containing your <a href="#shiny_cf_requirements_shinycode">Shiny code</a>
@@ -1378,11 +1383,11 @@ using Ridge Regression from the <code>MASS</code> package, the second demonstrat
 <h3>
 <a id="-mininum-requirements-for-hosting-shiny-apps-on-cf-r-buildpack" class="anchor" href="#-mininum-requirements-for-hosting-shiny-apps-on-cf-r-buildpack" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf_requirements_buildpack"></a> Mininum Requirements for Hosting Shiny Apps on CF: R buildpack</h3>
 
-<ul>
-<li>
-<a href="https://github.com/wjjung317/heroku-buildpack-r">https://github.com/wjjung317/heroku-buildpack-r</a>
-[more details to be filled out]</li>
-</ul>
+<p>Buildpacks provide framework and runtime support for your applications.  In the case of shiny apps, this would translate to an R buildpack that at a minimum also includes the shiny library.  </p>
+
+<p>Currently, we are using an <a href="https://github.com/wjjung317/heroku-buildpack-r">R buildpack for CF</a> that is heavily based on the <a href="https://github.com/virtualstaticvoid/heroku-buildpack-r">R buildpack for Heroku</a>.  Some <a href="https://github.com/wjjung317/heroku-buildpack-r/commit/d135794d2c49b36a043c18d01bfc6c7e2bbc5b44">modifications</a> were made to the Heroku R buildpack to allow compatibility with shiny.  </p>
+
+<p>For the purposes of pushing a shiny app to CF, one only needs to copy the url for this modified R buildpack: <a href="https://github.com/wjjung317/heroku-buildpack-r">https://github.com/wjjung317/heroku-buildpack-r</a>.  </p>
 
 <h3>
 <a id="-mininum-requirements-for-hosting-shiny-apps-on-cf-app-directory" class="anchor" href="#-mininum-requirements-for-hosting-shiny-apps-on-cf-app-directory" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf_requirements_appdir"></a> Mininum Requirements for Hosting Shiny Apps on CF: App directory</h3>
