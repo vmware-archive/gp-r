@@ -1231,6 +1231,8 @@ PivotalR is available for download and installation from [CRAN](http://cran.r-pr
 
 # <a name="shiny_cf"/> Shiny Apps on Cloud Foundry 
 
+![Alt Text](https://github.com/pivotalsoftware/whatif-shiny/blob/gh-pages/data/whatif_demo_720.gif)
+
 ##  <a name="shiny_cf_overview"/> Overview 
 
 In this guide, we will assume that the reader is familiar with the [Shiny](http://shiny.rstudio.com/) framework for building apps and dashboards.  Background on Shiny and those who need a refresher are encouraged to look [here](http://shiny.rstudio.com/tutorial/).  
