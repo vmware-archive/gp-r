@@ -1229,7 +1229,7 @@ We have put together a [video demo](http://www.youtube.com/watch?v=6cmyRCMY6j0) 
 PivotalR is available for download and installation from [CRAN](http://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/gopivotal/PivotalR).
 
 
-# <a name="shiny_cf"/> [WORK IN PROGRESS] Shiny Apps on Cloud Foundry 
+# <a name="shiny_cf"/> Shiny Apps on Cloud Foundry 
 
 ##  <a name="shiny_cf_overview"/> Overview 
 
@@ -1253,8 +1253,11 @@ An obvious prerequisite for pushing shiny apps to CF is that you'll need a CF en
 For development & exploratory work, you can also run CF locally on your laptop using [PCF-dev](https://docs.pivotal.io/pcf-dev/) and host your shiny app in that environment.  
 
 ### <a name="shiny_cf_requirements_buildpack"/> Mininum Requirements for Hosting Shiny Apps on CF: R buildpack
-* https://github.com/wjjung317/heroku-buildpack-r
-[more details to be filled out]
+Buildpacks provide framework and runtime support for your applications.  In the case of shiny apps, this would translate to an R buildpack that at a minimum also includes the shiny library.  
+
+Currently, we are using an [R buildpack for CF](https://github.com/wjjung317/heroku-buildpack-r) that is heavily based on the [R buildpack for Heroku] (https://github.com/virtualstaticvoid/heroku-buildpack-r).  Some [modifications](https://github.com/wjjung317/heroku-buildpack-r/commit/d135794d2c49b36a043c18d01bfc6c7e2bbc5b44) were made to the Heroku R buildpack to allow compatibility with shiny.  
+
+For the purposes of pushing a shiny app to CF, one only needs to copy the url for this modified R buildpack: https://github.com/wjjung317/heroku-buildpack-r.  
 
 ### <a name="shiny_cf_requirements_appdir"/> Mininum Requirements for Hosting Shiny Apps on CF: App directory
 Create a directory (say on your laptop) where you will store the code and scripts needed to push your shiny app to CF.  As described earlier, this directory (i.e. the App directory) will contain:
