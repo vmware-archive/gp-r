@@ -1231,7 +1231,7 @@ PivotalR is available for download and installation from [CRAN](http://cran.r-pr
 
 # <a name="shiny_cf"/> Shiny Apps on Cloud Foundry 
 
-![Alt Text](https://github.com/pivotalsoftware/gp-r/blob/gh-pages/images/whatif_demo_720.giff)
+![Alt Text](https://github.com/pivotalsoftware/gp-r/blob/gh-pages/images/whatif_demo_720.gif)
 
 ##  <a name="shiny_cf_overview"/> Overview 
 
