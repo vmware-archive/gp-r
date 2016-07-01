@@ -50,7 +50,7 @@ Topics covered
       * [manifest.yml file](#shiny_cf_requirements_mani)
   * [Steps to push your shiny app to CF](#shiny_cf_steps)
   * [Common mistakes to avoid](#shiny_cf_commonmistakes)
-
+  * [Example: Pushing the Superzip App to CF](<#shiny_cf_example_superzip>)
   
 # <a name="all_overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast.  One of the major focus areas of this guide is to explore the situation involving large data sets where these two assumptions are violated. 
@@ -1366,6 +1366,13 @@ applications:
 ## <a name="shiny_cf_commonmistakes"/> Common mistakes to avoid
 * Don't assume that the latest version of buildpacks are good to go when you push a new app or update an existing one -- you may need to mess around with the buildpack compile script.  After some trial-and-error, I needed to revert to an older version of the R buildpack as the latest version had a compatibility bug with one of the dependent libraries of Shiny.
 * When referring to file names in scripts that are used in your app, keep in mind case sensitivity of file names and file extensions.  
+
+## <a name="shiny_cf_example_superzip"/> Example: Pushing the Superzip App to CF
+
+Please take a look at [this repo](https://github.com/pivotalsoftware/superzip) for an example of how to slightly modify and enable a Shiny app to run on CF.  We take the beautiful [Superzip app](https://github.com/rstudio/shiny-examples/tree/master/063-superzip-example) from RStudio's Shiny Gallery and push it to CF -- a [live version of the slightly modified app that runs on CF can be found here](http://superzip.pcf1-rdu.nasa.pivotal.io/).  As described in this guide, only the following files were modified/added from the original RStudio code to make this happen:
+
+* Modified: [ui.R](https://github.com/pivotalsoftware/superzip/blob/master/superzip/UI.R), [server.R](https://github.com/pivotalsoftware/superzip/blob/master/superzip/server.R)
+* Added: [init.r](https://github.com/pivotalsoftware/superzip/blob/master/init.r), [startscript.R](https://github.com/pivotalsoftware/superzip/blob/master/startscript.R), [manifest.yml](https://github.com/pivotalsoftware/superzip/blob/master/manifest.yml)
 
 # Authors and Contributors
 * Woo J. Jung (@wjjung317)
