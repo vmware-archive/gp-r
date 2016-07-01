@@ -136,6 +136,7 @@
 </li>
 <li><a href="#shiny_cf_steps">Steps to push your shiny app to CF</a></li>
 <li><a href="#shiny_cf_commonmistakes">Common mistakes to avoid</a></li>
+<li><a href="#shiny_cf_example_superzip">Example: Pushing the Superzip App to CF</a></li>
 </ul>
 </li>
 </ul>
@@ -1581,6 +1582,18 @@ shiny::runApp('whatif', host = '0.0.0.0', port = as.numeric(port))
 <ul>
 <li>Don't assume that the latest version of buildpacks are good to go when you push a new app or update an existing one -- you may need to mess around with the buildpack compile script.  After some trial-and-error, I needed to revert to an older version of the R buildpack as the latest version had a compatibility bug with one of the dependent libraries of Shiny.</li>
 <li>When referring to file names in scripts that are used in your app, keep in mind case sensitivity of file names and file extensions.<br>
+</li>
+</ul>
+
+<h2>
+<a id="-example-pushing-the-superzip-app-to-cf" class="anchor" href="#-example-pushing-the-superzip-app-to-cf" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><a name="shiny_cf_example_superzip"></a> Example: Pushing the Superzip App to CF</h2>
+
+<p>Please take a look at <a href="https://github.com/pivotalsoftware/superzip">this repo</a> for an example of how to slightly modify and enable a Shiny app to run on CF.  We take the beautiful <a href="https://github.com/rstudio/shiny-examples/tree/master/063-superzip-example">Superzip app</a> from RStudio's Shiny Gallery and push it to CF -- a <a href="http://superzip.pcf1-rdu.nasa.pivotal.io/">live version of the slightly modified app that runs on CF can be found here</a>.  As described in this guide, only the following files were modified/added from the original RStudio code to make this happen:</p>
+
+<ul>
+<li>Modified: <a href="https://github.com/pivotalsoftware/superzip/blob/master/superzip/UI.R">ui.R</a>, <a href="https://github.com/pivotalsoftware/superzip/blob/master/superzip/server.R">server.R</a>
+</li>
+<li>Added: <a href="https://github.com/pivotalsoftware/superzip/blob/master/init.r">init.r</a>, <a href="https://github.com/pivotalsoftware/superzip/blob/master/startscript.R">startscript.R</a>, <a href="https://github.com/pivotalsoftware/superzip/blob/master/manifest.yml">manifest.yml</a>
 </li>
 </ul>
 
