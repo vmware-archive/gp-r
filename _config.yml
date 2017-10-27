@@ -1,0 +1,8 @@
+title: Pivotal | R
+description: A place for all things Pivotal & R
+google_analytics: UA-39168204-1
+show_downloads: true
+theme: jekyll-theme-cayman
+
+gems:
+  - jekyll-mentions
