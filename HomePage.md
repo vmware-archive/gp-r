@@ -1369,7 +1369,7 @@ applications:
 
 ## <a name="shiny_cf_example_superzip"/> Example: Pushing the Superzip App to CF
 
-Please take a look at [this repo](https://github.com/pivotalsoftware/superzip) for an example of how to slightly modify and enable a Shiny app to run on CF.  We take the beautiful [Superzip app](https://github.com/rstudio/shiny-examples/tree/master/063-superzip-example) from RStudio's Shiny Gallery and push it to CF -- a [live version of the slightly modified app that runs on CF can be found here](https://superzip.pcf1-rdu.nasa.pivotal.io/).  As described in this guide, only the following files were modified/added from the original RStudio code to make this happen:
+Please take a look at [this repo](https://github.com/pivotalsoftware/superzip) for an example of how to slightly modify and enable a Shiny app to run on CF.  We take the beautiful [Superzip app](https://github.com/rstudio/shiny-examples/tree/master/063-superzip-example) from RStudio's Shiny Gallery and push it to CF -- a [live version of the slightly modified app that runs on CF can be found here](https://superzip.apps.pcfdemo.net/).  As described in this guide, only the following files were modified/added from the original RStudio code to make this happen:
 
 * Modified: [ui.R](https://github.com/pivotalsoftware/superzip/blob/master/superzip/UI.R), [server.R](https://github.com/pivotalsoftware/superzip/blob/master/superzip/server.R)
 * Added: [init.r](https://github.com/pivotalsoftware/superzip/blob/master/init.r), [startscript.R](https://github.com/pivotalsoftware/superzip/blob/master/startscript.R), [manifest.yml](https://github.com/pivotalsoftware/superzip/blob/master/manifest.yml)
