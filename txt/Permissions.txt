@@ -19,4 +19,4 @@ Non-superusers *can run* a PL/R function that was created by a superuser. In the
 GRANT USAGE privilege to the account 
 http://lists.pgfoundry.org/pipermail/plr-general/2010-August/000441.html
 
-[untrusted] http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html
+[untrusted] https://www.postgresql.org/docs/current/interactive/catalog-pg-language.html

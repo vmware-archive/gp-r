@@ -74,4 +74,4 @@ data <- fetch( res, n = -1 )
 Note that the fetch function has a parameter, n, which sets the maximum number of records to retrieve. You probably always want to set this value to -1 to retrieve all of the records. I'm not sure why you would ever use this instead of the simpler dbGetQuery. 
 
 
-[RPostgreSQL] http://cran.r-project.org/web/packages/RPostgreSQL/index.html
+[RPostgreSQL] https://cran.r-project.org/web/packages/RPostgreSQL/index.html
