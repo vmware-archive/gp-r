@@ -1,4 +1,4 @@
-abalone = read.csv( 'http://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data',
+abalone = read.csv( 'https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data',
 					header=FALSE )
 
 names(abalone) = c('sex', 'length', 'diameter', 'height', 'whole_weight', 
