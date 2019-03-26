@@ -55,26 +55,26 @@ Topics covered
 # <a name="all_overview"/> Overview 
 In a traditional analytics workflow using R, data are loaded from a data source, modeled or visualized, and the model scoring results are pushed back to the data source. Such an approach works well when (i) the amount of data can be loaded into memory, and (ii) the transfer of large amounts of data is inexpensive and/or fast.  One of the major focus areas of this guide is to explore the situation involving large data sets where these two assumptions are violated. 
 
-[Greenplum Database (GPDB)](http://pivotal.io/big-data/pivotal-greenplum) and [Apache HAWQ](http://hawq.incubator.apache.org) offer several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with these platforms. In this guide, we will outline the most common practices and provide code examples to help get you started.
+[Greenplum Database (GPDB)](https://pivotal.io/big-data/pivotal-greenplum) and [Apache HAWQ](https://hawq.incubator.apache.org) offer several alternatives to interact with R using the in-database/in-Hadoop analytics paradigm. There are many ways to use R with these platforms. In this guide, we will outline the most common practices and provide code examples to help get you started.
 
-Regardless of the size of data, the "last mile" of operationalizing data-driven discoveries has traditionally often been an area of challenge.  With the advent of lightweight web frameworks for data scientists such as [Shiny](http://shiny.rstudio.com/) and highly automated hosting platforms such as [Cloud Foundry (CF)](https://www.cloudfoundry.org/), the effort involved in developing data-driven smart apps for end users has been reduced vastly.  In this document, we will also outline some guidelines to help you get started on pushing your Shiny apps to the cloud.  
+Regardless of the size of data, the "last mile" of operationalizing data-driven discoveries has traditionally often been an area of challenge.  With the advent of lightweight web frameworks for data scientists such as [Shiny](https://shiny.rstudio.com/) and highly automated hosting platforms such as [Cloud Foundry (CF)](https://www.cloudfoundry.org/), the effort involved in developing data-driven smart apps for end users has been reduced vastly.  In this document, we will also outline some guidelines to help you get started on pushing your Shiny apps to the cloud.  
 
 Official documentation can be found here:
 
 * GPDB
-  * [Product Page](http://pivotal.io/big-data/pivotal-greenplum)
-  * [Documentation](http://gpdb.docs.pivotal.io/index.html)
-  * [Installation guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43InstallGuide.pdf)
-  * [Administrator guide](http://gpdb.docs.pivotal.io/4320/pdf/GPDB43AdminGuide.pdf)
+  * [Product Page](https://pivotal.io/big-data/pivotal-greenplum)
+  * [Documentation](https://gpdb.docs.pivotal.io/index.html)
+  * [Installation guide](https://gpdb.docs.pivotal.io/4320/pdf/GPDB43InstallGuide.pdf)
+  * [Administrator guide](https://gpdb.docs.pivotal.io/4320/pdf/GPDB43AdminGuide.pdf)
 * Apache HAWQ
-  * [Product Page](http://hawq.incubator.apache.org)
-  * [Documentation](http://hawq.docs.pivotal.io/index.html)
-  * [Installation guide](http://hawq.docs.pivotal.io/docs-hawq/topics/HAWQInstallationandUpgrade.html)
-  * [Administrator guide](http://hawq.docs.pivotal.io/docs-hawq/topics/HAWQAdministration.html)
+  * [Product Page](https://hawq.incubator.apache.org)
+  * [Documentation](https://hawq.docs.pivotal.io/index.html)
+  * [Installation guide](https://hawq.docs.pivotal.io/docs-hawq/topics/HAWQInstallationandUpgrade.html)
+  * [Administrator guide](https://hawq.docs.pivotal.io/docs-hawq/topics/HAWQAdministration.html)
   * [Github Repository](https://github.com/apache/incubator-hawq) 
 * Cloud Foundry
   * [Product Page](https://www.cloudfoundry.org/)
-  * [Documentation](http://docs.cloudfoundry.org/)
+  * [Documentation](https://docs.cloudfoundry.org/)
   * [Installing PCF-Dev (i.e. CF in a VM)](https://docs.pivotal.io/pcf-dev/)
   * [Github Repository](https://github.com/cloudfoundry) 
   * [R Buildpack](https://github.com/wjjung317/heroku-buildpack-r)
@@ -93,11 +93,11 @@ PL/R provides a connection from the database to R -- which is running on every s
 
 ### Datasets for Examples
 
-This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the `abalone` [dataset](http://archive.ics.uci.edu/ml/datasets/Abalone) from the UC Irvine [Machine Learning Repository](http://archive.ics.uci.edu/ml/index.html).
+This guide contains code examples interspersed with explanations in natural language. You are encouraged to follow along with the examples, most of which will use the `abalone` [dataset](https://archive.ics.uci.edu/ml/datasets/Abalone) from the UC Irvine [Machine Learning Repository](https://archive.ics.uci.edu/ml/index.html).
 
 To get started, download the data onto the file system of the GPDB/HAWQ host machine, and note the path: 
 ```
-wget http://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
+wget https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data
 pwd
 ```
 
@@ -174,7 +174,7 @@ You may also install it on the template1 database to ensure every newly created 
 
 
 ### <a name="permissions"/> Note on Permissions
-R is an [untrusted language](http://www.postgresql.org/docs/current/interactive/catalog-pg-language.html). Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
+R is an [untrusted language](https://www.postgresql.org/docs/current/interactive/catalog-pg-language.html). Only superusers can create functions in untrusted languages. A discussion as to whether granting super user privileges on the database is acceptable needs to be an explicit step in selecting PL/R for your analytics project. 
 
 This is what happens when you try to create a PL/R function when you aren't a superuser:
 
@@ -305,22 +305,22 @@ Before installing the packages for PL/R ensure that you are referring to the rig
 Some users have a separate stand-alone installation of R on just the master node. If this is the case with your installation, ensure that this does not conflict with installation you need for PL/R to run on multiple segments.
 
 For a given R package, identify all dependent R packages and the package URLs.  This can be found by selecting the given package from the following navigation page: 
-`http://cran.r-project.org/web/packages/available_packages_by_name.html`
+`https://cran.r-project.org/web/packages/available_packages_by_name.html`
 
 From the page for the `arm` library, it can be seen that this library requires the following R libraries: `Matrix`, `lattice`, `lme4`, `R2WinBUGS`, `coda`, `abind`, `foreign`, `MASS`
 
 From the command line, use wget to download the required packages' `tar.gz` files to the master node:
 
 ```
-wget http://cran.r-project.org/src/contrib/arm_1.5-03.tar.gz
-wget http://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.0-1.tar.gz
-wget http://cran.r-project.org/src/contrib/Archive/lattice/lattice_0.19-33.tar.gz
-wget http://cran.r-project.org/src/contrib/lme4_0.999375-42.tar.gz
-wget http://cran.r-project.org/src/contrib/R2WinBUGS_2.1-18.tar.gz
-wget http://cran.r-project.org/src/contrib/coda_0.14-7.tar.gz
-wget http://cran.r-project.org/src/contrib/abind_1.4-0.tar.gz
-wget http://cran.r-project.org/src/contrib/foreign_0.8-49.tar.gz
-wget http://cran.r-project.org/src/contrib/MASS_7.3-17.tar.gz
+wget https://cran.r-project.org/src/contrib/arm_1.5-03.tar.gz
+wget https://cran.r-project.org/src/contrib/Archive/Matrix/Matrix_1.0-1.tar.gz
+wget https://cran.r-project.org/src/contrib/Archive/lattice/lattice_0.19-33.tar.gz
+wget https://cran.r-project.org/src/contrib/lme4_0.999375-42.tar.gz
+wget https://cran.r-project.org/src/contrib/R2WinBUGS_2.1-18.tar.gz
+wget https://cran.r-project.org/src/contrib/coda_0.14-7.tar.gz
+wget https://cran.r-project.org/src/contrib/abind_1.4-0.tar.gz
+wget https://cran.r-project.org/src/contrib/foreign_0.8-49.tar.gz
+wget https://cran.r-project.org/src/contrib/MASS_7.3-17.tar.gz
 ```
 
 Using `gpscp` and the hostname file, copy the `tar.gz` files to the same directory on all nodes of the GPDB/HAWQ cluster.  Note that this may require root access. (note: location and name of host file may be different. On our DCA its /home/gpadmin/all_hosts)
@@ -352,7 +352,7 @@ In getDependencies(pkgs, dependencies, available, lib) :
   package ‘matrix’ is not available (for R version 2.13.0)
 ```
 
-Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (http://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (http://cran.r-project.org/src/contrib/Archive/glmnet/ ) and download that version. This manual heuristic works reasonably well for finding compatible package versions. 
+Fortunately, there are older versions of most packages available in the CRAN archive. One heuristic we’ve found useful is to look at the release date of the R version installed on the machine. At the time of writing, it is v2.13 on our analytics DCA, which was released on 13-Apr-2011 (https://cran.r-project.org/src/base/R-2/). Armed with this date, go to the archive folder for the package you are installing and find the version that was released immediately prior to that date. For instance, the v1.5.3 of the package `glmnet` was released on 01-Mar-2011 and should be compatible with R v2.13 (https://cran.r-project.org/src/contrib/Archive/glmnet/ ) and download that version. This manual heuristic works reasonably well for finding compatible package versions. 
 
 ## <a name="bestpractices"/> Usage & Best Practices
 Here we outline workflows that have worked well for us in past experiences using R on GPDB & HAWQ.  
@@ -1099,12 +1099,12 @@ Given the heavy use of arrays in a PL/R workflow, another item to keep in mind i
 
 
 # <a name="plrexercises"/>PL/R Exercises
-The folder [PL/R Exercises](https://github.com/pivotalsoftware/gp-r/tree/master/exercises) contains 3 different exercises we developed for the [Data Science in Practice](http://pivotal.io/training) course using publicly available datasets. The first demonstrates
+The folder [PL/R Exercises](https://github.com/pivotalsoftware/gp-r/tree/master/exercises) contains 3 different exercises we developed for the [Data Science in Practice](https://pivotal.io/training) course using publicly available datasets. The first demonstrates
 using Ridge Regression from the `MASS` package, the second demonstrates using decision trees in the `rpart` package while the third is an exercises onRandom Forests using the `randomForest` package. The solutions are included inline in the same file. 
 
 # <a name="rpostgresql"/> RPostgreSQL on Greenplum & HAWQ
 ## Overview
-The [RPostgreSQL package](http://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with GDPB/HAWQ. This connection can be used to query GDPB/HAWQ in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
+The [RPostgreSQL package](https://cran.r-project.org/web/packages/RPostgreSQL/index.html) provides a database interface and PostgreSQL driver for R that is compatible with GDPB/HAWQ. This connection can be used to query GDPB/HAWQ in the normal fashion from within R code. We have found this package to be helpful for prototyping, working with datasets that can fit in-memory, and building visualizations. Generally speaking, using the RPostgreSQL interface does not lend itself to parallelization.  
 
 Using RPostgreSQL with a database includes the following 3 steps: 
 
@@ -1196,9 +1196,9 @@ Note that the fetch function has a parameter, `n`, which sets the maximum number
 
 # <a name="pivotalr"/> PivotalR on Greenplum & HAWQ
 ## Introduction
-[Apache MADlib](http://madlib.incubator.apache.org) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on GPDB, HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside of GPDB, HAWQ, and PostgreSQL. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, time series analysis, conditional random fields, association rules, and latent dirichlet allocation.  
+[Apache MADlib](https://madlib.incubator.apache.org) is an open-source library for highly scalable in-database/in-Hadoop analytics, and it currently runs on GPDB, HAWQ, and PostgreSQL.  MADlib provides implicitly parallelized SQL implementations of statistical & machine learning models that run directly inside of GPDB, HAWQ, and PostgreSQL. Examples of algorithms currently available in MADlib include linear regression, logistic regression, multinomial regression, elastic net, ARIMA, k-means clustering, naïve bayes, decision trees, random forests, support vector machines, Cox proportional hazards, time series analysis, conditional random fields, association rules, and latent dirichlet allocation.  
 
-While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](http://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database/in-Hadoop processing.  
+While end users benefit from MADlib’s high performance and scalability, its audience has previously been focused to those who are comfortable with modeling in SQL. [PivotalR](https://cran.r-project.org/web/packages/PivotalR/) is an R package that allows practitioners who know R but very little SQL to leverage the performance and scalability benefits of in-database/in-Hadoop processing.  
 
 The debut release of PivotalR was shipped out in June 2013.  A quickstart guide to PivotalR is available [here](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR-quick-start%20v2.pdf).  There is active ongoing development of  PivotalR, and we encourage you to view or contribute to this work on its [GitHub Page](https://github.com/pivotalsoftware/PivotalR).
 
@@ -1222,20 +1222,20 @@ Key features include the following:
 
 ## <a name="pivotalr_demo"/> Demo
 
-We have put together a [video demo](http://www.youtube.com/watch?v=6cmyRCMY6j0) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx), [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R), and [data](https://drive.google.com/file/d/0B76GEdSVCa8NUlZhQnFBaGgyTk0/view?usp=sharing) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](http://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) and this [paper](https://journal.r-project.org/archive/2014-1/qian.pdf) published in the R Journal to explore more of its features.  
+We have put together a [video demo](https://www.youtube.com/watch?v=6cmyRCMY6j0) of the debut release of PivotalR.  We also provide the [deck](https://github.com/wjjung317/gp-r/blob/master/docs/PivotalR_Demo.pptx), [code](https://github.com/wjjung317/gp-r/blob/master/src/R/PivotalR_Demo.R), and [data](https://drive.google.com/file/d/0B76GEdSVCa8NUlZhQnFBaGgyTk0/view?usp=sharing) used in the demo. Note that the demo intends to highlight a selection of functionality in PivotalR - we encourage you to check out the [documentation](https://cran.r-project.org/web/packages/PivotalR/PivotalR.pdf) and this [paper](https://journal.r-project.org/archive/2014-1/qian.pdf) published in the R Journal to explore more of its features.  
 
 ## <a name="pivotalr_install"/> Download & Installation
 
-PivotalR is available for download and installation from [CRAN](http://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/gopivotal/PivotalR).
+PivotalR is available for download and installation from [CRAN](https://cran.r-project.org/web/packages/PivotalR/) and its [GitHub Page](https://github.com/gopivotal/PivotalR).
 
 
 # <a name="shiny_cf"/> Shiny Apps on Cloud Foundry 
 
 ##  <a name="shiny_cf_overview"/> Overview 
 
-In this guide, we will assume that the reader is familiar with the [Shiny](http://shiny.rstudio.com/) framework for building apps and dashboards.  Background on Shiny and those who need a refresher are encouraged to look [here](http://shiny.rstudio.com/tutorial/).  
+In this guide, we will assume that the reader is familiar with the [Shiny](https://shiny.rstudio.com/) framework for building apps and dashboards.  Background on Shiny and those who need a refresher are encouraged to look [here](https://shiny.rstudio.com/tutorial/).  
 
-We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. [here](http://12factor.net/)) and ideally your [developer & designer](http://pivotallabs.com) buddies to improve and optimize.
+We place our focus on helping you get started on hosting Shiny apps on Cloud Foundry.  Please keep in mind that the authors of this current page are data scientists, not application developers.  The instructions here are intended merely to help get you started -- readers are encouraged to consult other resources (i.e. [here](https://12factor.net/)) and ideally your [developer & designer](https://pivotal.io/labs) buddies to improve and optimize.
 
 ## <a name="shiny_cf_requirements"/> Mininum Requirements for Hosting Shiny Apps on CF
 Listed below are the minimum requirements needed to host a Shiny app on CF:
@@ -1320,7 +1320,7 @@ shiny::runApp('whatif', host = '0.0.0.0', port = as.numeric(port))
 ```
 
 #### <a name="shiny_cf_requirements_mani"/> Mininum Requirements for Hosting Shiny Apps on CF: manifest.yml file
-The manifest.yml file should be saved in the root folder of your app directory, and tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the [CF documentation](http://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html) for more details and information on additional attribute entries that you can include in the manifest.yml file. 
+The manifest.yml file should be saved in the root folder of your app directory, and tells cf push what to do with your app by defining a set of 'attributes'. 'Attributes' include everything from how many instances to create, how much memory to allocate, and what command to run to start your app (i.e. for shiny, this could be the runApp() command).  In this section, we walk through the minimum set of attributes to include the 'applications' block of the manifest.yml that will get your shiny app on CF -- please refer to the [CF documentation](https://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html) for more details and information on additional attribute entries that you can include in the manifest.yml file. 
 
 * 'name' attribute
   * The name of your app, preceded by a single dash and one space
