@@ -990,7 +990,7 @@ Given the result for 1D SQL arrays, what are your bets on how 2D SQL arrays are 
 SELECT array[array[1,2], array[3,4]];
      array     
 ---------------
- \{{1,2},{3,4}}\
+{1,2},{3,4}
 (1 row)
 SELECT func_array(array[array[1,2],array[3,4]]);
  func_array 
