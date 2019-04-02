@@ -1004,7 +1004,7 @@ And as one would expect, 3D SQL arrays map to an R array:
 SELECT array[array[array[1,2], array[3,4]],array[array[5,6], array[7,8]]];
              array             
 -------------------------------
- {{{1,2},{3,4}},{{5,6},{7,8}}}
+ {1,2},{3,4},{5,6},{7,8}
 (1 row)
 SELECT func_array(array[array[array[1,2], array[3,4]],array[array[5,6], array[7,8]]]);
 func_array 
